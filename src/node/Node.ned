@@ -15,20 +15,20 @@ module Node
         @display("i=misc/node_vs,gold");
     gates:
         inout port[];
-    
+
     submodules:
         trsubmitter: TripRequestSubmitter if isRequestGenerator {
-        	parameters:
+            parameters:
                 address = address;
-                @display("p=180,60");
+                @display("p=228,70");
         }
-        
+
         app: <appType> like IApp {
             parameters:
                 address = address;
                 @display("p=140,60");
         }
-        routing: <routingType> like IRouting{
+        routing: <routingType> like IRouting {
             parameters:
                 @display("p=140,130");
             gates:

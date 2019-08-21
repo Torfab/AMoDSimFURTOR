@@ -23,6 +23,8 @@ Vehicle::Vehicle() {
     traveledDistance = 0.0;
     seats = 1;
     state = -1; //IDLE
+
+    emergencyVehicle = true; //veicolo di emergenza
 }
 
 Vehicle::~Vehicle() {

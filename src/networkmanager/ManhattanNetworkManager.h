@@ -24,12 +24,7 @@ class ManhattanNetworkManager : public AbstractNetworkManager
 private:
     int rows;
     int columns;
-
-<<<<<<< HEAD
     int hospitalAddress;
-
-=======
->>>>>>> parent of 2273131... added hospital behaviour
     double xChannelLength;
     double yChannelLength;
     double xTravelTime;
