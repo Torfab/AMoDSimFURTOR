@@ -25,10 +25,17 @@ void ManhattanNetworkManager::initialize()
     hospitalAddress=par("hospitalAddress");
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
+    numberOfEmergencyVehicles = par("numberOfEmergencyVehicles");
 
-       //for(int i=0; i<numberOfVehicles; i++)
-       //vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
-        vehiclesPerNode[1]=numberOfVehicles;
+    for (int i = 0; i < numberOfVehicles - numberOfEmergencyVehicles; i++)
+        {
+        int rand = intuniform(0, numberOfNodes - 1, 4);
+        if (rand != hospitalAddress) //Nessun veicolo civile puo' partire dall'ospedale
+        vehiclesPerNode[rand] += 1;
+        }
+
+    vehiclesPerNode[hospitalAddress] = numberOfEmergencyVehicles;
+
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 

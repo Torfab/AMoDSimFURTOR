@@ -25,7 +25,7 @@ class Vehicle: public Packet {
         int seats;
         int traveledDistance;
         int state;
-        bool emergencyVehicle; //veicolo di emergenza
+        int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza (TODO: enum)
 
     public:
         Vehicle();

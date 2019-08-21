@@ -24,10 +24,20 @@ Vehicle::Vehicle() {
     seats = 1;
     state = -1; //IDLE
 
-    emergencyVehicle = true; //veicolo di emergenza
+    specialVehicle=0; //veicolo di emergenza
 }
 
 Vehicle::~Vehicle() {
+}
+
+
+int Vehicle::getSpecialVehicle() const
+{
+    return specialVehicle;
+}
+void Vehicle::setSpecialVehicle(int specialVehicle)
+{
+    this->specialVehicle = specialVehicle;
 }
 
 int Vehicle::getID() const
