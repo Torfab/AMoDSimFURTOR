@@ -25,7 +25,6 @@ class Vehicle: public Packet {
         int seats;
         int traveledDistance;
         int state;
-        bool emergencyVehicle; //veicolo di emergenza
 
     public:
         Vehicle();

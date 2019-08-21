@@ -22,6 +22,10 @@ void ManhattanNetworkManager::initialize()
     cModule* parentModule = getParentModule();
     rows = parentModule->par("width");
     columns = parentModule->par("height");
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 2273131... added hospital behaviour
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
     hospitalAddress = par("hospitalAddress");
@@ -32,6 +36,12 @@ void ManhattanNetworkManager::initialize()
 
 
 
+<<<<<<< HEAD
+=======
+    for(int i=0; i<numberOfVehicles; i++)
+        vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
+
+>>>>>>> parent of 2273131... added hospital behaviour
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 
