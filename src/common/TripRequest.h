@@ -27,6 +27,7 @@ private:
 protected:
     static int nextID;
     int id;
+
     StopPoint *pickup;
     StopPoint *dropoff;
 

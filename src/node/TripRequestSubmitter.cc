@@ -24,7 +24,7 @@ class TripRequestSubmitter : public cSimpleModule
         int myAddress;
         int x_coord;
         int y_coord;
-        bool emergencyVehicle;
+
         double maxSubmissionTime;
         double minTripLength;
         int destAddresses;
@@ -36,6 +36,7 @@ class TripRequestSubmitter : public cSimpleModule
         cMessage *generatePacket;
         long pkCounter;
 
+        bool emergencyVehicle;
 
 
         // signals
@@ -80,7 +81,7 @@ void TripRequestSubmitter::initialize()
     generatePacket = new cMessage("nextPacket");
     tripRequest = registerSignal("tripRequest");
 
-    emergencyVehicle = true;
+    emergencyVehicle = par("emergencyVehicle");
 
     if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime)
         scheduleAt(sendIATime->doubleValue(), generatePacket);

@@ -24,7 +24,9 @@ class ManhattanNetworkManager : public AbstractNetworkManager
 private:
     int rows;
     int columns;
+
     int hospitalAddress;
+
     double xChannelLength;
     double yChannelLength;
     double xTravelTime;
