@@ -11,6 +11,8 @@ simple TripRequestSubmitter
         double maxDelay @unit(s) = default(2minute); //max allowed delay from pickup/dropoff request
         volatile double sendIaTime @unit(s)= default(exponential(2minute)); // time between generating packets
         volatile int passengersPerRequest = default(1);
+        bool emergencyVehicle = default(false); //emergency vehicle
+        int hospitalAddress = default(1);
         @display("i=block/user");
 
 }

@@ -22,13 +22,13 @@ void ManhattanNetworkManager::initialize()
     cModule* parentModule = getParentModule();
     rows = parentModule->par("width");
     columns = parentModule->par("height");
-
+    hospitalAddress=par("hospitalAddress");
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
 
-    for(int i=0; i<numberOfVehicles; i++)
-        vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
-
+       //for(int i=0; i<numberOfVehicles; i++)
+       //vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
+        vehiclesPerNode[1]=numberOfVehicles;
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 

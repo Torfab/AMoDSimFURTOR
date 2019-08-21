@@ -24,7 +24,7 @@ class TripRequestSubmitter : public cSimpleModule
         int myAddress;
         int x_coord;
         int y_coord;
-
+        bool emergencyVehicle;
         double maxSubmissionTime;
         double minTripLength;
         int destAddresses;
@@ -35,6 +35,8 @@ class TripRequestSubmitter : public cSimpleModule
 
         cMessage *generatePacket;
         long pkCounter;
+
+
 
         // signals
         simsignal_t tripRequest;
@@ -78,6 +80,8 @@ void TripRequestSubmitter::initialize()
     generatePacket = new cMessage("nextPacket");
     tripRequest = registerSignal("tripRequest");
 
+    emergencyVehicle = true;
+
     if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime)
         scheduleAt(sendIATime->doubleValue(), generatePacket);
 
@@ -118,9 +122,9 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     double simtime = simTime().dbl();
 
     // Generate a random destination address for the request
-    int destAddress = intuniform(0, destAddresses-1, 3);
-    while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength)
-        destAddress = intuniform(0, destAddresses-1, 3);
+    int destAddress = par("hospitalAddress");  // intuniform(0, destAddresses-1, 3);
+  //  while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength)
+  //      destAddress = intuniform(0, destAddresses-1, 3);
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
