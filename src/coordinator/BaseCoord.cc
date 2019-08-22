@@ -121,6 +121,60 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
 }
 
 /**
+ * Assign the new trip request to the first emergency vehicle available in the vehicles proposal.
+ *
+ * @param vehicleProposal The vehicles proposals
+ * @param tr The new TripRequest
+ *
+ * @return The ID of the vehicle which will serve the request or -1 otherwise.
+ */
+int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr) {
+    double pickupDeadline = tr->getPickupSP()->getTime()+ tr->getPickupSP()->getMaxDelay()*100;
+    double additionalCost = -1.0;
+    int vehicleID = -1;
+
+    //The request has been evaluated
+    TripRequest *preq = pendingRequests[tr->getID()];
+    pendingRequests.erase(tr->getID());
+    delete preq;
+
+    // TODO: CHECK CHE LA MAPPA vehicleProposal non sia vuota
+    if (!vehicleProposal.empty()){
+
+    //for (auto const &x : vehicleProposal) {
+    double curAdditionalCost = vehicleProposal.begin()->second->getAdditionalCost();
+    // if (x.second->getActualPickupTime() <= pickupDeadline) {
+    //        if (additionalCost == -1.0 || curAdditionalCost < additionalCost) {
+    //              if (vehicleID != -1) //The current proposal is better than the previous one
+    //                  delete (vehicleProposal[vehicleID]);
+
+    vehicleID = vehicleProposal.begin()->first;
+    additionalCost = curAdditionalCost;
+    //           } else
+    //              delete x.second; //Reject the current proposal (A better one has been accepted)
+    //   } else
+    //       delete x.second; //Reject the current proposal: it does not respect the time constraints
+    // }
+    }
+    if (additionalCost > -1) {
+        EV << "Accepted request of emergency vehicle " << vehicleID << " for request: "
+                  << tr->getID() << " .The time cost is: " << additionalCost << endl;
+
+        updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
+    } else {
+        EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
+        uRequests[tr->getID()] = new TripRequest(*tr);
+        delete tr;
+        return -1;
+    }
+    delete tr;
+
+    return vehicleID;
+}
+
+
+
+/**
  * Assign the new trip request to the vehicle which minimize the additional time cost.
  *
  * @param vehicleProposal The vehicles proposals
