@@ -32,6 +32,7 @@ protected:
 
     int vehicleID;
     int distanceToPickup;
+    int isSpecial;
 
 public:
     TripRequest();
@@ -50,6 +51,8 @@ public:
     virtual void setVehicleID(int vehicleID);
     virtual int getDistanceToPickup() const;
     virtual void setDistanceToPickup(int distanceToPickup);
+    virtual int getIsSpecial() const;
+    virtual void setIsSpecial(int isSpecial);
 };
 
 #endif /* TRIPREQUEST_H_ */

@@ -24,6 +24,7 @@ TripRequest::TripRequest() {
     dropoff = nullptr;
     distanceToPickup = -1;
     vehicleID = -1;
+    isSpecial = 0;
 }
 
 TripRequest::TripRequest(const TripRequest& other)
@@ -45,7 +46,6 @@ TripRequest::~TripRequest() {
     delete this->pickup;
     delete this->dropoff;
 }
-
 
 int TripRequest::getID() const
 {
@@ -86,6 +86,14 @@ void TripRequest::setVehicleID(int vehicleID)
 int TripRequest::getDistanceToPickup() const
 {
     return distanceToPickup;
+}
+
+int TripRequest::getIsSpecial() const {
+    return isSpecial;
+}
+
+void TripRequest::setIsSpecial(int isSpecial) {
+    this->isSpecial = isSpecial;
 }
 
 void TripRequest::setDistanceToPickup(int distanceToPickup)

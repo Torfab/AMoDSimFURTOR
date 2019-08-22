@@ -108,7 +108,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
         if (ev.isGUI()) getParentModule()->bubble("TRIP REQUEST");
         tr = buildTripRequest();
 
-        EV << "Requiring a new trip from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+        EV << "Requiring a trip request from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
         EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
         emit(tripRequest, tr);
@@ -135,7 +135,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
            if (ev.isGUI()) getParentModule()->bubble("EMERGENCY REQUEST");
            tr = buildEmergencyRequest();
 
-           EV << "Requiring a new trip from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+           EV << "Requiring a EMERGENCY REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
            EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
            emit(tripRequest, tr);
@@ -164,9 +164,8 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
     double simtime = simTime().dbl();
 
     // Generate a random destination address for the request
-    int destAddress = par("hospitalAddress");  // intuniform(0, destAddresses-1, 3);
-  //  while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength)
-  //      destAddress = intuniform(0, destAddresses-1, 3);
+    int destAddress = par("hospitalAddress");
+
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
@@ -177,6 +176,8 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
 
     request->setPickupSP(pickupSP);
     request->setDropoffSP(dropoffSP);
+
+    request->setIsSpecial(1); //hospital request
 
     return request;
 }
@@ -200,6 +201,8 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
 
     request->setPickupSP(pickupSP);
     request->setDropoffSP(dropoffSP);
+
+    request->setIsSpecial(0); //normal
 
     return request;
 }
