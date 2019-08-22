@@ -93,8 +93,14 @@ void App::initialize()
         for(int i=0; i<numberOfVehicles; i++)
         {
             Vehicle *v = new Vehicle();
-            v->setSeats(seatsPerVehicle);
-            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << ". It has " << v->getSeats() << " seats." << endl;
+            int hospitalAddress = par("hospitalAddress");
+            if (myAddress == hospitalAddress){
+                v->setSpecialVehicle(1);  //ambulanza
+                v->setSeats(1);
+            } else
+                v->setSeats(seatsPerVehicle);
+
+            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << "of type "<< v->getSpecialVehicle() << ". It has " << v->getSeats() << " seats." << endl;
             tcoord->registerVehicle(v, myAddress);
         }
 
@@ -104,6 +110,7 @@ void App::initialize()
         //When the coordinator assign a new request to a vehicle, local node will be notified
         simulation.getSystemModule()->subscribe("newTripAssigned",this);
     }
+
 
 }
 

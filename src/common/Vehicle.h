@@ -37,6 +37,8 @@ class Vehicle: public Packet {
         virtual void setSeats(int seats);
         virtual void setState(int state);
         virtual int getState() const;
+        virtual int getSpecialVehicle() const;
+        virtual void setSpecialVehicle(int specialVehicle);
 };
 
 #endif /* VEHICLE_H_ */
