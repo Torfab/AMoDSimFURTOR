@@ -73,7 +73,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr)
     }
     // //Assign the request to the emergency vehicle
     if (tr->getIsSpecial() == 1) {
-       //  EV << vehicleProposals.size() << " Emergency vehicles are available for proposal" << endl;
+         EV << "+++"<< vehicleProposals.size() << " Emergency vehicles are available for proposal" << endl;
          emergencyAssignment(vehicleProposals, tr);
 
     }
