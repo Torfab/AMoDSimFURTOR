@@ -29,6 +29,11 @@ private:
     double xChannelLength;
     double yChannelLength;
 
+    double feromone_N;
+    double feromone_S;
+    double feromone_W;
+    double feromone_E;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
