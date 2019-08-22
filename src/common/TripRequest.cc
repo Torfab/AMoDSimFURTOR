@@ -24,6 +24,7 @@ TripRequest::TripRequest() {
     dropoff = nullptr;
     distanceToPickup = -1;
     vehicleID = -1;
+
     isSpecial = 0;
 }
 

@@ -137,24 +137,11 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
     TripRequest *preq = pendingRequests[tr->getID()];
     pendingRequests.erase(tr->getID());
     delete preq;
+    if (!vehicleProposal.empty()) {
+        double curAdditionalCost =vehicleProposal.begin()->second->getAdditionalCost();
+        vehicleID = vehicleProposal.begin()->first;
+        additionalCost = curAdditionalCost;
 
-    // TODO: CHECK CHE LA MAPPA vehicleProposal non sia vuota
-    if (!vehicleProposal.empty()){
-
-    //for (auto const &x : vehicleProposal) {
-    double curAdditionalCost = vehicleProposal.begin()->second->getAdditionalCost();
-    // if (x.second->getActualPickupTime() <= pickupDeadline) {
-    //        if (additionalCost == -1.0 || curAdditionalCost < additionalCost) {
-    //              if (vehicleID != -1) //The current proposal is better than the previous one
-    //                  delete (vehicleProposal[vehicleID]);
-
-    vehicleID = vehicleProposal.begin()->first;
-    additionalCost = curAdditionalCost;
-    //           } else
-    //              delete x.second; //Reject the current proposal (A better one has been accepted)
-    //   } else
-    //       delete x.second; //Reject the current proposal: it does not respect the time constraints
-    // }
     }
     if (additionalCost > -1) {
         EV << "Accepted request of emergency vehicle " << vehicleID << " for request: "
