@@ -118,7 +118,7 @@ void App::initialize()
 void App::handleMessage(cMessage *msg)
 {
     Vehicle *vehicle = NULL;
-    double sendDelayTime = additionalTravelTime;
+    double sendDelayTime = additionalTravelTime;// * trafficFactor;
 
     try{
         //A vehicle is here

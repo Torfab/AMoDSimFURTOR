@@ -17,6 +17,7 @@
 #define __AMOD_SIMULATOR_MANHATTANROUTING_H_
 
 #include <omnetpp.h>
+#include "Pheromone.h"
 
 class ManhattanRouting : public cSimpleModule
 {
@@ -29,13 +30,25 @@ private:
     double xChannelLength;
     double yChannelLength;
 
+
+
     double feromone_N;
     double feromone_S;
     double feromone_W;
     double feromone_E;
 
-    double intervalloDecadimentoFeromone;
-    double fattoreDecadimentoFeromone;
+	// Feromone
+	double pheromoneDecayTime;
+	double pheromoneDecayFactor;
+	Pheromone *pheromone;// = nullptr;
+	// Traffico
+	double traffic_N;
+	double traffic_S;
+	double traffic_W;
+    double traffic_E;
+
+    double intervalloDecadimentoTraffico;
+    double fattoreDecadimentoTraffico;
 
     double lastUpdateTime;
 

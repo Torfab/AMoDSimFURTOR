@@ -15,6 +15,8 @@
 
 #include "ManhattanRouting.h"
 #include "Vehicle.h"
+#include "Pheromone.h"
+
 
 Define_Module(ManhattanRouting);
 
@@ -39,8 +41,12 @@ void ManhattanRouting::initialize()
     EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY << endl;
 
     //lastUpdateTime = simTime().dbl();
-	intervalloDecadimentoFeromone = getParentModule()->getParentModule()->par("intervalloDecadimentoFeromone");
-	fattoreDecadimentoFeromone = getParentModule()->getParentModule()->par("fattoreDecadimentoFeromone");
+
+
+	pheromoneDecayTime = getParentModule()->getParentModule()->par("intervalloDecadimentoFeromone");
+	pheromoneDecayFactor = getParentModule()->getParentModule()->par("fattoreDecadimentoFeromone");
+
+	Pheromone pheromone(pheromoneDecayTime,pheromoneDecayFactor);
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg)
@@ -70,21 +76,26 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
 	//double nextDecadenceTime = decadimentoFeromone * fattoreFeromone
 
-	int n = (simTime().dbl() - lastUpdateTime) / intervalloDecadimentoFeromone;
+	int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
 
 
 	if (n != 0) {
-		EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" <<lastUpdateTime << "/" << intervalloDecadimentoFeromone <<endl;
+		EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" <<lastUpdateTime << "/" << pheromoneDecayTime <<endl;
 		for (int i = 0; i < n; i++) {
-			feromone_E = feromone_E - feromone_E * fattoreDecadimentoFeromone; //feromone al tempo t+1
+			pheromone->decayPheromone();
+			/*
+			feromone_E = feromone_E - feromone_E * fattoreDecadimentoFeromone; //pheromone al tempo t+1
 			feromone_N = feromone_N - feromone_N * fattoreDecadimentoFeromone;
 			feromone_S = feromone_S - feromone_S * fattoreDecadimentoFeromone;
 			feromone_W = feromone_W - feromone_W * fattoreDecadimentoFeromone;
+			*/
 		}
-		emit(signalFeromoneE, feromone_E);
-		emit(signalFeromoneW, feromone_W);
+		for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
+		emit(signalFeromoneE, pheromone->getPheromone(i));
+		}
+	/*	emit(signalFeromoneW, feromone_W);
 		emit(signalFeromoneS, feromone_S);
-		emit(signalFeromoneN, feromone_N);
+		emit(signalFeromoneN, feromone_N);*/
 
 		lastUpdateTime = simTime().dbl();
 	}
@@ -93,7 +104,8 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
     if(myX < destX)
     {
-        feromone_E++;
+    	pheromone->increasePheromone(1);
+        //feromone_E++;
         outGateIndex = 2; //right
         distance = xChannelLength;
         emit(signalFeromoneE, feromone_E);
@@ -101,7 +113,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     else
         if(myX > destX)
         {
-            feromone_W++;
+        	pheromone->increasePheromone(3);
             outGateIndex = 3; //left
             distance = xChannelLength;
     		emit(signalFeromoneW, feromone_W);
@@ -110,7 +122,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     else
         if(myY < destY)
         {
-            feromone_S++;
+        	pheromone->increasePheromone(2);
             outGateIndex = 0; //sud
             distance = yChannelLength;
     		emit(signalFeromoneS, feromone_S);
@@ -118,7 +130,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         }
         else
         {
-            feromone_N++;
+        	pheromone->increasePheromone(0);
             outGateIndex = 1; //north
             distance = yChannelLength;
     		emit(signalFeromoneN, feromone_N);
