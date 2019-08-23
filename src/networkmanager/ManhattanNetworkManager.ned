@@ -9,4 +9,4 @@ simple ManhattanNetworkManager like INetworkManager
         int hospitalAddress;  
         int numberOfEmergencyVehicles = default(0);
         @display("i=block/network2_l");
-}
+        }

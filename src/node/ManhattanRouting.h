@@ -39,6 +39,12 @@ private:
 
     double lastUpdateTime;
 
+    //Feromone related signals
+    simsignal_t signalFeromoneE;
+    simsignal_t signalFeromoneN;
+    simsignal_t signalFeromoneS;
+    simsignal_t signalFeromoneW;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
