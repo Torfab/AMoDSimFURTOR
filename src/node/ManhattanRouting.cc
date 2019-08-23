@@ -31,7 +31,9 @@ void ManhattanRouting::initialize()
 
     EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY << endl;
 
-
+    //lastUpdateTime = simTime().dbl();
+	intervalloDecadimentoFeromone = getParentModule()->getParentModule()->par("intervalloDecadimentoFeromone");
+	fattoreDecadimentoFeromone = getParentModule()->getParentModule()->par("fattoreDecadimentoFeromone");
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg)
@@ -54,11 +56,37 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     int destX = pk->getDestAddr() % rows;
     int destY = pk->getDestAddr() / rows;
 
+    // todo: memorizzare tempo e decadimento feromone
+
+    // non e' la verita': il feromone viene aggiornato solo quando un veicolo attraversa il nodo. Il valore e' corretto ma non aggiornato in maniera continua nel tempo
+
+
+
+	//double simtime = simTime().dbl();
+	//emit(rxBytesSignal, (long)check_and_cast<cPacket *>(msg)->getByteLength());
+
+	//double nextDecadenceTime = decadimentoFeromone * fattoreFeromone
+
+	int n = (simTime().dbl() - lastUpdateTime) / intervalloDecadimentoFeromone;
+
+
+	if (n != 0) {
+		EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" <<lastUpdateTime << "/" << intervalloDecadimentoFeromone <<endl;
+		for (int i = 0; i < n; i++) {
+			feromone_E = feromone_E - feromone_E * fattoreDecadimentoFeromone; //feromone al tempo t+1
+			feromone_N = feromone_N - feromone_N * fattoreDecadimentoFeromone;
+			feromone_S = feromone_S - feromone_S * fattoreDecadimentoFeromone;
+			feromone_W = feromone_W - feromone_W * fattoreDecadimentoFeromone;
+		}
+		lastUpdateTime = simTime().dbl();
+	}
+
+
+
 
     if(myX < destX)
     {
         feromone_E++;
-
         outGateIndex = 2; //right
         distance = xChannelLength;
     }

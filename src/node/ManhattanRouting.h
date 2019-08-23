@@ -34,6 +34,11 @@ private:
     double feromone_W;
     double feromone_E;
 
+    double intervalloDecadimentoFeromone;
+    double fattoreDecadimentoFeromone;
+
+    double lastUpdateTime;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

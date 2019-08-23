@@ -7,7 +7,9 @@ network AMoD
 {
 	parameters:
 	    //------Traffico-----
-	    double fattoreFeromone = default(1);
+	    double fattoreDecadimentoFeromone = default(0.1);  			// 10%
+	    double intervalloDecadimentoFeromone @unit(s) = default(600s);
+	    
 	    double traffico = default(1);
 	    
 	    //------Network Parameters------
