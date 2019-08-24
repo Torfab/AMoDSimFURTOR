@@ -20,7 +20,7 @@ class Pheromone {
 
 	private:
 		int numberOfGates ;
-		double pheromone[]; // N E S W
+		double *pheromone; // N E S W
 		double pheromoneDecayTime;
 		double pheromoneDecayFactor;
 public:

@@ -40,20 +40,25 @@ private:
 	// Feromone
 	double pheromoneDecayTime;
 	double pheromoneDecayFactor;
-	Pheromone *pheromone;// = nullptr;
-	// Traffico
-	double traffic_N;
-	double traffic_S;
-	double traffic_W;
-    double traffic_E;
+	Pheromone *pheromone; // = nullptr;
 
-    double intervalloDecadimentoTraffico;
-    double fattoreDecadimentoTraffico;
+
+//  double intervalloDecadimentoTraffico;
+//  double fattoreDecadimentoTraffico;
+//	double traffic_N;
+//	double traffic_S;
+//	double traffic_W;
+//  double traffic_E;
+
+	// Traffico
+	double trafficDecayTime;
+	double trafficDecayFactor;
+	Pheromone *traffic; // = nullptr;
 
     double lastUpdateTime;
 
     //Feromone related signals
-    simsignal_t signalFeromoneE;
+    simsignal_t * signalFeromone;
     simsignal_t signalFeromoneN;
     simsignal_t signalFeromoneS;
     simsignal_t signalFeromoneW;
@@ -61,6 +66,7 @@ private:
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual ~ManhattanRouting();
 };
 
 #endif

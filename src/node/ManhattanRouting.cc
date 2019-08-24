@@ -22,11 +22,12 @@ Define_Module(ManhattanRouting);
 
 void ManhattanRouting::initialize()
 {
+	signalFeromone = new simsignal_t[4];
     /* ---- REGISTER SIGNALS ---- */
-    signalFeromoneE = registerSignal("signalFeromoneE");
-    signalFeromoneN = registerSignal("signalFeromoneN");
-    signalFeromoneS = registerSignal("signalFeromoneS");
-    signalFeromoneW = registerSignal("signalFeromoneW");
+    signalFeromone[0] = registerSignal("signalFeromoneN");
+    signalFeromone[1] = registerSignal("signalFeromoneE");
+    signalFeromone[2] = registerSignal("signalFeromoneS");
+    signalFeromone[3] = registerSignal("signalFeromoneW");
     /*****************************/
 
     myAddress = getParentModule()->par("address");
@@ -46,7 +47,16 @@ void ManhattanRouting::initialize()
 	pheromoneDecayTime = getParentModule()->getParentModule()->par("intervalloDecadimentoFeromone");
 	pheromoneDecayFactor = getParentModule()->getParentModule()->par("fattoreDecadimentoFeromone");
 
-	Pheromone pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+	pheromone = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+//	Pheromone pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+//	EV << "PHEROMONE 1 "  << "  "<< pheromone.getPheromone(1) << endl;
+//	pheromone.increasePheromone(1);
+
+
+}
+
+ ManhattanRouting::~ManhattanRouting(){
+	delete pheromone;
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg)
@@ -91,11 +101,13 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 			*/
 		}
 		for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
-		emit(signalFeromoneE, pheromone->getPheromone(i));
+//		emit(signalFeromone[1], pheromone->getPheromone(1));
+		emit(signalFeromone[i], pheromone->getPheromone(i));
 		}
-	/*	emit(signalFeromoneW, feromone_W);
-		emit(signalFeromoneS, feromone_S);
-		emit(signalFeromoneN, feromone_N);*/
+//
+//		emit(signalFeromoneW, feromone_W);
+//		emit(signalFeromoneS, feromone_S);
+//		emit(signalFeromoneN, feromone_N);
 
 		lastUpdateTime = simTime().dbl();
 	}
@@ -108,7 +120,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         //feromone_E++;
         outGateIndex = 2; //right
         distance = xChannelLength;
-        emit(signalFeromoneE, feromone_E);
+        emit(signalFeromone[1], pheromone->getPheromone(1));
     }
     else
         if(myX > destX)
@@ -116,7 +128,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         	pheromone->increasePheromone(3);
             outGateIndex = 3; //left
             distance = xChannelLength;
-    		emit(signalFeromoneW, feromone_W);
+    		emit(signalFeromone[3], pheromone->getPheromone(3));
 
         }
     else
@@ -125,7 +137,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         	pheromone->increasePheromone(2);
             outGateIndex = 0; //sud
             distance = yChannelLength;
-    		emit(signalFeromoneS, feromone_S);
+    		emit(signalFeromone[2], pheromone->getPheromone(2));
 
         }
         else
@@ -133,9 +145,11 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         	pheromone->increasePheromone(0);
             outGateIndex = 1; //north
             distance = yChannelLength;
-    		emit(signalFeromoneN, feromone_N);
+            emit(signalFeromone[0], pheromone->getPheromone(0));
         }
-    EV << "Nodo " << myAddress << " feromoni N E S W: " << feromone_N << " | "<< feromone_E << " | " << feromone_S << " | "<< feromone_W << " | " << endl;
+    for (int i = 0; i < 4; i++) {
+    EV << "Nodo " << myAddress << " feromoni N E S W: " << pheromone->getPheromone(i) << endl;
+    }
     pk->setHopCount(pk->getHopCount()+1);
     pk->setTraveledDistance(pk->getTraveledDistance() + distance);
 

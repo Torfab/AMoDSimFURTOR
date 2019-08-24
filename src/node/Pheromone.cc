@@ -18,16 +18,19 @@
 Pheromone::Pheromone(double DecayTime, double DecayFactor) :
 		pheromoneDecayTime(DecayTime), pheromoneDecayFactor(DecayFactor) {
 	this->numberOfGates = 4;
-	//pheromone[numberOfGates];
-	for (int i = 0; i < numberOfGates; i++)
+	pheromone = new double[numberOfGates];
+	for (int i = 0; i < numberOfGates; i++) {
 		pheromone[i] = 0;
+	}
 }
 
 Pheromone::~Pheromone() {
+	delete [] pheromone;
 }
 
 double Pheromone::getPheromoneDecayFactor() const {
 	return pheromoneDecayFactor;
+
 }
 
 double Pheromone::getPheromoneDecayTime() const {
@@ -35,7 +38,7 @@ double Pheromone::getPheromoneDecayTime() const {
 }
 
 void Pheromone::increasePheromone(int i) {
-	pheromone[i]++;
+	pheromone[i] = pheromone[i] + 1;
 
 }
 
@@ -49,6 +52,6 @@ int Pheromone::getNumberOfGates() const {
 
 void Pheromone::decayPheromone() {
 	for (int i = 0; i < numberOfGates; i++) {
-		pheromone[i] -= pheromone[i] * pheromoneDecayTime;
+		pheromone[i] -= pheromone[i] * pheromoneDecayFactor;
 	}
 }
