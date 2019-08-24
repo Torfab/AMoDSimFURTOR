@@ -78,8 +78,8 @@ network AMoD
         
     connections allowunconnected:
         for i=0..height-1, for j=0..width-1 {
-            n[i*width+j].port[0] <--> yRoad <--> n[(i+1)*width+j].port[1] if i!=height-1;  //Vertical connections
-            n[i*width+j].port[2] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1;   //Horizontal connections
+            n[i*width+j].port[2] <--> yRoad <--> n[(i+1)*width+j].port[0] if i!=height-1;  //Vertical connections
+            n[i*width+j].port[1] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1;   //Horizontal connections
         }
    
 }
