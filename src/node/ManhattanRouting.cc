@@ -43,14 +43,12 @@ void ManhattanRouting::initialize()
 
     //lastUpdateTime = simTime().dbl();
 
-
+    //Pheromone
 	pheromoneDecayTime = getParentModule()->getParentModule()->par("intervalloDecadimentoFeromone");
 	pheromoneDecayFactor = getParentModule()->getParentModule()->par("fattoreDecadimentoFeromone");
 
 	pheromone = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
-//	Pheromone pheromone(pheromoneDecayTime,pheromoneDecayFactor);
-//	EV << "PHEROMONE 1 "  << "  "<< pheromone.getPheromone(1) << endl;
-//	pheromone.increasePheromone(1);
+
 
 
 }
@@ -93,21 +91,11 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 		EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" <<lastUpdateTime << "/" << pheromoneDecayTime <<endl;
 		for (int i = 0; i < n; i++) {
 			pheromone->decayPheromone();
-			/*
-			feromone_E = feromone_E - feromone_E * fattoreDecadimentoFeromone; //pheromone al tempo t+1
-			feromone_N = feromone_N - feromone_N * fattoreDecadimentoFeromone;
-			feromone_S = feromone_S - feromone_S * fattoreDecadimentoFeromone;
-			feromone_W = feromone_W - feromone_W * fattoreDecadimentoFeromone;
-			*/
 		}
 		for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
-//		emit(signalFeromone[1], pheromone->getPheromone(1));
 		emit(signalFeromone[i], pheromone->getPheromone(i));
 		}
-//
-//		emit(signalFeromoneW, feromone_W);
-//		emit(signalFeromoneS, feromone_S);
-//		emit(signalFeromoneN, feromone_N);
+
 
 		lastUpdateTime = simTime().dbl();
 	}
@@ -117,7 +105,6 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     if(myX < destX)
     {
     	pheromone->increasePheromone(1);
-        //feromone_E++;
         outGateIndex = 2; //right
         distance = xChannelLength;
         emit(signalFeromone[1], pheromone->getPheromone(1));
@@ -147,9 +134,14 @@ void ManhattanRouting::handleMessage(cMessage *msg)
             distance = yChannelLength;
             emit(signalFeromone[0], pheromone->getPheromone(0));
         }
+
+    EV << "Nodo " << myAddress << " feromoni N E S W: ";
     for (int i = 0; i < 4; i++) {
-    EV << "Nodo " << myAddress << " feromoni N E S W: " << pheromone->getPheromone(i) << endl;
+    EV << pheromone->getPheromone(i) << " || ";;
     }
+    EV << endl;
+
+
     pk->setHopCount(pk->getHopCount()+1);
     pk->setTraveledDistance(pk->getTraveledDistance() + distance);
 

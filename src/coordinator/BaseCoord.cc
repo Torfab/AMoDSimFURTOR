@@ -129,7 +129,7 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
  * @return The ID of the vehicle which will serve the request or -1 otherwise.
  */
 int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr) {
-    double pickupDeadline = tr->getPickupSP()->getTime()+ tr->getPickupSP()->getMaxDelay()*100;
+//    double pickupDeadline = tr->getPickupSP()->getTime()+ tr->getPickupSP()->getMaxDelay()*100; //
     double additionalCost = -1.0;
     int vehicleID = -1;
 
