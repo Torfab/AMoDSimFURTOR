@@ -105,7 +105,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     if(myX < destX)
     {
     	pheromone->increasePheromone(1);
-        outGateIndex = 2; //right
+        outGateIndex = 1; //right
         distance = xChannelLength;
         emit(signalFeromone[1], pheromone->getPheromone(1));
     }
@@ -122,7 +122,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         if(myY < destY)
         {
         	pheromone->increasePheromone(2);
-            outGateIndex = 0; //sud
+            outGateIndex = 2; //sud
             distance = yChannelLength;
     		emit(signalFeromone[2], pheromone->getPheromone(2));
 
@@ -130,7 +130,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         else
         {
         	pheromone->increasePheromone(0);
-            outGateIndex = 1; //north
+            outGateIndex = 0; //north
             distance = yChannelLength;
             emit(signalFeromone[0], pheromone->getPheromone(0));
         }
