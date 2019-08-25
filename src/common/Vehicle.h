@@ -27,6 +27,8 @@ class Vehicle: public Packet {
         int state;
         int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza (TODO: enum)
 
+        int chosenGate; // Choose the gate for leaving the node
+
     public:
         Vehicle();
         virtual ~Vehicle();
@@ -39,6 +41,9 @@ class Vehicle: public Packet {
         virtual int getState() const;
         virtual int getSpecialVehicle() const;
         virtual void setSpecialVehicle(int specialVehicle);
+        virtual int getChosenGate();
+        virtual void setChosenGate(int gate);
+
 };
 
 #endif /* VEHICLE_H_ */

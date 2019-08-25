@@ -25,6 +25,9 @@ Vehicle::Vehicle() {
     state = -1; //IDLE
 
     specialVehicle=0; //veicolo di emergenza
+
+//    chosenGate = 0;
+
 }
 
 Vehicle::~Vehicle() {
@@ -73,4 +76,13 @@ int Vehicle::getState() const
 void Vehicle::setState(int state)
 {
     this->state = state;
+}
+
+int Vehicle::getChosenGate() {
+	return chosenGate;
+}
+
+
+void Vehicle::setChosenGate(int gate) {
+	this->chosenGate = gate;
 }
