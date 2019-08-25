@@ -126,37 +126,32 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		}
 
 		if (myX < destX) {
-			pheromone->increasePheromone(1);
-			traffic->increaseTraffic(1);
 			pk->setChosenGate(1); //right
-//        distance = xChannelLength;
-			emit(signalFeromone[1], pheromone->getPheromone(1));
 
 		} else if (myX > destX) {
-			pheromone->increasePheromone(3);
-			traffic->increaseTraffic(3);
 			pk->setChosenGate(3); //left
 
-//            distance = xChannelLength;
-			emit(signalFeromone[3], pheromone->getPheromone(3));
-
 		} else if (myY < destY) {
-			pheromone->increasePheromone(2);
-			traffic->increaseTraffic(2);
-
 			pk->setChosenGate(2); //sud
 
-//            distance = yChannelLength;
-			emit(signalFeromone[2], pheromone->getPheromone(2));
-
 		} else {
+			pk->setChosenGate(0); //north
+//            distance = yChannelLength;
 			pheromone->increasePheromone(0);
 			traffic->increaseTraffic(0);
 
-			pk->setChosenGate(0); //north
-//            distance = yChannelLength;
-			emit(signalFeromone[0], pheromone->getPheromone(0));
+
+
 		}
+
+
+		// Update Pheromone and Traffic
+		pheromone->increasePheromone(pk->getChosenGate());
+		traffic->increaseTraffic(pk->getChosenGate());
+		// Emit pheromone signal
+		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
+
+
 
 		EV << "Nodo " << myAddress << " Pheromone N E S W: ";
 		for (int i = 0; i < 4; i++) {
