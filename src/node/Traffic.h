@@ -21,21 +21,18 @@ class Traffic {
 protected:
 	int numberOfGates;
 	double *traffic; // N E S W
-	double DecayTime;
-	double DecayFactor;
 
 public:
-	Traffic(double DecayTime, double DecayFactor);
+	Traffic();
 	virtual ~Traffic();
-
-	double getDecayFactor() const;
-	double getDecayTime() const;
 
 	void increaseTraffic(int i);
 	const double getTraffic(int i) const;
 	int getNumberOfGates() const;
 
-	void decay();
+	void decay(int i);
+
+	double trafficInfluence(int i);
 };
 
 #endif /* TRAFFIC_H_ */

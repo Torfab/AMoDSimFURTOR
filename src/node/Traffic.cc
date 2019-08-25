@@ -16,12 +16,10 @@
 #include <Traffic.h>
 
 Traffic::~Traffic() {
-	// TODO Auto-generated destructor stub
 	delete [] traffic;
 }
 
-Traffic::Traffic(double DecayTime, double DecayFactor) :
-		DecayTime(DecayTime), DecayFactor(DecayFactor) {
+Traffic::Traffic() {
 	this->numberOfGates = 4;
 	traffic = new double[numberOfGates];
 	for (int i = 0; i < numberOfGates; i++) {
@@ -29,16 +27,8 @@ Traffic::Traffic(double DecayTime, double DecayFactor) :
 	}
 }
 
-double Traffic::getDecayFactor() const {
-	return DecayFactor;
-}
-
-double Traffic::getDecayTime() const {
-	return DecayTime;
-}
-
 void Traffic::increaseTraffic(int i) {
-	traffic[i] = traffic[i] + 1;
+	traffic[i]++;
 }
 
 const double Traffic::getTraffic(int i) const {
@@ -49,8 +39,13 @@ int Traffic::getNumberOfGates() const {
 	return numberOfGates;
 }
 
-void Traffic::decay() {
-	for (int i = 0; i < numberOfGates; i++) {
-		traffic[i] -= traffic[i] * DecayFactor;
-	}
+void Traffic::decay(int i) {
+		traffic[i]--;
+
+}
+/*
+ * La formula è stata inventata "a mente"
+ */
+double Traffic::trafficInfluence(int i) {
+	return traffic[i] * 0.05 + 1; // y = 0.05x + 1
 }

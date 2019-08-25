@@ -7,10 +7,10 @@ network AMoD
 {
 	parameters:
 	    //------Traffico-----
-	    double fattoreDecadimentoFeromone = default(0.1);  			// 10%
-	    double intervalloDecadimentoFeromone @unit(s) = default(600s);
+	    double pheromoneDecayFactor = default(0.1);  			// 10% 	Feromone decay factor
+	    double pheromoneDecayTime @unit(s) = default(600s); // Feromone increase factor
+
 	    
-	    double traffico = default(1);
 	    
 	    //------Network Parameters------
         int height @prompt("Number of rows") = default(5); 	//nodes on y axes
@@ -28,8 +28,8 @@ network AMoD
         
         //------Channel Parameters------
         //--Don't touch 
-        double xTravelTime @unit(s) = (traffico*dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
-        double yTravelTime @unit(s) = (traffico*dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
+        double xTravelTime @unit(s) = (dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
+        double yTravelTime @unit(s) = (dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         
         //------Coordinator type--------
         string coordType = default ("RadioTaxiCoord");
