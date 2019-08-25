@@ -18,6 +18,7 @@
 
 #include <omnetpp.h>
 #include "Pheromone.h"
+#include "Traffic.h"
 
 class ManhattanRouting : public cSimpleModule
 {
@@ -30,7 +31,7 @@ private:
     double xChannelLength;
     double yChannelLength;
 
-
+    double speed;
 
     double feromone_N;
     double feromone_S;
@@ -42,18 +43,10 @@ private:
 	double pheromoneDecayFactor;
 	Pheromone *pheromone; // = nullptr;
 
-
-//  double intervalloDecadimentoTraffico;
-//  double fattoreDecadimentoTraffico;
-//	double traffic_N;
-//	double traffic_S;
-//	double traffic_W;
-//  double traffic_E;
-
 	// Traffico
 	double trafficDecayTime;
 	double trafficDecayFactor;
-	Pheromone *traffic; // = nullptr;
+	Traffic *traffic; // = nullptr;
 
     double lastUpdateTime;
 

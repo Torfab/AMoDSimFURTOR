@@ -3,17 +3,22 @@ COSE DA CHIEDERE AD ANDREA:
 
 --Il simulatore è errato: il tempo calcolato da setAdditionalTravelTime in abstractnetworkmanager.h tiene conto dell'accelerazione ma è finta. Omnet tira dritto e non conta l'accelerazione
 
+--Ha senso imporre la velocità al veicolo, la velocità di canale = 0 e utilizzare il self message per determinare i tempi?
+	(speed in manhattanrouting.cc e .h hardcoded)
 
 
 
 TODONEXTTIME:
 
 traffico 
-	c'è la classe traffico ma non è ancora utilizzata
-	-> workaround automessaggio
--fattore traffico
+parametrizzare aumento feromone e traffico
 
+-fattore traffico (to fix)
+	fix traffic influence
 
+-fix distanza (x o y )
+
+-? emit traffico
 
 TODO Importanti:
 
@@ -38,8 +43,9 @@ TODO mildly important:
 TODO Non importanti:
 evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
 
+* Enum vari (gates, tipiveicoli)
 
-
+* funzione di decay feromone a metodo? manhattanrouting (riga 121 - 132)
 
 DONE:
 
@@ -51,7 +57,10 @@ DONE-- cambiare indice porte per adattare il suo al nostro o vv.  -manhattanrout
 
 -risultati
 	Abbiamo i risultati dei feromoni nei quattro canali di ogni nodo
-
+	
+traffico
+	c'è la classe traffico ma non è ancora utilizzata
+	-> workaround automessaggio
 
 
 
