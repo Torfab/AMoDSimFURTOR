@@ -12,6 +12,9 @@ simple App like IApp
         double StartTime @unit(s);
         @display("i=block/browser");
         
+        int CivilTrafficN; 		//Times every node generates civil vehicles
+        
+        
     gates:
         input in;
         output out;

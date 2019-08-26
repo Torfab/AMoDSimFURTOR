@@ -42,7 +42,8 @@ class App : public cSimpleModule,cListener
     int alightingTime;
     double additionalTravelTime;
     int CivilDestinations;
-    int civilDest;
+//    int civilDest;
+    int CivilTrafficN;
 
     BaseCoord *tcoord;
     AbstractNetworkManager *netmanager;
@@ -60,6 +61,7 @@ class App : public cSimpleModule,cListener
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
+	void generateCivilTraffic();
 };
 
 Define_Module(App);
@@ -74,6 +76,16 @@ App::~App()
 {
 }
 
+void App::generateCivilTraffic() {
+	Vehicle* civile = new Vehicle();
+	int destAddress = intuniform(0, CivilDestinations - 1, 3);
+	while (destAddress == myAddress)
+		destAddress = intuniform(0, CivilDestinations - 1, 3);
+	civile->setDestAddr(destAddress);
+	civile->setSpecialVehicle(-1); // -1 means civil vehicle
+	 EV << "New civil vehicle " << civile->getID() << " with dest: " << civile->getDestAddr() << endl;
+	send(civile, "out");
+}
 
 void App::initialize()
 {
@@ -85,6 +97,9 @@ void App::initialize()
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
     numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
     additionalTravelTime = netmanager->getAdditionalTravelTime();
+
+    CivilTrafficN = par("CivilTrafficN");
+
 
     newTripAssigned = registerSignal("newTripAssigned");
 
@@ -121,15 +136,8 @@ void App::initialize()
 	}
 
 	if (StartTime >= 0) {
-		Vehicle *civile = new Vehicle();
-		int destAddress = intuniform(0, CivilDestinations - 1, 3);
-		while (destAddress == myAddress)
-			destAddress = intuniform(0, CivilDestinations - 1, 3);
-
-		civile->setDestAddr(destAddress);
-
-		civile->setSpecialVehicle(-1); // -1 means civil vehicle
-		send(civile, "out");
+		for (int i=0;i<CivilTrafficN;i++)
+		generateCivilTraffic();
     }
 
 }
@@ -154,6 +162,11 @@ void App::handleMessage(cMessage *msg)
 
     // Civil vehicle
     if (vehicle->getSpecialVehicle() == -1){
+    	if (vehicle->getDestAddr() == myAddress) {
+    		EV << "Veicolo civile a destinazione" << endl;
+    		generateCivilTraffic();
+    		return;
+    	}
         int destAddress = intuniform(0, CivilDestinations, 3);
                    while (destAddress == myAddress)
                        destAddress = intuniform(0, CivilDestinations - 1, 3);
