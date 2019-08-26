@@ -12,6 +12,11 @@ TODONEXTTIME:
 
 -creazione traffico civile (non taxi - indipendente dal coordinatore)
 
+segnale creato dall'app per traffico civile nell'initialize
+
+al receive signal se lo smezza
+	se arriva a dest lo deleta -> e ne manda un altro
+
 
 TODO Importanti:
 
