@@ -17,6 +17,9 @@ segnale creato dall'app per traffico civile nell'initialize
 al receive signal se lo smezza
 	se arriva a dest lo deleta -> e ne manda un altro
 
+primadidomani:
+veicolo lettura feromone e traffico
+
 
 TODO Importanti:
 

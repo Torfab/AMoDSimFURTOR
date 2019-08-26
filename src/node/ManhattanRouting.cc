@@ -103,10 +103,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		int destY = pk->getDestAddr() / rows;
 
 		// todo: memorizzare tempo e decadimento feromone
-
 		// non e' la verita': il feromone viene aggiornato solo quando un veicolo attraversa il nodo. Il valore e' corretto ma non aggiornato in maniera continua nel tempo
-
-		//double nextDecadenceTime = decadimentoFeromone * fattoreFeromone
 
 		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
 
@@ -153,7 +150,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 //		(xNodeDistance)/(speed)
 		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
 		if (trafficDelay < simTime() )
-			trafficDelay = simTime();
+			trafficDelay = simTime(); // for some reasons .dbl() doesn't work
 
 
 		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
