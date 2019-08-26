@@ -33,28 +33,21 @@ private:
 
     double speed;
 
-    double feromone_N;
-    double feromone_S;
-    double feromone_W;
-    double feromone_E;
 
 	// Feromone
 	double pheromoneDecayTime;
 	double pheromoneDecayFactor;
-	Pheromone *pheromone; // = nullptr;
+	Pheromone *pheromone;
 
 	// Traffico
-	double trafficDecayTime;
-	double trafficDecayFactor;
-	Traffic *traffic; // = nullptr;
+	Traffic *traffic;
 
     double lastUpdateTime;
 
     //Feromone related signals
     simsignal_t * signalFeromone;
-    simsignal_t signalFeromoneN;
-    simsignal_t signalFeromoneS;
-    simsignal_t signalFeromoneW;
+    //Traffic related signals
+    simsignal_t * signalTraffic;
 
   protected:
     virtual void initialize();

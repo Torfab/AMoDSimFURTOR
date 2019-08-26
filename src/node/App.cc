@@ -214,7 +214,7 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
               else
                   sendDelayTime = sendDelayTime+delays;
 
-              EV << "Sending Vehicle from: " << veic->getSrcAddr() << "to " << veic->getDestAddr() << endl;
+              EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to " << veic->getDestAddr() << endl;
               Enter_Method("sendDelayed",veic,sendDelayTime,"out");
               sendDelayed(veic,sendDelayTime,"out");
 

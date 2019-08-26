@@ -47,5 +47,5 @@ void Traffic::decay(int i) {
  * La formula è stata inventata "a mente"
  */
 double Traffic::trafficInfluence(int i) {
-	return traffic[i] * 0.05 + 1; // y = 0.05x + 1
+	return traffic[i] * 0.05; // y = 0.05x + 1
 }

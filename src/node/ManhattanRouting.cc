@@ -27,6 +27,13 @@ void ManhattanRouting::initialize() {
 	signalFeromone[2] = registerSignal("signalFeromoneS");
 	signalFeromone[3] = registerSignal("signalFeromoneW");
 	/*****************************/
+	signalTraffic = new simsignal_t[4];
+	/* ---- REGISTER SIGNALS ---- */
+	signalTraffic[0] = registerSignal("signalTrafficN");
+	signalTraffic[1] = registerSignal("signalTrafficE");
+	signalTraffic[2] = registerSignal("signalTrafficS");
+	signalTraffic[3] = registerSignal("signalTrafficW");
+	/*****************************/
 
 	myAddress = getParentModule()->par("address");
 	myX = getParentModule()->par("x");
@@ -137,21 +144,37 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		} else {
 			pk->setChosenGate(0); //north
 //            distance = yChannelLength;
-			pheromone->increasePheromone(0);
-			traffic->increaseTraffic(0);
-
-
+//			pheromone->increasePheromone(0);
+//			traffic->increaseTraffic(0);
 
 		}
+
+		// Traffic delay logic
+
+		int distanceToTravel = 0;
+		if (pk->getChosenGate() % 2 == 1)  	// Odd gates are horizontal
+			distanceToTravel = xChannelLength;
+		else
+			// Even gates are vertical
+			distanceToTravel = yChannelLength;
+
+
+//		(xNodeDistance)/(speed)
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence(pk->getChosenGate()))+0.00001; //TODO: FIX:
+		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+		scheduleAt(trafficDelay, msg);
+
 
 
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
 		traffic->increaseTraffic(pk->getChosenGate());
+
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
 
-
+		// Emit traffic signal
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 
 		EV << "Nodo " << myAddress << " Pheromone N E S W: ";
 		for (int i = 0; i < 4; i++) {
@@ -171,14 +194,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 //    //send the vehicle to the next node
 //    send(pk, "out", outGateIndex);
 
-		// Traffic delay logic
-		// Send self message
 
-		int distanceToTravel = xChannelLength;
-
-//		(xNodeDistance)/(speed)
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence((pk->getChosenGate())-1));
-		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence((pk->getChosenGate())-1)) << endl;
-		scheduleAt(trafficDelay, msg);
 	}
 }

@@ -10,15 +10,8 @@ COSE DA CHIEDERE AD ANDREA:
 
 TODONEXTTIME:
 
-traffico 
-parametrizzare aumento feromone e traffico
+-creazione traffico civile (non taxi - indipendente dal coordinatore)
 
--fattore traffico (to fix)
-	fix traffic influence
-
--fix distanza (x o y )
-
--? emit traffico
 
 TODO Importanti:
 
@@ -36,6 +29,14 @@ scenari
 
 
 TODO mildly important:
+
+--BUG: manhattanrouting.cc - trafficDelay: abbiamo aggiunto un epsilon pari a +0.00001 perchè c'è un bug nel simulatore (coi double) e finisce con lo schedulare il veicolo nel passato (confrontando i numeri c'è tipo 0.000000001 di differenza)
+
+-- Le richieste vengono generate dal TRipRequestSubmitter con una frequenza del 50% tra normali e di emergenza. (confrontare le idee e valutare la strategia scelta)
+
+-- cambiare selfmessage con sendDelayed(pk,sendDelayTime,"out");
+
+
 --Check che tutto sia in inglese
 
 
@@ -61,7 +62,9 @@ DONE-- cambiare indice porte per adattare il suo al nostro o vv.  -manhattanrout
 traffico
 	c'è la classe traffico ma non è ancora utilizzata
 	-> workaround automessaggio
-
+	(parametrizzare aumento feromone e traffico) done partially
+		fix traffic influence
+	-? emit traffico
 
 
 
