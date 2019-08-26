@@ -43,6 +43,10 @@ void ManhattanNetworkManager::initialize()
     yTravelTime = parentModule->par("yTravelTime");
 
     additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
+
+    newCivilVehicle = registerSignal("newCivilVehicle");
+    emit(newCivilVehicle, (double) 0);
+
 }
 
 /**

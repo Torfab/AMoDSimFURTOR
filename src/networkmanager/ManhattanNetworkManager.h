@@ -33,6 +33,7 @@ private:
     double xTravelTime;
     double yTravelTime;
 
+    simsignal_t newCivilVehicle;
 
 protected:
     virtual void initialize() override;

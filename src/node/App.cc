@@ -41,12 +41,16 @@ class App : public cSimpleModule,cListener
     int boardingTime;
     int alightingTime;
     double additionalTravelTime;
+    int PossibleNodes;
+    int civilDest;
 
     BaseCoord *tcoord;
     AbstractNetworkManager *netmanager;
 
     // signals
     simsignal_t newTripAssigned;
+
+    simtime_t StartTime;
 
   public:
     App();
@@ -77,13 +81,18 @@ void App::initialize()
     seatsPerVehicle = par("seatsPerVehicle");
     alightingTime = getParentModule()->getParentModule()->par("alightingTime");
     boardingTime = getParentModule()->getParentModule()->par("boardingTime");
-
     tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
     numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
     additionalTravelTime = netmanager->getAdditionalTravelTime();
 
     newTripAssigned = registerSignal("newTripAssigned");
+
+    StartTime = par("StartTime");
+    PossibleNodes=netmanager->getNumberOfNodes();
+    // Subscription to civil traffic
+    simulation.getSystemModule()->subscribe("newCivilVehicle", this);
+
 
     EV << "I am node " << myAddress << endl;
 
@@ -111,6 +120,20 @@ void App::initialize()
         simulation.getSystemModule()->subscribe("newTripAssigned",this);
     }
 
+    if(StartTime >= 0) {
+        Vehicle *civile = new Vehicle();
+
+
+
+        int destAddress = intuniform(0, PossibleNodes-1, 3);
+            while (destAddress == myAddress)
+                destAddress = intuniform(0, PossibleNodes - 1, 3);
+
+            civile->setDestAddr(destAddress);
+
+            civile->setSpecialVehicle(-1); // -1 significa veicolo civile
+        send(civile, "out");
+    }
 
 }
 
@@ -118,6 +141,7 @@ void App::initialize()
 void App::handleMessage(cMessage *msg)
 {
     Vehicle *vehicle = NULL;
+
     double sendDelayTime = additionalTravelTime;// * trafficFactor;
 
     try{
@@ -128,7 +152,16 @@ void App::handleMessage(cMessage *msg)
         return ;
     }
 
-    EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops." << endl;
+    EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+
+    if (vehicle->getSpecialVehicle()==-1){
+        int destAddress = intuniform(0, PossibleNodes, 3);
+                   while (destAddress == myAddress)
+                       destAddress = intuniform(0, PossibleNodes - 1, 3);
+        vehicle->setDestAddr(destAddress);
+        send(vehicle, "out");
+        return;
+    }
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
     if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup())
@@ -181,49 +214,52 @@ void App::handleMessage(cMessage *msg)
  * @param signalID
  * @param obj
  */
-void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID){
+void App::receiveSignal(cComponent *source, simsignal_t signalID,
+        double vehicleID) {
 
+    /**
+     * The coordinator has accepted a trip proposal
+     */
+    if (signalID == newTripAssigned) {
+           if (tcoord->getLastVehicleLocation(vehicleID) == myAddress) {
+            //The vehicle that should serve the request is in this node
+            Vehicle *veic = tcoord->getVehicleByID(vehicleID);
 
-  /**
-   * The coordinator has accepted a trip proposal
-   */
-  if(signalID == newTripAssigned)
-  {
+            if (veic != NULL) {
+                double sendDelayTime = additionalTravelTime;
 
-      if(tcoord->getLastVehicleLocation(vehicleID) == myAddress)
-      {
-          //The vehicle that should serve the request is in this node
-          Vehicle *veic = tcoord->getVehicleByID(vehicleID);
+                StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());
+                EV << "The proposal of vehicle: " << veic->getID()
+                          << " has been accepted for requestID:  "
+                          << sp->getRequestID() << endl;
+                veic->setSrcAddr(myAddress);
+                veic->setDestAddr(sp->getLocation());
 
-          if (veic != NULL)
-          {
-              double sendDelayTime = additionalTravelTime;
+                //Time for boarding or dropoff
+                double delays = (sp->getActualTime() - simTime().dbl())
+                        - netmanager->getTimeDistance(myAddress,
+                                sp->getLocation());
+                if (delays < 0)
+                    delays = 0;
 
-              StopPoint* sp =tcoord->getNewAssignedStopPoint(veic->getID());
-              EV << "The proposal of vehicle: " << veic->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
-              veic->setSrcAddr(myAddress);
-              veic->setDestAddr(sp->getLocation());
+                if (sp->getLocation() == myAddress)
+                    sendDelayTime = delays;
+                else
+                    sendDelayTime = sendDelayTime + delays;
 
-              //Time for boarding or dropoff
-              double delays = (sp->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, sp->getLocation());
-              if(delays < 0)
-                  delays = 0;
+                EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to "
+                          << veic->getDestAddr() << endl;
+                Enter_Method
+                ("sendDelayed", veic, sendDelayTime, "out");
+                sendDelayed(veic, sendDelayTime, "out");
 
-              if(sp->getLocation() == myAddress)
-                  sendDelayTime = delays;
-              else
-                  sendDelayTime = sendDelayTime+delays;
-
-              EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to " << veic->getDestAddr() << endl;
-              Enter_Method("sendDelayed",veic,sendDelayTime,"out");
-              sendDelayed(veic,sendDelayTime,"out");
-
-              if (ev.isGUI())
-                getParentModule()->getDisplayString().setTagArg("i",1,"gold");
-              //if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
+                if (ev.isGUI())
+                    getParentModule()->getDisplayString().setTagArg("i", 1,
+                            "gold");
+                //if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
                 //  simulation.getSystemModule()->unsubscribe("tripRequestCoord",this);
-          }
-      }
-  }
+            }
+        }
+    }
 
 }

@@ -36,7 +36,10 @@ protected:
     virtual int getVehiclesPerNode(int nodeAddr)=0;                  //Get the number of vehicles located in the node at simulation start
     virtual bool isValidAddress(int nodeAddr)=0;                     //Check if the specified address is valid
     inline int getNumberOfVehicles(){return numberOfVehicles;}       //Get the fleet size
+    inline int getNumberOfNodes(){return numberOfNodes;}            // Get the nodes
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
+
+
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
