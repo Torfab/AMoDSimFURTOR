@@ -99,16 +99,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 	} else {
 
-//    simtime_t st= simTime().dbl() + 10;
-//    if (intuniform(0, 10, 0) % 2 == 0) {
-//    	scheduleAt(st, msg);
-//    }
-//    if (msg->isSelfMessage()){
-//    	EV << 'SELF!!' << endl;
-//    }
-
-//    int distance; 		// vecchia variabile
-//		int outGateIndex; 	// vecchia variabile
 		int destX = pk->getDestAddr() % rows;
 		int destY = pk->getDestAddr() / rows;
 

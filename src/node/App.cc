@@ -118,21 +118,18 @@ void App::initialize()
 
         //When the coordinator assign a new request to a vehicle, local node will be notified
         simulation.getSystemModule()->subscribe("newTripAssigned",this);
-    }
+	}
 
-    if(StartTime >= 0) {
-        Vehicle *civile = new Vehicle();
+	if (StartTime >= 0) {
+		Vehicle *civile = new Vehicle();
+		int destAddress = intuniform(0, PossibleNodes - 1, 3);
+		while (destAddress == myAddress)
+			destAddress = intuniform(0, PossibleNodes - 1, 3);
 
+		civile->setDestAddr(destAddress);
 
-
-        int destAddress = intuniform(0, PossibleNodes-1, 3);
-            while (destAddress == myAddress)
-                destAddress = intuniform(0, PossibleNodes - 1, 3);
-
-            civile->setDestAddr(destAddress);
-
-            civile->setSpecialVehicle(-1); // -1 significa veicolo civile
-        send(civile, "out");
+		civile->setSpecialVehicle(-1); // -1 significa veicolo civile
+		send(civile, "out");
     }
 
 }
@@ -154,14 +151,28 @@ void App::handleMessage(cMessage *msg)
 
     EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
 
+
+    // Civil vehicle
     if (vehicle->getSpecialVehicle()==-1){
         int destAddress = intuniform(0, PossibleNodes, 3);
                    while (destAddress == myAddress)
                        destAddress = intuniform(0, PossibleNodes - 1, 3);
-        vehicle->setDestAddr(destAddress);
-        send(vehicle, "out");
-        return;
-    }
+		vehicle->setDestAddr(destAddress);
+
+		double delays = simTime().dbl()
+				- (netmanager->getTimeDistance(myAddress,
+						vehicle->getDestAddr()));
+		if (delays < 0)
+			delays = 0;
+
+		if (vehicle->getDestAddr() == myAddress)
+			sendDelayed(vehicle, delays, "out");
+		else
+			sendDelayed(vehicle, sendDelayTime + delays, "out");
+		return;
+	}
+
+
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
     if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup())
