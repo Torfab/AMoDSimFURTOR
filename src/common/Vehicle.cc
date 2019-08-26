@@ -24,10 +24,12 @@ Vehicle::Vehicle() {
     seats = 1;
     state = -1; //IDLE
 
+    /*
+     * -1 veicolo civile
+     *  0 taxi
+     *  1 veicolo di emergenza
+     */
     specialVehicle=0; //veicolo di emergenza
-
-//    chosenGate = 0;
-
 }
 
 Vehicle::~Vehicle() {
