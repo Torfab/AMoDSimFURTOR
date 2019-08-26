@@ -16,6 +16,7 @@
 #include "ManhattanRouting.h"
 #include "Vehicle.h"
 #include "Pheromone.h"
+#include "Traffic.h"
 
 Define_Module(ManhattanRouting);
 
