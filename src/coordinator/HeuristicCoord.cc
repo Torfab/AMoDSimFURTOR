@@ -123,8 +123,8 @@ StopPointOrderingProposal* HeuristicCoord::eval_requestAssignment(int vehicleID,
             newList.push_back(newTRdropoff);
 
             toReturn=new StopPointOrderingProposal(vehicleID,vehicleID, additionalCost, timeToPickup, newList);
-            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
-            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
+//            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
+//            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
         }
         else
         {
@@ -155,8 +155,8 @@ StopPointOrderingProposal* HeuristicCoord::eval_requestAssignment(int vehicleID,
             newList.push_back(newTRdropoff);
 
             toReturn=new StopPointOrderingProposal(vehicleID,vehicleID, additionalCost, timeToPickup, newList);
-            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
-            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
+//            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
+//            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
         }
         else
         {
@@ -370,7 +370,7 @@ std::list<StopPointOrderingProposal*> HeuristicCoord::addStopPointToTrip(int veh
 
         }
         else
-            EV << "Too many passengers after SP in location " << (*it)->getLocation() << " and ReqiestID " << (*it)->getRequestID() << endl;
+            EV << "Too many passengers after SP in location " << (*it)->getLocation() << " and RequestID " << (*it)->getRequestID() << endl;
 
         if(constrainedPosition)
             break;
