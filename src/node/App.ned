@@ -9,7 +9,6 @@ simple App like IApp
         int address;  			//local node address
         int hospitalAddress;
         volatile int seatsPerVehicle = default(1);
-        double StartTime @unit(s);
         @display("i=block/browser");
         
         int CivilTrafficN; 		//Times every node generates civil vehicles

@@ -80,7 +80,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		return;
 	}
 	if (msg->isSelfMessage()) { //The vehicle has waited a delay to simulate the traffic in chosen channel
-
 		int pkChosenGate = pk->getChosenGate();
 		pk->setHopCount(pk->getHopCount() + 1);
 
@@ -98,7 +97,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		traffic->decay(pkChosenGate);
 
 	} else {
-
 		int destX = pk->getDestAddr() % rows;
 		int destY = pk->getDestAddr() / rows;
 

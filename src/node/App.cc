@@ -51,8 +51,6 @@ class App : public cSimpleModule,cListener
     // signals
     simsignal_t newTripAssigned;
 
-    simtime_t StartTime;
-
   public:
     App();
     virtual ~App();
@@ -81,10 +79,12 @@ void App::generateCivilTraffic() {
 	int destAddress = intuniform(0, CivilDestinations - 1, 3);
 	while (destAddress == myAddress)
 		destAddress = intuniform(0, CivilDestinations - 1, 3);
+	civile->setSrcAddr(myAddress);
 	civile->setDestAddr(destAddress);
 	civile->setSpecialVehicle(-1); // -1 means civil vehicle
 	 EV << "New civil vehicle " << civile->getID() << " with dest: " << civile->getDestAddr() << endl;
-	send(civile, "out");
+	 double delay=uniform(0,3);
+	sendDelayed(civile, delay, "out");
 }
 
 void App::initialize()
@@ -103,7 +103,7 @@ void App::initialize()
 
     newTripAssigned = registerSignal("newTripAssigned");
 
-    StartTime = par("StartTime");
+
     CivilDestinations=netmanager->getNumberOfNodes();
     // Subscription to civil traffic
     simulation.getSystemModule()->subscribe("newCivilVehicle", this);
@@ -135,10 +135,8 @@ void App::initialize()
         simulation.getSystemModule()->subscribe("newTripAssigned",this);
 	}
 
-	if (StartTime >= 0) {
-		for (int i=0;i<CivilTrafficN;i++)
-		generateCivilTraffic();
-    }
+	for (int i=0;i<CivilTrafficN;i++)
+	generateCivilTraffic();
 
 }
 
@@ -163,24 +161,24 @@ void App::handleMessage(cMessage *msg)
     // Civil vehicle
     if (vehicle->getSpecialVehicle() == -1){
     	if (vehicle->getDestAddr() == myAddress) {
-    		EV << "Veicolo civile a destinazione" << endl;
+    		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr()<< " partito da "<< vehicle->getSrcAddr() <<endl;
     		generateCivilTraffic();
     		return;
     	}
-        int destAddress = intuniform(0, CivilDestinations, 3);
-                   while (destAddress == myAddress)
-                       destAddress = intuniform(0, CivilDestinations - 1, 3);
-		vehicle->setDestAddr(destAddress);
-
-		double delays = simTime().dbl()	- (netmanager->getTimeDistance(myAddress,vehicle->getDestAddr()));
-		if (delays < 0)
-			delays = 0;
-
-		if (vehicle->getDestAddr() == myAddress)
-			sendDelayed(vehicle, delays, "out");
-		else
-			sendDelayed(vehicle, sendDelayTime + delays, "out");
-		return;
+//        int destAddress = intuniform(0, CivilDestinations, 3);
+//                   while (destAddress == myAddress)
+//                       destAddress = intuniform(0, CivilDestinations - 1, 3);
+//		vehicle->setDestAddr(destAddress);
+//
+//		double delays = simTime().dbl()	- (netmanager->getTimeDistance(myAddress,vehicle->getDestAddr()));
+//		if (delays < 0)
+//			delays = 0;
+//
+//		if (vehicle->getDestAddr() == myAddress)
+//			sendDelayed(vehicle, delays, "out");
+//		else
+//			sendDelayed(vehicle, sendDelayTime + delays, "out");
+//		return;
 	}
 
 
