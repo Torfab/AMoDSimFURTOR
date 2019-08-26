@@ -41,7 +41,7 @@ class App : public cSimpleModule,cListener
     int boardingTime;
     int alightingTime;
     double additionalTravelTime;
-    int PossibleNodes;
+    int CivilDestinations;
     int civilDest;
 
     BaseCoord *tcoord;
@@ -89,7 +89,7 @@ void App::initialize()
     newTripAssigned = registerSignal("newTripAssigned");
 
     StartTime = par("StartTime");
-    PossibleNodes=netmanager->getNumberOfNodes();
+    CivilDestinations=netmanager->getNumberOfNodes();
     // Subscription to civil traffic
     simulation.getSystemModule()->subscribe("newCivilVehicle", this);
 
@@ -122,13 +122,13 @@ void App::initialize()
 
 	if (StartTime >= 0) {
 		Vehicle *civile = new Vehicle();
-		int destAddress = intuniform(0, PossibleNodes - 1, 3);
+		int destAddress = intuniform(0, CivilDestinations - 1, 3);
 		while (destAddress == myAddress)
-			destAddress = intuniform(0, PossibleNodes - 1, 3);
+			destAddress = intuniform(0, CivilDestinations - 1, 3);
 
 		civile->setDestAddr(destAddress);
 
-		civile->setSpecialVehicle(-1); // -1 significa veicolo civile
+		civile->setSpecialVehicle(-1); // -1 means civil vehicle
 		send(civile, "out");
     }
 
@@ -153,15 +153,13 @@ void App::handleMessage(cMessage *msg)
 
 
     // Civil vehicle
-    if (vehicle->getSpecialVehicle()==-1){
-        int destAddress = intuniform(0, PossibleNodes, 3);
+    if (vehicle->getSpecialVehicle() == -1){
+        int destAddress = intuniform(0, CivilDestinations, 3);
                    while (destAddress == myAddress)
-                       destAddress = intuniform(0, PossibleNodes - 1, 3);
+                       destAddress = intuniform(0, CivilDestinations - 1, 3);
 		vehicle->setDestAddr(destAddress);
 
-		double delays = simTime().dbl()
-				- (netmanager->getTimeDistance(myAddress,
-						vehicle->getDestAddr()));
+		double delays = simTime().dbl()	- (netmanager->getTimeDistance(myAddress,vehicle->getDestAddr()));
 		if (delays < 0)
 			delays = 0;
 
