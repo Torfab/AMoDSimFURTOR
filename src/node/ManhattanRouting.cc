@@ -148,7 +148,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 //		(xNodeDistance)/(speed)
 		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
 		if (trafficDelay < simTime() )
-			trafficDelay = simTime(); // for some reasons .dbl() doesn't work
+			trafficDelay = simTime(); // .dbl() doesn't work
 
 
 		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
