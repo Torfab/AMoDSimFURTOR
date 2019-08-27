@@ -3,14 +3,32 @@
 
 ~~ --Il simulatore è errato: il tempo calcolato da setAdditionalTravelTime in abstractnetworkmanager.h tiene conto dell'accelerazione ma è finta. Omnet tira dritto e non conta l'accelerazione ~~
 
---
-a senso imporre la velocità al veicolo, la velocità di canale = 0 e utilizzare il self message per determinare i tempi?
+--ha senso imporre la velocità al veicolo, la velocità di canale = 0 e utilizzare il self message per determinare i tempi?
 	(speed in manhattanrouting.cc e .h hardcoded)
 
 
 
 # TODONEXTTIME:
+mezzo pesante - es valore 20 veicoli normali
+punti di ammassamento in ingresso ee uscita ai bordi della mash
+esploratore??
+ambulanza più posti
+heatmap
+traffico che scappa
+punti di raccolta taxi  ride sharing
 
+mezzo pesante circuito in zone di ammassamento
+
+feromoni di tipo diverso
+
+algoritmi bioispirati coordinamento ambulanze
+l'altro, gestione dell emergency managment, simmulazione dinamiche produzione informazioni, concetto mezzo pesante,
+strategie per la simulazione delle condizioni a contorno di un evento catastrofico
+
+coordinamento di ambulanze attraverso strategie bioispirate in uno scenario di disastro naturale
+
+
+simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
 
 # TODO Importanti:
