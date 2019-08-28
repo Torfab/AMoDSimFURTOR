@@ -45,7 +45,6 @@ void ManhattanRouting::initialize() {
 	xChannelLength = getParentModule()->getParentModule()->par("xNodeDistance");
 	yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
 
-	speed = 9.7; //wsrediojpkugtretipjkyt'pi9oertgijpokertgopèjkretojipèerkjoèrfwèekqlporfkelèwporfèklpwerfèplkewèlrkpewlèp
 
 	EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY
 				<< endl;
@@ -148,14 +147,17 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			distanceToTravel = yChannelLength;
 
 
+		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
+
 //		(xNodeDistance)/(speed)
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
 		if (trafficDelay < simTime() )
 			trafficDelay = simTime(); // .dbl() doesn't work
 
 
-		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
-		scheduleAt(trafficDelay, msg);
+		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+		EV << "++Travel Time: " << channelTravelTime << endl;
+		scheduleAt(channelTravelTime + trafficDelay, msg);
 
 
 

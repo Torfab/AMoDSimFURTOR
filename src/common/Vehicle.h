@@ -29,8 +29,11 @@ class Vehicle: public Packet {
 
         int chosenGate; // Choose the gate for leaving the node
 
+        double speed;  // Avg. speed of vehicle in channel
+        
     public:
         Vehicle();
+        Vehicle(int specialVehicle, double speed);
         virtual ~Vehicle();
         virtual int getID() const;
         virtual double getTraveledDistance() const;
@@ -40,10 +43,11 @@ class Vehicle: public Packet {
         virtual void setState(int state);
         virtual int getState() const;
         virtual int getSpecialVehicle() const;
-        virtual void setSpecialVehicle(int specialVehicle);
+//        virtual void setSpecialVehicle(int specialVehicle);
         virtual int getChosenGate();
         virtual void setChosenGate(int gate);
-
+        virtual double getSpeed() const;
+        virtual void setSpeed(double speed);
 };
 
 #endif /* VEHICLE_H_ */

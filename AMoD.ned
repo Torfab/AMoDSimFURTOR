@@ -28,8 +28,8 @@ network AMoD
         
         //------Channel Parameters------
         //--Don't touch 
-        double xTravelTime @unit(s) = (dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
-        double yTravelTime @unit(s) = (dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
+        double xTravelTime @unit(s) = 0s; //(dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
+        double yTravelTime @unit(s) = 0s; //(dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         
         //------Coordinator type--------
         string coordType = default ("RadioTaxiCoord");

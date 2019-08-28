@@ -19,7 +19,7 @@ ambulanza più posti
 heatmap
 traffico che scappa
 punti di raccolta taxi ride sharing
-
+più ospedali
 mezzo pesante circuito in zone di ammassamento
 
 -rilascio feromone secondo tipo
@@ -108,3 +108,20 @@ traffico
 
 3. Delay di canale nel nodo ricevitore
 	~ L'idea è mettere tempo di canale = 0 e trasferire la logica temporale nel concetto del selfmessage nel routing.
+
+
+
+
+simulazioni da riga di comando
+per vedere le combinazioni
+./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
+
+
+* opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..1
+
+-j7 simulazioni contemporanee
+./AMoD_Simulator  fa riferimento al .exe
+AMoD_Network nome rete
+Cmdenv omnet fornisce 2 environment - questo è da riga di comando
+-r 0..1727 num di simulazioni
+

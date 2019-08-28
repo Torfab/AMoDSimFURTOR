@@ -30,10 +30,6 @@ private:
     int columns;
     double xChannelLength;
     double yChannelLength;
-
-    double speed;
-
-
 	// Feromone
 	double pheromoneDecayTime;
 	double pheromoneDecayFactor;

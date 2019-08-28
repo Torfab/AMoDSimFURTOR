@@ -32,6 +32,7 @@ private:
     double yChannelLength;
     double xTravelTime;
     double yTravelTime;
+    
 
     simsignal_t newCivilVehicle;
 
@@ -46,6 +47,7 @@ protected:
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
+
 };
 
 #endif
