@@ -27,6 +27,10 @@ void ManhattanNetworkManager::initialize()
     numberOfNodes = par("numberOfNodes");
     numberOfEmergencyVehicles = par("numberOfEmergencyVehicles");
 
+    ambulanceSpeed =  par("ambulanceSpeed");
+    truckSpeed =  par("truckSpeed");
+
+
     for (int i = 0; i < numberOfVehicles; i++)
         {
         int rand = intuniform(0, numberOfNodes - 1, 4);
@@ -39,13 +43,13 @@ void ManhattanNetworkManager::initialize()
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 
-    xTravelTime = parentModule->par("xTravelTime");
-    yTravelTime = parentModule->par("yTravelTime");
-
-    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
-
-    newCivilVehicle = registerSignal("newCivilVehicle");
-    emit(newCivilVehicle, (double) 0);
+//    xTravelTime = parentModule->par("xTravelTime");
+//    yTravelTime = parentModule->par("yTravelTime");
+//
+//    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
+//
+////    newCivilVehicle = registerSignal("newCivilVehicle");
+////    emit(newCivilVehicle, (double) 0);
 
 }
 
@@ -115,6 +119,7 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
 
     return nVehicles;
 }
+
 
 
 /**
