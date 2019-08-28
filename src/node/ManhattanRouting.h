@@ -39,6 +39,8 @@ private:
 	double pheromoneDecayFactor;
 	Pheromone *pheromone;
 
+	Pheromone *pheromoneEmergency;
+
 	// Traffico
 	Traffic *traffic;
 

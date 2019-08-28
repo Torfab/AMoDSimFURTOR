@@ -60,6 +60,9 @@ void ManhattanRouting::initialize() {
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
+	pheromoneEmergency = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+
+	// Traffic
 	traffic = new Traffic();
 }
 

@@ -9,26 +9,31 @@
 
 
 # TODONEXTTIME:
-mezzo pesante - es valore 20 veicoli normali
+
+2. velocità nei veicoli come attributo del veicolo
+3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
+4. 
 punti di ammassamento in ingresso ee uscita ai bordi della mash
 esploratore??
 ambulanza più posti
 heatmap
 traffico che scappa
-punti di raccolta taxi  ride sharing
+punti di raccolta taxi ride sharing
 
 mezzo pesante circuito in zone di ammassamento
 
-feromoni di tipo diverso
+-rilascio feromone secondo tipo
 
+
+# TITOLI:
 algoritmi bioispirati coordinamento ambulanze
 l'altro, gestione dell emergency managment, simmulazione dinamiche produzione informazioni, concetto mezzo pesante,
 strategie per la simulazione delle condizioni a contorno di un evento catastrofico
 
-coordinamento di ambulanze attraverso strategie bioispirate in uno scenario di disastro naturale
+* coordinamento di ambulanze attraverso strategie bioispirate in uno scenario di disastro naturale
 
 
-simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
+* simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
 
 # TODO Importanti:
@@ -89,7 +94,7 @@ traffico
 
 -- funzione di decay feromone a metodo? manhattanrouting (riga 121 - 132)
 
-
+1. feromoni di tipo diverso
 
 
 
