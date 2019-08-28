@@ -45,7 +45,6 @@ void ManhattanRouting::initialize() {
 	xChannelLength = getParentModule()->getParentModule()->par("xNodeDistance");
 	yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
 
-	speed = 9.7; //wsrediojpkugtretipjkyt'pi9oertgijpokertgopèjkretojipèerkjoèrfwèekqlporfkelèwporfèklpwerfèplkewèlrkpewlèp
 
 	EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY
 				<< endl;
@@ -60,6 +59,9 @@ void ManhattanRouting::initialize() {
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
+	pheromoneEmergency = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+
+	// Traffic
 	traffic = new Traffic();
 }
 
@@ -70,7 +72,7 @@ ManhattanRouting::~ManhattanRouting() {
 void ManhattanRouting::handleMessage(cMessage *msg) {
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-
+	int trafficWeight = pk->getTrafficWeight();
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress
@@ -94,7 +96,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		//send the vehicle to the next node
 		send(pk, "out", pkChosenGate);
 
-		traffic->decay(pkChosenGate);
+		traffic->decay(pkChosenGate,trafficWeight);
 
 	} else {
 		int destX = pk->getDestAddr() % rows;
@@ -145,20 +147,23 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			distanceToTravel = yChannelLength;
 
 
+		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
+
 //		(xNodeDistance)/(speed)
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / speed) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
 		if (trafficDelay < simTime() )
 			trafficDelay = simTime(); // .dbl() doesn't work
 
 
-		EV << "Messaggio ritardato per " << trafficDelay  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
-		scheduleAt(trafficDelay, msg);
+		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+		EV << "++Travel Time: " << channelTravelTime << endl;
+		scheduleAt(channelTravelTime + trafficDelay, msg);
 
 
 
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
-		traffic->increaseTraffic(pk->getChosenGate());
+		traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));

@@ -24,6 +24,8 @@ protected:
     int numberOfVehicles;               //Number of vehicles in the network
     int numberOfNodes;                  //Number of crossroads(nodes) in the network
     double additionalTravelTime;        //Additional Travel Time due to acceleration and deceleration
+    double ambulanceSpeed;				// Ambulance Speed
+    double truckSpeed;					// Truck Speed
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -38,19 +40,21 @@ protected:
     inline int getNumberOfVehicles(){return numberOfVehicles;}       //Get the fleet size
     inline int getNumberOfNodes(){return numberOfNodes;}            // Get the nodes
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
-
+    inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
+    inline virtual double getTruckSpeed() {return truckSpeed;}
 
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
         if(acceleration<=0) {additionalTravelTime=0; return 0;}
         else{
-            double Ta=speed/acceleration;
-            double D = 0.5*acceleration*pow(Ta, 2);
-            double Ta_prime = D/speed;
-
-            additionalTravelTime = 2*(Ta - Ta_prime);
-            return additionalTravelTime;
+//            double Ta=speed/acceleration;
+//            double D = 0.5*acceleration*pow(Ta, 2);
+//            double Ta_prime = D/speed;
+//
+//            additionalTravelTime = 2*(Ta - Ta_prime);
+//            return additionalTravelTime;
+        	return 10;
         }
     }
 };

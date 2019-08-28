@@ -41,6 +41,7 @@ class App : public cSimpleModule,cListener
     int boardingTime;
     int alightingTime;
     double additionalTravelTime;
+    double ambulanceSpeed;
     int CivilDestinations;
 //    int civilDest;
     int CivilTrafficN;
@@ -75,13 +76,14 @@ App::~App()
 }
 
 void App::generateCivilTraffic() {
-	Vehicle* civile = new Vehicle();
+	Vehicle* civile = new Vehicle(-1,9.7, 1);
+
 	int destAddress = intuniform(0, CivilDestinations - 1, 3);
 	while (destAddress == myAddress)
 		destAddress = intuniform(0, CivilDestinations - 1, 3);
 	civile->setSrcAddr(myAddress);
 	civile->setDestAddr(destAddress);
-	civile->setSpecialVehicle(-1); // -1 means civil vehicle
+
 	 EV << "New civil vehicle " << civile->getID() << " with dest: " << civile->getDestAddr() << endl;
 	 double delay=uniform(0,3);
 	sendDelayed(civile, delay, "out");
@@ -97,6 +99,8 @@ void App::initialize()
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
     numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
     additionalTravelTime = netmanager->getAdditionalTravelTime();
+
+    ambulanceSpeed = netmanager->getAmbulanceSpeed();
 
     CivilTrafficN = par("CivilTrafficN");
 
@@ -116,10 +120,10 @@ void App::initialize()
     {
         for(int i=0; i<numberOfVehicles; i++)
         {
-            Vehicle *v = new Vehicle();
+            Vehicle *v = new Vehicle(1, ambulanceSpeed , 1);
             int hospitalAddress = par("hospitalAddress");
             if (myAddress == hospitalAddress){
-                v->setSpecialVehicle(1);  //ambulanza
+//                v->setSpecialVehicle(1);  //ambulanza
                 v->setSeats(1);
             } else
                 v->setSeats(seatsPerVehicle);
@@ -155,7 +159,8 @@ void App::handleMessage(cMessage *msg)
         return ;
     }
 
-    EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+    EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+    vehicle->setBusyState(false);
 
 
     // Civil vehicle
@@ -245,7 +250,11 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID,
             //The vehicle that should serve the request is in this node
             Vehicle *veic = tcoord->getVehicleByID(vehicleID);
 
+
             if (veic != NULL) {
+
+            	veic->setBusyState(true);
+
                 double sendDelayTime = additionalTravelTime;
 
                 StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());

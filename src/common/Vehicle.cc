@@ -22,14 +22,43 @@ Vehicle::Vehicle() {
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-    state = -1; //IDLE
+    busyState = false; //IDLE
+    trafficWeight = 1;
 
-    /*
+    /*  veicolo di emergenza
      * -1 veicolo civile
      *  0 taxi
      *  1 veicolo di emergenza
      */
-    specialVehicle=0; //veicolo di emergenza
+    specialVehicle=0;
+
+    /**
+     * default speed = 9.7 mps
+     *  (35 km/h)
+     */
+    speed = 9.7;
+}
+
+/*  veicolo di emergenza
+ * -1 veicolo civile
+ *  0 taxi
+ *  1 veicolo di emergenza
+ */
+Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
+    id = ++nextID;
+    setName((std::to_string(id)).c_str());
+    traveledDistance = 0.0;
+    seats = 1;
+    busyState = false; //IDLE
+    this->trafficWeight = trafficWeight;
+
+    this->specialVehicle=specialVehicle;
+
+    /**
+     * default speed = 9.7 mps
+     *  (35 km/h)
+     */
+    this->speed = speed;
 }
 
 Vehicle::~Vehicle() {
@@ -40,10 +69,10 @@ int Vehicle::getSpecialVehicle() const
 {
     return specialVehicle;
 }
-void Vehicle::setSpecialVehicle(int specialVehicle)
-{
-    this->specialVehicle = specialVehicle;
-}
+//void Vehicle::setSpecialVehicle(int specialVehicle)
+//{
+//    this->specialVehicle = specialVehicle;
+//}
 
 int Vehicle::getID() const
 {
@@ -70,15 +99,6 @@ void Vehicle::setTraveledDistance(double distance)
     this->traveledDistance = distance;
 }
 
-int Vehicle::getState() const
-{
-    return state;
-}
-
-void Vehicle::setState(int state)
-{
-    this->state = state;
-}
 
 int Vehicle::getChosenGate() {
 	return chosenGate;
@@ -87,4 +107,24 @@ int Vehicle::getChosenGate() {
 
 void Vehicle::setChosenGate(int gate) {
 	this->chosenGate = gate;
+}
+
+double Vehicle::getSpeed() const {
+	return speed;
+}
+
+bool Vehicle::isBusyState() const {
+	return busyState;
+}
+
+int Vehicle::getTrafficWeight() const {
+	return trafficWeight;
+}
+
+void Vehicle::setBusyState(bool busyState) {
+	this->busyState = busyState;
+}
+
+void Vehicle::setSpeed(double speed) {
+	this->speed = speed;
 }

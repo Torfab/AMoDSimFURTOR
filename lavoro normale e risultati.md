@@ -9,26 +9,31 @@
 
 
 # TODONEXTTIME:
-mezzo pesante - es valore 20 veicoli normali
+
+
+3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
+4. 
 punti di ammassamento in ingresso ee uscita ai bordi della mash
 esploratore??
 ambulanza più posti
 heatmap
 traffico che scappa
-punti di raccolta taxi  ride sharing
-
+punti di raccolta taxi ride sharing
+più ospedali
 mezzo pesante circuito in zone di ammassamento
 
-feromoni di tipo diverso
+-rilascio feromone secondo tipo
 
+
+# TITOLI:
 algoritmi bioispirati coordinamento ambulanze
 l'altro, gestione dell emergency managment, simmulazione dinamiche produzione informazioni, concetto mezzo pesante,
 strategie per la simulazione delle condizioni a contorno di un evento catastrofico
 
-coordinamento di ambulanze attraverso strategie bioispirate in uno scenario di disastro naturale
+* coordinamento di ambulanze attraverso strategie bioispirate in uno scenario di disastro naturale
 
 
-simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
+* simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
 
 # TODO Importanti:
@@ -46,6 +51,8 @@ scenari
 
 
 
+* calcolo corretto setAdditionalTravelTime
+* gestire coda richieste pendenti
 
 # TODO mildly important:
 
@@ -55,6 +62,8 @@ scenari
 
 --Check che tutto sia in inglese (E' già in inglese a meno dei log)
 
+-- ManhattanNetworkManager::getTimeDistance(
+refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
 
 # TODO Non importanti:
@@ -89,8 +98,8 @@ traffico
 
 -- funzione di decay feromone a metodo? manhattanrouting (riga 121 - 132)
 
-
-
+1. feromoni di tipo diverso
+2. velocità nei veicoli come attributo del veicolo
 
 
 # Limiti del simulatore:
@@ -103,3 +112,20 @@ traffico
 
 3. Delay di canale nel nodo ricevitore
 	~ L'idea è mettere tempo di canale = 0 e trasferire la logica temporale nel concetto del selfmessage nel routing.
+
+
+
+
+simulazioni da riga di comando
+per vedere le combinazioni
+./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
+
+
+* opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..1
+
+-j7 simulazioni contemporanee
+./AMoD_Simulator  fa riferimento al .exe
+AMoD_Network nome rete
+Cmdenv omnet fornisce 2 environment - questo è da riga di comando
+-r 0..1727 num di simulazioni
+
