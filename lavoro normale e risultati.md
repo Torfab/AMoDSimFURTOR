@@ -11,20 +11,30 @@
 # TODONEXTTIME:
 
 
-3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
-4. 
-punti di ammassamento in ingresso ee uscita ai bordi della mash
-esploratore??
-ambulanza più posti
-heatmap
-traffico che scappa
-punti di raccolta taxi ride sharing
-più ospedali
-mezzo pesante circuito in zone di ammassamento
+4. esploratore; implementazione snapshot per esplorazione della rete
+	alla fine, i non esplorati non sono raggiungibili
+	non è ammissibile accettare richieste da loro
+
+4. heatmap
+5. punti di ammassamento in ingresso ee uscita ai bordi della mash
+6. mezzo pesante circuito in zone di ammassamento
+6. traffico (civile) che scappa
+7. ambulanza più posti
+8. autobus: punti di raccolta taxi ride sharing
+9. più ospedali
+10.
+
+routing - djstra!?
+
+
+
+
+
+
 
 -rilascio feromone secondo tipo
 
-
+// esploratore?? ci serve?!
 # TITOLI:
 algoritmi bioispirati coordinamento ambulanze
 l'altro, gestione dell emergency managment, simmulazione dinamiche produzione informazioni, concetto mezzo pesante,
@@ -100,7 +110,7 @@ traffico
 
 1. feromoni di tipo diverso
 2. velocità nei veicoli come attributo del veicolo
-
+3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
 
 # Limiti del simulatore:
 
