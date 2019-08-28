@@ -46,7 +46,7 @@ void ManhattanNetworkManager::initialize()
 //    xTravelTime = parentModule->par("xTravelTime");
 //    yTravelTime = parentModule->par("yTravelTime");
 //
-//    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
+    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
 //
 ////    newCivilVehicle = registerSignal("newCivilVehicle");
 ////    emit(newCivilVehicle, (double) 0);
@@ -97,7 +97,7 @@ double ManhattanNetworkManager::getTimeDistance(int srcAddr, int dstAddr)
     time_distance += yTime;
 
     if(time_distance != 0)
-        time_distance+=additionalTravelTime;
+        time_distance+= additionalTravelTime;
 
     return time_distance;
 }

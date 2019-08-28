@@ -60,6 +60,8 @@ scenari
 
 --Check che tutto sia in inglese (E' già in inglese a meno dei log)
 
+-- ManhattanNetworkManager::getTimeDistance(
+refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
 
 # TODO Non importanti:
