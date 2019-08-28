@@ -47,20 +47,23 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr)
 
     for (auto const &x : vehicles) {
         if (tr->getIsSpecial() == 1) {  //hospital
-            if (x.first->getSpecialVehicle() == 1) {
-                //e' un'ambulanza
+            if (x.first->getSpecialVehicle() == 1 && !x.first->isBusyState() ) {   //e' un'ambulanza
+
+//
                 //dobbiamo assegnare il viaggio all'ambulanza
                 StopPointOrderingProposal *tmp = eval_requestAssignment(x.first->getID(), tr);
-                if (tmp && !tmp->getSpList().empty())
-                    vehicleProposals[x.first->getID()] = tmp;
+                if (tmp && !tmp->getSpList().empty()){
+					vehicleProposals[x.first->getID()] = tmp;
+				}
 
-            }
-        } else {
+			}
+
+        }
+        else {
             //non e' una emergency request
-
             if (x.first->getSpecialVehicle() == 0) {
-                //Check if the vehicle has enough seats to serve the request
 
+            	//Check if the vehicle has enough seats to serve the request
                 if (x.first->getSeats() >= tr->getPickupSP()->getNumberOfPassengers()) {
 
                     StopPointOrderingProposal *tmp = eval_requestAssignment(

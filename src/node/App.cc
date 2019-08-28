@@ -249,7 +249,11 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID,
             //The vehicle that should serve the request is in this node
             Vehicle *veic = tcoord->getVehicleByID(vehicleID);
 
+
             if (veic != NULL) {
+
+            	veic->setBusyState(true);
+
                 double sendDelayTime = additionalTravelTime;
 
                 StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());
