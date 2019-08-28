@@ -27,10 +27,14 @@ Traffic::Traffic() {
 	}
 }
 
-void Traffic::increaseTraffic(int i) {
-	traffic[i]++;
+/*
+ * increases the traffic of weight
+ * i index of vector
+ * w traffic weight of the vehicle to increase
+ */
+void Traffic::increaseTraffic(int i, int w) {
+	traffic[i]+=w;
 }
-
 const double Traffic::getTraffic(int i) const {
 	return traffic[i];
 }
@@ -39,9 +43,13 @@ int Traffic::getNumberOfGates() const {
 	return numberOfGates;
 }
 
-void Traffic::decay(int i) {
-		traffic[i]--;
-
+/*
+ * decreases the traffic of weight
+ * i index of vector
+ * w traffic weight of the vehicle to increase
+ */
+void Traffic::decay(int i,int w) {
+		traffic[i]-=w;
 }
 /*
  * La formula è stata inventata "a mente"

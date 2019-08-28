@@ -72,7 +72,7 @@ ManhattanRouting::~ManhattanRouting() {
 void ManhattanRouting::handleMessage(cMessage *msg) {
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-
+	int trafficWeight = pk->getTrafficWeight();
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress
@@ -96,7 +96,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		//send the vehicle to the next node
 		send(pk, "out", pkChosenGate);
 
-		traffic->decay(pkChosenGate);
+		traffic->decay(pkChosenGate,trafficWeight);
 
 	} else {
 		int destX = pk->getDestAddr() % rows;
@@ -163,7 +163,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
-		traffic->increaseTraffic(pk->getChosenGate());
+		traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));

@@ -26,11 +26,11 @@ public:
 	Traffic();
 	virtual ~Traffic();
 
-	void increaseTraffic(int i);
+	void increaseTraffic(int i, int w);
 	const double getTraffic(int i) const;
 	int getNumberOfGates() const;
 
-	void decay(int i);
+	void decay(int i,int w);
 
 	double trafficInfluence(int i);
 };

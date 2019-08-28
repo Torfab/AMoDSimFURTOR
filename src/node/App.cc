@@ -76,7 +76,7 @@ App::~App()
 }
 
 void App::generateCivilTraffic() {
-	Vehicle* civile = new Vehicle(-1,9.7);
+	Vehicle* civile = new Vehicle(-1,9.7, 1);
 
 	int destAddress = intuniform(0, CivilDestinations - 1, 3);
 	while (destAddress == myAddress)
@@ -120,7 +120,7 @@ void App::initialize()
     {
         for(int i=0; i<numberOfVehicles; i++)
         {
-            Vehicle *v = new Vehicle(1, ambulanceSpeed );
+            Vehicle *v = new Vehicle(1, ambulanceSpeed , 1);
             int hospitalAddress = par("hospitalAddress");
             if (myAddress == hospitalAddress){
 //                v->setSpecialVehicle(1);  //ambulanza

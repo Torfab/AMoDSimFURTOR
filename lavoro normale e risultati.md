@@ -10,7 +10,7 @@
 
 # TODONEXTTIME:
 
-2. velocità nei veicoli come attributo del veicolo
+
 3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
 4. 
 punti di ammassamento in ingresso ee uscita ai bordi della mash
@@ -51,8 +51,8 @@ scenari
 
 
 
-calcolo corretto setAdditionalTravelTime
-gestire coda richieste pendenti
+* calcolo corretto setAdditionalTravelTime
+* gestire coda richieste pendenti
 
 # TODO mildly important:
 
@@ -99,7 +99,7 @@ traffico
 -- funzione di decay feromone a metodo? manhattanrouting (riga 121 - 132)
 
 1. feromoni di tipo diverso
-
+2. velocità nei veicoli come attributo del veicolo
 
 
 # Limiti del simulatore:

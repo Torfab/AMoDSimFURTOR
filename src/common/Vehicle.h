@@ -26,6 +26,7 @@ class Vehicle: public Packet {
         int traveledDistance;
         bool busyState;
         int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza (TODO: enum)
+        int trafficWeight;  // influence of single vehicle in traffic channel. It increases the travel times of other vehicles.
 
         int chosenGate; // Choose the gate for leaving the node
 
@@ -33,7 +34,7 @@ class Vehicle: public Packet {
         
     public:
         Vehicle();
-        Vehicle(int specialVehicle, double speed);
+        Vehicle(int specialVehicle, double speed, int trafficWeight);
         virtual ~Vehicle();
         virtual int getID() const;
         virtual double getTraveledDistance() const;
@@ -49,6 +50,7 @@ class Vehicle: public Packet {
         virtual void setSpeed(double speed);
         virtual bool isBusyState() const;
         virtual void setBusyState(bool busyState);
+        virtual int getTrafficWeight() const;
 };
 
 #endif /* VEHICLE_H_ */
