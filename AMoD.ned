@@ -9,7 +9,8 @@ network AMoD
 	    //------Traffico-----
 	    double pheromoneDecayFactor = default(0.1);  			// 10% 	Feromone decay factor
 	    double pheromoneDecayTime @unit(s) = default(600s); // Feromone increase factor
-
+		double alpha = default (0.7);
+		int seed = default (0);
 	    
 	    
 	    //------Network Parameters------
@@ -78,8 +79,9 @@ network AMoD
         
     connections allowunconnected:
         for i=0..height-1, for j=0..width-1 {
-            n[i*width+j].port[2] <--> yRoad <--> n[(i+1)*width+j].port[0] if i!=height-1;  //Vertical connections
-            n[i*width+j].port[1] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1;   //Horizontal connections
-        }
+            	n[i*width+j].port[2] <--> yRoad <--> n[(i+1)*width+j].port[0] if i!=height-1 && uniform(0,1,seed)<alpha;   //Vertical connections
+            	n[i*width+j].port[1] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1 && uniform(0,1,seed)<alpha;  //Horizontal connections
+            }
+
    
 }
