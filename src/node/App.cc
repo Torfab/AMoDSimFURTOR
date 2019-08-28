@@ -159,7 +159,8 @@ void App::handleMessage(cMessage *msg)
         return ;
     }
 
-    EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+    EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+    vehicle->setBusyState(false);
 
 
     // Civil vehicle

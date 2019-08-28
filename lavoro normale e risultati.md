@@ -52,7 +52,7 @@ scenari
 
 
 calcolo corretto setAdditionalTravelTime
-
+gestire coda richieste pendenti
 
 # TODO mildly important:
 
