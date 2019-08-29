@@ -40,6 +40,7 @@ private:
 	// Traffico
 	Traffic *traffic;
 
+	cTopology* topo;
 
     double lastUpdateTime;
 
