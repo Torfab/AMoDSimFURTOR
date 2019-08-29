@@ -26,6 +26,12 @@
 
 routing - djstra!?
 
+check su routing
+evitare che i nodi morti pubblichino richieste
+parametrizzare raggio di esplosione e rendere possibile la non esplosione
+numero di esplosioni
+
+
 
 Inizializzazione nodi: 
 1. Epicentro esplosione parametrizzato
