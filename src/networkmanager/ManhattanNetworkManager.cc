@@ -23,6 +23,7 @@ void ManhattanNetworkManager::initialize()
     rows = parentModule->par("width");
     columns = parentModule->par("height");
     hospitalAddress=par("hospitalAddress");
+    epicenterAddress=par("epicenterAddress");
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
     numberOfEmergencyVehicles = par("numberOfEmergencyVehicles");
@@ -42,13 +43,10 @@ void ManhattanNetworkManager::initialize()
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 
-//    xTravelTime = parentModule->par("xTravelTime");
-//    yTravelTime = parentModule->par("yTravelTime");
-//
+
     additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
-//
-////    newCivilVehicle = registerSignal("newCivilVehicle");
-////    emit(newCivilVehicle, (double) 0);
+
+    propagateEarthquakeBetweenNodes();
 
 }
 
@@ -119,7 +117,28 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
     return nVehicles;
 }
 
+/**
+ * Propagate the earthquake from epicenter node to neighbours.
+ */
 void ManhattanNetworkManager::propagateEarthquakeBetweenNodes() {
+
+    listOfDestroyedNodes.push_front(epicenterAddress);
+
+    cTopology *topo = new cTopology("topo");
+
+    std::vector<std::string> nedTypes;
+    nedTypes.push_back("src.node.Node");
+    topo->extractByNedTypeName(nedTypes);
+
+    for (int i = 0; i < topo->getNumNodes(); i++) {
+
+        cTopology::Node *node = topo->getNode(epicenterAddress);
+
+        for (int j = 0; j < node->getNumOutLinks(); j++) {
+            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+            listOfDestroyedNodes.push_front(neighbour->getModule()->getIndex());
+        }
+    }
 }
 
 /**
@@ -163,6 +182,18 @@ void ManhattanNetworkManager::handleMessage(cMessage *msg)
 
 }
 
+/** Check if current node is destroyed.
+ *
+ * @param addr
+ * @return
+ **/
 bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
-    return true;
+
+    std::list<int>::iterator it; // iteratore associato
+    for( it = listOfDestroyedNodes.begin();it!=listOfDestroyedNodes.end();++it){
+
+        if (*it == addr)
+            return true;
+    }
+    return false;
 }

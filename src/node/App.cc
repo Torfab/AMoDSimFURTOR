@@ -104,11 +104,39 @@ void App::initialize()
 
     CivilTrafficN = par("CivilTrafficN");
 
+    cTopology* topo = new cTopology("topo");
+    std::vector<std::string> nedTypes;
+    nedTypes.push_back("src.node.Node");
+    topo->extractByNedTypeName(nedTypes);
+    cTopology::Node *node = topo->getNode(myAddress);
 
+    if (netmanager->checkDisconnectedNode(myAddress)) {
+        //KABOOM
+        // disconnects channels
+
+        for (int j = 0; j < node->getNumOutLinks(); j++) {
+            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+            cGate *gate = node->getLinkOut(j)->getLocalGate();
+            gate->disconnect();
+
+        }
+        return;
+    } else {
+        for (int j = 0; j < node->getNumOutLinks(); j++) {
+            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+
+            if (netmanager->checkDisconnectedNode(neighbour->getModule()->getIndex())){
+                cGate *gate = node->getLinkOut(j)->getLocalGate();
+                gate->disconnect();
+            }
+        }
+
+    }
+
+    delete topo;
     newTripAssigned = registerSignal("newTripAssigned");
 
-
-    CivilDestinations=netmanager->getNumberOfNodes();
+    CivilDestinations = netmanager->getNumberOfNodes();
     // Subscription to civil traffic
     simulation.getSystemModule()->subscribe("newCivilVehicle", this);
 
