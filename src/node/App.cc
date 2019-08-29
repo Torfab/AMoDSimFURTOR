@@ -121,7 +121,7 @@ void App::initialize()
         for(int i=0; i<numberOfVehicles; i++)
         {
             Vehicle *v = new Vehicle(1, ambulanceSpeed , 1);
-            int hospitalAddress = par("hospitalAddress");
+            int hospitalAddress = netmanager->getHospitalAddress();
             if (myAddress == hospitalAddress){
 //                v->setSpecialVehicle(1);  //ambulanza
                 v->setSeats(1);
