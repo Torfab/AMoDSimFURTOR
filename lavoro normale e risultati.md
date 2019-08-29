@@ -16,7 +16,7 @@
 	non è ammissibile accettare richieste da loro
 
 4. heatmap
-5. punti di ammassamento in ingresso ee uscita ai bordi della mash
+5. punti di ammassamento in ingresso ee uscita ai bordi della mesh
 6. mezzo pesante circuito in zone di ammassamento
 6. traffico (civile) che scappa
 7. ambulanza più posti
@@ -25,6 +25,13 @@
 10.
 
 routing - djstra!?
+
+
+Inizializzazione nodi: 
+1. Epicentro esplosione parametrizzato
+2. l'epicentro, prima di esplodere, ha una probabilità di inviare un pacco bomba ai nodi limitrofi
+3. il nodo limitrofo, che riceve un pacco bomba, ha una probabilità di inviare un altro pacco bomba ai SUOI nodi vicini
+4. poi esplode
 
 
 
@@ -79,7 +86,7 @@ refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 # TODO Non importanti:
 * evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
 * scorrere meno nodi in manhattanrouting topo disconnessione
-
+* cambiare colore ospedali
 
 # DONE:
 
