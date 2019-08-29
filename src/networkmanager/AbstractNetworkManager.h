@@ -26,6 +26,8 @@ protected:
     double additionalTravelTime;        //Additional Travel Time due to acceleration and deceleration
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
+    int epicenterAddress;
+    int hospitalAddress;
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -57,6 +59,14 @@ protected:
         	return 10;
         }
     }
+
+	int getEpicenterAddress() const {
+		return epicenterAddress;
+	}
+
+	int getHospitalAddress() const {
+		return hospitalAddress;
+	}
 };
 
 

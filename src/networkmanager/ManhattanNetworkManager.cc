@@ -30,6 +30,8 @@ void ManhattanNetworkManager::initialize()
     ambulanceSpeed =  par("ambulanceSpeed");
     truckSpeed =  par("truckSpeed");
 
+    epicenterAddress = par("epicenterAddress");
+
 
     for (int i = 0; i < numberOfVehicles; i++)
         {

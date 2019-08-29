@@ -25,7 +25,7 @@ private:
     int rows;
     int columns;
 
-    int hospitalAddress;
+
     int numberOfEmergencyVehicles;
 
     double xChannelLength;
