@@ -40,6 +40,8 @@ private:
 	// Traffico
 	Traffic *traffic;
 
+	cTopology* topo;
+
     double lastUpdateTime;
 
     //Feromone related signals

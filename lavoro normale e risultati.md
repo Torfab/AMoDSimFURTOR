@@ -77,8 +77,8 @@ refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
 
 # TODO Non importanti:
-evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
-
+* evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
+* scorrere meno nodi in manhattanrouting topo disconnessione
 
 
 # DONE:
