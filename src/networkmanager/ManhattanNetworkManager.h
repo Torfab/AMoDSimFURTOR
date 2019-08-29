@@ -24,8 +24,6 @@ class ManhattanNetworkManager : public AbstractNetworkManager
 private:
     int rows;
     int columns;
-
-    int hospitalAddress;
     int numberOfEmergencyVehicles;
 
     double xChannelLength;
@@ -47,6 +45,7 @@ protected:
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
+
 
 };
 

@@ -26,6 +26,7 @@ protected:
     double additionalTravelTime;        //Additional Travel Time due to acceleration and deceleration
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
+    int hospitalAddress;
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -42,6 +43,7 @@ protected:
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
+    inline virtual int getHospitalAddress(){return hospitalAddress;}
 
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
