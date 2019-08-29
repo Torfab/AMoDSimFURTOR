@@ -7,7 +7,6 @@ simple App like IApp
 {
     parameters:
         int address;  			//local node address
-        int hospitalAddress;
         volatile int seatsPerVehicle = default(1);
         @display("i=block/browser");
         
