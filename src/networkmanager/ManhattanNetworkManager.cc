@@ -30,7 +30,6 @@ void ManhattanNetworkManager::initialize()
     ambulanceSpeed =  par("ambulanceSpeed");
     truckSpeed =  par("truckSpeed");
 
-
     for (int i = 0; i < numberOfVehicles; i++)
         {
         int rand = intuniform(0, numberOfNodes - 1, 4);
@@ -120,7 +119,8 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
     return nVehicles;
 }
 
-
+void ManhattanNetworkManager::propagateEarthquakeBetweenNodes() {
+}
 
 /**
  * Check if the specified address is valid.
@@ -161,4 +161,8 @@ double ManhattanNetworkManager::getChannelLength(int nodeAddr, int gateIndex)
 void ManhattanNetworkManager::handleMessage(cMessage *msg)
 {
 
+}
+
+bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
+    return true;
 }

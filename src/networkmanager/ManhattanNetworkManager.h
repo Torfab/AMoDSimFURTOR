@@ -18,6 +18,7 @@
 
 #include <omnetpp.h>
 #include <AbstractNetworkManager.h>
+#include <list>
 
 class ManhattanNetworkManager : public AbstractNetworkManager
 {
@@ -30,14 +31,15 @@ private:
     double yChannelLength;
     double xTravelTime;
     double yTravelTime;
-    
 
     simsignal_t newCivilVehicle;
+
+    std::list<int> listOfDestroyedNodes;
 
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-
+    virtual void propagateEarthquakeBetweenNodes() override;
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
@@ -45,6 +47,7 @@ protected:
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
+    virtual bool checkDisconnectedNode(int addr) override;
 
 
 };

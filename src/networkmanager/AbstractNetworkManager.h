@@ -27,9 +27,11 @@ protected:
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
     int hospitalAddress;
+    int epicenterAddress;
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
+    virtual void propagateEarthquakeBetweenNodes() = 0;
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
@@ -44,6 +46,7 @@ protected:
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
     inline virtual int getHospitalAddress(){return hospitalAddress;}
+    virtual bool checkDisconnectedNode(int addr) =0;
 
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration

@@ -112,7 +112,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_requestAssignment(int vehicleID,
     if(rPerVehicle.find(vehicleID) == rPerVehicle.end() || old.empty())
     {
 //        EV << "The vehicle " << vehicleID << " has not other stop points!" << endl;
-        additionalCost = netmanager->getTimeDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation());
+        additionalCost = 10;
         double timeToPickup = additionalCost + simTime().dbl();
         additionalCost+=netmanager->getTimeDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()) + (boardingTime*newTRpickup->getNumberOfPassengers());
 
