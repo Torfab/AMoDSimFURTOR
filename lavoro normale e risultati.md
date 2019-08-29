@@ -26,7 +26,7 @@
 
 routing - djstra!?
 
-check su routing
+
 evitare che i nodi morti pubblichino richieste
 parametrizzare raggio di esplosione e rendere possibile la non esplosione
 numero di esplosioni
@@ -89,6 +89,7 @@ scenari
 refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
 
+
 # TODO Non importanti:
 * evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
 * scorrere meno nodi in manhattanrouting topo disconnessione
@@ -124,6 +125,8 @@ traffico
 1. feromoni di tipo diverso
 2. velocità nei veicoli come attributo del veicolo
 3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
+
+check su routing
 
 # Limiti del simulatore:
 

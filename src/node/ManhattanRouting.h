@@ -42,6 +42,8 @@ private:
 
     double lastUpdateTime;
 
+    cTopology* topo;
+
     //Feromone related signals
     simsignal_t * signalFeromone;
     //Traffic related signals
@@ -51,6 +53,7 @@ private:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual ~ManhattanRouting();
+    virtual bool checkAvailableGate(int proposal);
 };
 
 #endif

@@ -115,11 +115,12 @@ void App::initialize()
         // disconnects channels
 
         for (int j = 0; j < node->getNumOutLinks(); j++) {
-            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+//            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
             cGate *gate = node->getLinkOut(j)->getLocalGate();
             gate->disconnect();
 
         }
+
         return;
     } else {
         for (int j = 0; j < node->getNumOutLinks(); j++) {

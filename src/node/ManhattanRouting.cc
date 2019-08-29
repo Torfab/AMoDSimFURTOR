@@ -63,10 +63,28 @@ void ManhattanRouting::initialize() {
 
 	// Traffic
 	traffic = new Traffic();
+
+	// Topology
+	topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
 }
 
 ManhattanRouting::~ManhattanRouting() {
 	delete pheromone;
+	delete topo;
+}
+
+bool ManhattanRouting::checkAvailableGate(int proposal){
+	// Check if gates exist
+	cTopology::Node *node = topo->getNode(myAddress);
+	for (int j = 0; j < node->getNumOutLinks(); j++) {
+				cGate *gate = node->getLinkOut(j)->getLocalGate();
+				if (proposal == gate->getIndex())
+					return true;
+			}
+	return false;
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg) {
@@ -120,22 +138,24 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			lastUpdateTime = simTime().dbl();
 		}
 
-		if (myX < destX) {
+
+
+
+		if (myX < destX && checkAvailableGate(1)) {
 			pk->setChosenGate(1); //right
 
-		} else if (myX > destX) {
+
+		} else if (myX > destX && checkAvailableGate(3)) {
 			pk->setChosenGate(3); //left
 
-		} else if (myY < destY) {
+		} else if (myY < destY && checkAvailableGate(2)) {
 			pk->setChosenGate(2); //sud
 
-		} else {
+		} else if (checkAvailableGate(0)){
 			pk->setChosenGate(0); //north
-//            distance = yChannelLength;
-//			pheromone->increasePheromone(0);
-//			traffic->increaseTraffic(0);
-
 		}
+		else
+			return;
 
 		// Traffic delay logic
 
