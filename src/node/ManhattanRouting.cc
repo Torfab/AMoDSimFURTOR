@@ -45,6 +45,7 @@ void ManhattanRouting::initialize() {
 	xChannelLength = getParentModule()->getParentModule()->par("xNodeDistance");
 	yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
 
+
 	EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY
 				<< endl;
 
@@ -58,96 +59,14 @@ void ManhattanRouting::initialize() {
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
-	pheromoneEmergency = new Pheromone(pheromoneDecayTime,
-			pheromoneDecayFactor);
+	pheromoneEmergency = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
 
 	// Traffic
 	traffic = new Traffic();
-
-	// Gates
-	topo = new cTopology("topo");
-
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
-
-//	    for (int i = 0; i < topo->getNumNodes(); i++) {
-//	      cTopology::Node *node = topo->getNode(i);
-//	      EV << "Node i=" << i << " is " << node->getModule()->getFullPath() << endl; // nome completo nodo: getFullPath
-//	      EV << " It has " << node->getNumOutLinks() << " conns to other nodes\n";
-//	      EV << " and " << node->getNumInLinks() << " conns from other nodes\n";
-//
-//	      EV << " Connections to other modules are:\n";
-//	      for (int j = 0; j < node->getNumOutLinks(); j++) {
-//	        cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-//	        cGate *gate = node->getLinkOut(j)->getLocalGate();
-//	        EV << " " << neighbour->getModule()->getFullPath()
-//	           << " through gate " << gate->getFullName() << endl;
-//	        gate->disconnect();
-//	      }
-//	    }
-
-	int nodeToDisconnect = 3;
-	// disconnetti tutti i canali in uscita
-	cTopology::Node *node = topo->getNode(nodeToDisconnect);
-	for (int j = 0; j < node->getNumOutLinks(); j++) {
-		cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-		cGate *gate = node->getLinkOut(j)->getLocalGate();
-		gate->disconnect();
-	}
-
-	//disconnetti tutte entrate da neighbours
-	for (int i = 0; i < topo->getNumNodes(); i++) {
-		cTopology::Node *node = topo->getNode(i);
-
-		for (int j = 0; j < node->getNumOutLinks(); j++) {
-			cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-			cGate *gate = node->getLinkOut(j)->getLocalGate();
-			if (neighbour->getModule()->getFullPath() == topo->getNode(nodeToDisconnect)->getModule()->getFullPath())
-			gate->disconnect();
-		}
-	}
-
-//	    for (int i=0; i<topo->getNumNodes(); i++)
-//	    {
-//	        int address = topo->getNode(i)->getModule()->par("address");
-//	        EV << "il mio address e': " << address << endl;
-//	        //	        indexTable[address]=i;
-//
-//	        cTopology::Node* thisNode = NULL;
-//	        int thisAddress;
-////	        topo->calculateUnweightedSingleShortestPathsTo(topo->getNode(i));
-//
-//	        for(int j=0; j < topo->getNumNodes(); j++)
-//	        {
-////
-//	            if(i==j) {
-//
-//	            thisNode = topo->getNode(myAddress);
-//	            thisAddress = thisNode->getModule()->par("address");
-
-//	            if (thisNode->getNumPaths()==0) continue; // not connected
-
-//	            EV << "thisNode->getNumOutLinks() " << thisNode->getNumOutLinks()<< endl;
-//	            }
-//	            thisNode->getNumPaths()
-//	            for (int i=0;i<4;i++){
-//	            EV << thisNode->getModule()->
-////	            		getLinkIn(i)->isEnabled() << endl;
-//
-//	            }
-//	            EV << "gateid" << thisNode->getLinkOut(0)->getLocalGateId() << endl;
-
-//	            cGate *parentModuleGate = thisNode->getPath(0)->getLocalGate();
-//	            int gateIndex = parentModuleGate->getIndex();
-//
-//	            EV << address << "] il mio localgate e': " << gateIndex << endl;
-
 }
 
 ManhattanRouting::~ManhattanRouting() {
 	delete pheromone;
-	delete traffic;
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg) {
@@ -177,7 +96,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		//send the vehicle to the next node
 		send(pk, "out", pkChosenGate);
 
-		traffic->decay(pkChosenGate, trafficWeight);
+		traffic->decay(pkChosenGate,trafficWeight);
 
 	} else {
 		int destX = pk->getDestAddr() % rows;
@@ -227,33 +146,30 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			// Even gates are vertical
 			distanceToTravel = yChannelLength;
 
+
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
 //		(xNodeDistance)/(speed)
-		simtime_t trafficDelay = simTime().dbl()
-				+ (distanceToTravel / pk->getSpeed())
-						* (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
-		if (trafficDelay < simTime())
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
+		if (trafficDelay < simTime() )
 			trafficDelay = simTime(); // .dbl() doesn't work
 
-		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime
-					<< " di " << trafficDelay - simTime().dbl() << " s"
-					<< "  Traffic infl:"
-					<< (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+
+		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
 		EV << "++Travel Time: " << channelTravelTime << endl;
 		scheduleAt(channelTravelTime + trafficDelay, msg);
 
+
+
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
-		traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+		traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
 
 		// Emit pheromone signal
-		emit(signalFeromone[pk->getChosenGate()],
-				pheromone->getPheromone(pk->getChosenGate()));
+		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
 
 		// Emit traffic signal
-		emit(signalTraffic[pk->getChosenGate()],
-				traffic->getTraffic(pk->getChosenGate()));
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 
 		EV << "Nodo " << myAddress << " Pheromone N E S W: ";
 		for (int i = 0; i < 4; i++) {
@@ -272,6 +188,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 //
 //    //send the vehicle to the next node
 //    send(pk, "out", outGateIndex);
+
 
 	}
 }
