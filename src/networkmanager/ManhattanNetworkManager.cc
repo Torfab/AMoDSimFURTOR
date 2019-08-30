@@ -45,20 +45,27 @@ void ManhattanNetworkManager::initialize()
     vehiclesPerNode[hospitalAddress] = numberOfEmergencyVehicles;
 
     xChannelLength = parentModule->par("xNodeDistance");
-    yChannelLength = parentModule->par("yNodeDistance");
+	yChannelLength = parentModule->par("yNodeDistance");
 
+	additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"),
+			parentModule->par("acceleration"));
 
-    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
+	if (disasterRadius > 0)
+		setOfDestroyedNodes.insert(epicenterAddress);
 
-    if (disasterRadius > 0)
-    listOfDestroyedNodes.push_front(epicenterAddress);
+	std::set<int> auxSet;
 
-	for (int i = 1; i < disasterRadius; i++){
-		std::list<int>::iterator it; // iteratore associato
-		for (it = listOfDestroyedNodes.begin();it != listOfDestroyedNodes.end(); ++it) {
-			propagateEarthquakeBetweenNodes(*it);
-		}
+	for (int i = 1; i < disasterRadius; i++) {
+
+		for(auto elem : setOfDestroyedNodes)
+			propagateEarthquakeBetweenNodes(elem, auxSet);
+
+		setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
 	}
+	EV << "BEGIN LIST: " << endl;
+	for(auto elem : setOfDestroyedNodes)
+		EV << elem << " | ";
+	EV << endl;
 
 
 }
@@ -133,9 +140,9 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
 /**
  * Propagate the earthquake from epicenter node to neighbours.
  */
-void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
+void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) {
 
-    listOfDestroyedNodes.push_front(epicenterAddress);
+	auxSet.insert(epicenterAddress);
 
     cTopology *topo = new cTopology("topo");
 
@@ -149,7 +156,8 @@ void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddre
 
         for (int j = 0; j < node->getNumOutLinks(); j++) {
             cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-            listOfDestroyedNodes.push_front(neighbour->getModule()->getIndex());
+            auxSet.insert(neighbour->getModule()->getIndex());
+
         }
     }
 }
@@ -202,11 +210,10 @@ void ManhattanNetworkManager::handleMessage(cMessage *msg)
  **/
 bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
 
-    std::list<int>::iterator it; // iteratore associato
-    for( it = listOfDestroyedNodes.begin();it!=listOfDestroyedNodes.end();++it){
+	for (auto elem : setOfDestroyedNodes) {
 
-        if (*it == addr)
-            return true;
-    }
-    return false;
+		if (elem == addr)
+			return true;
+	}
+	return false;
 }
