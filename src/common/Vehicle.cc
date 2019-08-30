@@ -29,6 +29,7 @@ Vehicle::Vehicle() {
      * -1 veicolo civile
      *  0 taxi
      *  1 veicolo di emergenza
+     *  2 truck
      */
     specialVehicle=0;
 
