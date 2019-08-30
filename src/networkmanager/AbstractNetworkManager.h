@@ -33,7 +33,7 @@ protected:
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
-    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
+    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr

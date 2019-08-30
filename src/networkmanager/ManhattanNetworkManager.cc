@@ -58,12 +58,12 @@ void ManhattanNetworkManager::initialize()
 	for (int i = 1; i < disasterRadius; i++) {
 
 		for(auto elem : setOfDestroyedNodes)
-			propagateEarthquakeBetweenNodes(elem, auxSet);
+			auxSet=propagateEarthquakeBetweenNodes(elem, auxSet);
 
 		setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
 	}
 	EV << "BEGIN LIST: " << endl;
-	for(auto elem : setOfDestroyedNodes)
+	for(auto elem : auxSet)
 		EV << elem << " | ";
 	EV << endl;
 
@@ -140,7 +140,7 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
 /**
  * Propagate the earthquake from epicenter node to neighbours.
  */
-void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) {
+std::set<int> ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) {
 
 	auxSet.insert(epicenterAddress);
 
@@ -160,6 +160,7 @@ void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddre
 
         }
     }
+    return auxSet;
 }
 
 /**

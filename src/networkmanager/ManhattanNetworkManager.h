@@ -41,7 +41,7 @@ private:
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) override;
+    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) override;
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
