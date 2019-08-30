@@ -9,35 +9,31 @@
 
 
 # TODONEXTTIME:
-1. ottimizzazione bomba
 
-4. più esplosioni
-5. punti di ammassamento in ingresso ee uscita ai bordi della mesh
-6. mezzo pesante circuito in zone di ammassamento
-6. traffico (civile) che scappa
-7. ambulanza più posti
-8. autobus: punti di raccolta taxi ride sharing
-9. più ospedali
+
+
+
+6. mezzo pesante circuito in zone di ammassamento = implementare una truck request
+
+7. traffico (civile) che scappa
+
+8. ambulanza più posti
+
+9. autobus: punti di raccolta taxi ride sharing
+
+
+
+#scoprirecomefareivettori.help.andrea
+4. più esplosioni  soluzione:vettore
+5. punti di ammassamento in ingresso e uscita ai bordi della mesh   soluzione:vettore
+9. più ospedalieri	soluzione:vettore
+10. TruckStartNodes  soluzione:vettore
+
+
+
 
 
 routing - djstra!?
-
-
-
-
-
-
-
-
-Inizializzazione nodi: 
-1. Epicentro esplosione parametrizzato
-2. l'epicentro, prima di esplodere, ha una probabilità di inviare un pacco bomba ai nodi limitrofi
-3. il nodo limitrofo, che riceve un pacco bomba, ha una probabilità di inviare un altro pacco bomba ai SUOI nodi vicini
-4. poi esplode
-
-
-
-
 
 
 
@@ -75,7 +71,9 @@ scenari
 
 # TODO mildly important:
 
---ottimizzare funzione esplosione bomba
+
+
+
 
 -- Le richieste vengono generate dal TripRequestSubmitter con una frequenza del 50% tra normali e di emergenza. (confrontare le idee e valutare la strategia scelta)
 
@@ -130,6 +128,10 @@ evitare che i nodi morti pubblichino richieste
 parametrizzare raggio di esplosione e rendere possibile la non esplosione
 
 4. heatmap
+
+1. ottimizzazione bomba
+
+
 
 # Limiti del simulatore:
 
