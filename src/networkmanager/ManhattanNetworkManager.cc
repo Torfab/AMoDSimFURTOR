@@ -23,13 +23,17 @@ void ManhattanNetworkManager::initialize()
     rows = parentModule->par("width");
     columns = parentModule->par("height");
     hospitalAddress=par("hospitalAddress");
-    epicenterAddress=par("epicenterAddress");
+
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
     numberOfEmergencyVehicles = par("numberOfEmergencyVehicles");
 
     ambulanceSpeed =  par("ambulanceSpeed");
     truckSpeed =  par("truckSpeed");
+
+    disasterRadius = par("disasterRadius");
+    epicenterAddress=par("epicenterAddress");
+
 
     for (int i = 0; i < numberOfVehicles; i++)
         {
@@ -46,7 +50,16 @@ void ManhattanNetworkManager::initialize()
 
     additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
 
-    propagateEarthquakeBetweenNodes();
+    if (disasterRadius > 0)
+    listOfDestroyedNodes.push_front(epicenterAddress);
+
+	for (int i = 1; i < disasterRadius; i++){
+		std::list<int>::iterator it; // iteratore associato
+		for (it = listOfDestroyedNodes.begin();it != listOfDestroyedNodes.end(); ++it) {
+			propagateEarthquakeBetweenNodes(*it);
+		}
+	}
+
 
 }
 
@@ -120,7 +133,7 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
 /**
  * Propagate the earthquake from epicenter node to neighbours.
  */
-void ManhattanNetworkManager::propagateEarthquakeBetweenNodes() {
+void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
 
     listOfDestroyedNodes.push_front(epicenterAddress);
 

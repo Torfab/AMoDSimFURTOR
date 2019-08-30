@@ -84,6 +84,10 @@ void TripRequestSubmitter::initialize()
 
     tripRequest = registerSignal("tripRequest");
 
+    bool disconnected = netmanager->checkDisconnectedNode(myAddress);
+    if (disconnected) //AVOID Trip request creations
+    	return;
+
     if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
         if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
             //richiesta normale

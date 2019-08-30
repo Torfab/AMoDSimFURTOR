@@ -34,12 +34,14 @@ private:
 
     simsignal_t newCivilVehicle;
 
+
+
     std::list<int> listOfDestroyedNodes;
 
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-    virtual void propagateEarthquakeBetweenNodes() override;
+    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress) override;
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;

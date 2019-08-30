@@ -9,27 +9,23 @@
 
 
 # TODONEXTTIME:
+1. ottimizzazione bomba
 
-
-4. esploratore; implementazione snapshot per esplorazione della rete
-	alla fine, i non esplorati non sono raggiungibili
-	non è ammissibile accettare richieste da loro
-
-4. heatmap
+4. più esplosioni
 5. punti di ammassamento in ingresso ee uscita ai bordi della mesh
 6. mezzo pesante circuito in zone di ammassamento
 6. traffico (civile) che scappa
 7. ambulanza più posti
 8. autobus: punti di raccolta taxi ride sharing
 9. più ospedali
-10.
+
 
 routing - djstra!?
 
 
-evitare che i nodi morti pubblichino richieste
-parametrizzare raggio di esplosione e rendere possibile la non esplosione
-numero di esplosioni
+
+
+
 
 
 
@@ -79,6 +75,7 @@ scenari
 
 # TODO mildly important:
 
+--ottimizzare funzione esplosione bomba
 
 -- Le richieste vengono generate dal TripRequestSubmitter con una frequenza del 50% tra normali e di emergenza. (confrontare le idee e valutare la strategia scelta)
 
@@ -94,6 +91,8 @@ refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 * evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
 * scorrere meno nodi in manhattanrouting topo disconnessione
 * cambiare colore ospedali
+
+ controllo se esistono nodi non raggiungibili (djistra)
 
 # DONE:
 
@@ -127,6 +126,10 @@ traffico
 3. crezione mezzo pesante (fattore traffico  valore 20 veicoli normali)
 
 check su routing
+evitare che i nodi morti pubblichino richieste
+parametrizzare raggio di esplosione e rendere possibile la non esplosione
+
+4. heatmap
 
 # Limiti del simulatore:
 

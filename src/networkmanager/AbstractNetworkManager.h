@@ -27,11 +27,13 @@ protected:
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
     int hospitalAddress;
+
     int epicenterAddress;
+    int disasterRadius;
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
-    virtual void propagateEarthquakeBetweenNodes() = 0;
+    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress) = 0;
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
@@ -62,6 +64,10 @@ protected:
         	return 10;
         }
     }
+
+	int getDisasterRadius() const {
+		return disasterRadius;
+	}
 };
 
 

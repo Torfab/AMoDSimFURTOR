@@ -46,6 +46,7 @@ class App : public cSimpleModule,cListener
 //    int civilDest;
     int CivilTrafficN;
 
+
     BaseCoord *tcoord;
     AbstractNetworkManager *netmanager;
 
@@ -55,6 +56,7 @@ class App : public cSimpleModule,cListener
   public:
     App();
     virtual ~App();
+
 
   protected:
     virtual void initialize();
@@ -120,7 +122,6 @@ void App::initialize()
             gate->disconnect();
 
         }
-
         return;
     } else {
         for (int j = 0; j < node->getNumOutLinks(); j++) {
