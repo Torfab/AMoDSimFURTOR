@@ -23,6 +23,7 @@ void ManhattanNetworkManager::initialize()
     rows = parentModule->par("width");
     columns = parentModule->par("height");
     hospitalAddress=par("hospitalAddress");
+    collectionPointAddress=par("collectionPointAddress");
 
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
@@ -47,8 +48,7 @@ void ManhattanNetworkManager::initialize()
     xChannelLength = parentModule->par("xNodeDistance");
 	yChannelLength = parentModule->par("yNodeDistance");
 
-	additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"),
-			parentModule->par("acceleration"));
+	additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"),parentModule->par("acceleration"));
 
 	if (disasterRadius > 0)
 		setOfDestroyedNodes.insert(epicenterAddress);
@@ -62,10 +62,20 @@ void ManhattanNetworkManager::initialize()
 
 		setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
 	}
-	EV << "BEGIN LIST: " << endl;
-	for(auto elem : auxSet)
-		EV << elem << " | ";
-	EV << endl;
+
+	for (int i=0;i<columns;i++){
+	    for(int j=0;j<rows;j++){
+	        if(i==0||j==0||i==(columns-1)||j==(rows-1)){
+	            setOfBorderNodes.insert(j+i*rows);
+	        }
+
+	    }
+	}
+//	EV<<"nodi al limite"<<endl;
+//	for(auto elem : setOfBorderNodes)
+//	        EV <<elem<< "|";
+//	EV<<endl;
+
 
 
 }

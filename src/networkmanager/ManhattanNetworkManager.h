@@ -36,7 +36,9 @@ private:
 
 
 
-    std::set<int> setOfDestroyedNodes;
+    std::set<int> setOfDestroyedNodes;          //nodes without connections
+    std::set<int> setOfNodesInRedZone;          //good neighbours of destroyed nodes
+    std::set<int> setOfBorderNodes;             //nodes in the border of the grid
 
 protected:
     virtual void initialize() override;
