@@ -10,12 +10,11 @@
 
 # TODONEXTTIME:
 
-7. traffico (civile) che scappa
+9. le emergenze dovrebbero essere nella zona rossa
+10. autobus: punti di raccolta taxi ride sharing
+11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
-8. ambulanza più posti
-
-9. autobus: punti di raccolta taxi ride sharing
-
+12. ambulanza più posti
 
 
 #scoprirecomefareivettori.help.andrea
@@ -129,7 +128,7 @@ parametrizzare raggio di esplosione e rendere possibile la non esplosione
 1. ottimizzazione bomba
 
 6. mezzo pesante circuito in zone di ammassamento = implementare una truck request
-
+7. traffico (civile) che scappa
 
 # Limiti del simulatore:
 
@@ -158,3 +157,12 @@ AMoD_Network nome rete
 Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 -r 0..1727 num di simulazioni
 
+
+
+
+
+CAPITOLI TESI:
+Scenario
+Simulatore
+Algoritmi applicati
+Risultati

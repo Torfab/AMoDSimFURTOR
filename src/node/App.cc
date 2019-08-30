@@ -79,17 +79,17 @@ App::~App()
 }
 
 void App::generateCivilTraffic() {
-	Vehicle* civile = new Vehicle(-1,9.7, 1);
 
-	int destAddress = intuniform(0, CivilDestinations - 1, 3);
-	while (destAddress == myAddress)
-		destAddress = intuniform(0, CivilDestinations - 1, 3);
+	Vehicle* civile = new Vehicle(-1,9.7, 1);
+	int destAddress = tcoord->getClosestExitNode(myAddress); //
+
 	civile->setSrcAddr(myAddress);
 	civile->setDestAddr(destAddress);
 
-	 EV << "New civil vehicle " << civile->getID() << " with dest: " << civile->getDestAddr() << endl;
-	 double delay=uniform(0,3);
-	sendDelayed(civile, delay, "out");
+	 EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to dest: " << civile->getDestAddr() << endl;
+
+//	 double delay=uniform(0,3);
+	 send(civile, "out");
 }
 
 void App::initialize()
@@ -105,6 +105,7 @@ void App::initialize()
     numberOfTrucks=netmanager->getNumberOfTrucks();
     ambulanceSpeed = netmanager->getAmbulanceSpeed();
     truckSpeed= netmanager->getTruckSpeed();
+
     CivilTrafficN = par("CivilTrafficN");
 
     cTopology* topo = new cTopology("topo");
@@ -176,8 +177,12 @@ void App::initialize()
         simulation.getSystemModule()->subscribe("newTripAssigned", this);
     }
 
-    for (int i = 0; i < CivilTrafficN; i++)
-        generateCivilTraffic();
+
+    // Sono un nodo in red zone?
+    // si -> genero traffico
+    // no -> nice
+    if (netmanager->checkRedZoneNode(myAddress))
+        generateCivilTraffic();// panico
 }
 
 void App::handleMessage(cMessage *msg)
@@ -202,7 +207,8 @@ void App::handleMessage(cMessage *msg)
     if (vehicle->getSpecialVehicle() == -1){
     	if (vehicle->getDestAddr() == myAddress) {
     		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr()<< " partito da "<< vehicle->getSrcAddr() <<endl;
-    		generateCivilTraffic();
+//    		generateCivilTraffic();
+    		 delete vehicle;
     		return;
     	}
 //        int destAddress = intuniform(0, CivilDestinations, 3);

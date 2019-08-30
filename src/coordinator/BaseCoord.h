@@ -103,6 +103,8 @@ private:
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
 
+
+
     public:
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
@@ -113,6 +115,7 @@ private:
         int countOnBoardRequests(int vehicleID);
         StopPoint* getNewAssignedStopPoint(int vehicleID);
         inline double getMinTripLength(){return minTripLength;}
+        int getClosestExitNode(int address);
 };
 
 #endif /* BASECOORD_H_ */

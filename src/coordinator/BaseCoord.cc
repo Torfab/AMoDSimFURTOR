@@ -820,4 +820,23 @@ bool BaseCoord::eval_feasibility (int vehicleID, StopPoint* sp)
     return isFeasible;
 }
 
+int BaseCoord::getClosestExitNode(int address) {
 
+	std::set<int> borderNodes = netmanager->getSetOfBorderNodes();
+
+	int closestAddr;
+	int min = netmanager->getNumberOfNodes(); // No roads can be greater that the number of nodes
+
+	for (auto elem : borderNodes) {
+		//calcolo min path
+		if (min > netmanager->getHopDistance(address, elem)){
+			closestAddr = elem;
+			min = netmanager->getHopDistance(address, elem);
+		}
+
+	}
+	EV << "Closest Exit node for node: " << address << " is > " << closestAddr << endl;
+	return closestAddr;
+
+
+}

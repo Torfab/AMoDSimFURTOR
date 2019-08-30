@@ -50,12 +50,11 @@ void ManhattanNetworkManager::buildSetOfBorderNodes() {
 		}
 	}
 }
-
-void ManhattanNetworkManager::buildTruckStartNode() {
-	int rnd = intuniform(0, setOfBorderNodes.size() - 1);
-	std::set<int>::const_iterator it(setOfBorderNodes.begin());
+int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s){
+	int rnd = intuniform(0, s.size() - 1);
+	std::set<int>::const_iterator it(s.begin());
 	advance(it, rnd);
-	truckStartNode = *it;
+	return *it;
 }
 
 void ManhattanNetworkManager::initialize()
@@ -95,7 +94,7 @@ void ManhattanNetworkManager::initialize()
 
 
 	// initialize truck start node
-    buildTruckStartNode();
+	truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
 
 
     EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
@@ -143,6 +142,29 @@ double ManhattanNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
     space_distance += abs(ySource - yDest) * yChannelLength;
 
     return space_distance;
+}
+
+/**
+ * Return the hop distance from current node to target one.
+ *
+ * @param srcAddr
+ * @param dstAddress
+ * @return
+ */
+double ManhattanNetworkManager::getHopDistance(int srcAddr, int dstAddr)
+{
+    double hopDistance = 0;
+
+    int xSource = srcAddr % rows;
+    int xDest = dstAddr % rows;
+
+    int ySource = srcAddr / rows;
+    int yDest = dstAddr / rows;
+
+    hopDistance += abs(xSource - xDest);
+    hopDistance += abs(ySource - yDest);
+
+    return hopDistance;
 }
 
 /**
@@ -273,3 +295,20 @@ bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
 	}
 	return false;
 }
+
+bool ManhattanNetworkManager::checkBorderNode(int addr) {
+	for (auto elem : setOfBorderNodes) {
+			if (elem == addr)
+				return true;
+		}
+		return false;
+}
+bool ManhattanNetworkManager::checkRedZoneNode(int addr) {
+	for (auto elem : setOfNodesInRedZone) {
+			if (elem == addr)
+				return true;
+		}
+		return false;
+}
+
+

@@ -38,7 +38,7 @@ private:
 
     std::set<int> setOfDestroyedNodes;          //nodes without connections
     std::set<int> setOfNodesInRedZone;          //good neighbours of destroyed nodes
-    std::set<int> setOfBorderNodes;             //nodes in the border of the grid
+
 
 protected:
     virtual void initialize() override;
@@ -50,19 +50,19 @@ protected:
 	void buildSetOfNodesInRedZone(std::set<int> auxSet);
 	void buildSetOfBorderNodes();
 	void buildTruckStartNode();
+	int pickRandomElemFromSet(std::set<int> s);
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
+    virtual double getHopDistance(int srcAddr, int dstAddr) override;
     virtual double getChannelLength(int nodeAddr, int gateIndex) override;
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
     virtual bool checkDisconnectedNode(int addr) override;
-
-	const std::set<int>& getSetOfBorderNodes() const {
-		return setOfBorderNodes;
-	}
+    virtual bool checkBorderNode(int addr) override;
+    virtual bool checkRedZoneNode(int addr) override;
 };
 
 #endif

@@ -33,6 +33,7 @@ protected:
     int disasterRadius;
     int truckStartNode;
 
+    std::set<int> setOfBorderNodes;             //nodes in the border of the grid
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -41,6 +42,7 @@ protected:
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
     virtual double getSpaceDistance(int srcAddr, int dstAddr)=0;     //Get the space-distance from srcAddr to dstAddr
+    virtual double getHopDistance(int srcAddr, int dstAddr)=0;
     virtual double getChannelLength(int nodeAddr, int gateIndex)=0;  //Get the length of the channel connected to the specified gate
     virtual int getOutputGate(int srcAddr, int destAddr)=0;          //Get the index of the gate where send the packet to reach the destAddr
     virtual int getVehiclesPerNode(int nodeAddr)=0;                  //Get the number of vehicles located in the node at simulation start
@@ -54,7 +56,8 @@ protected:
     inline virtual int getHospitalAddress(){return hospitalAddress;}
     inline virtual int getTruckStartNode() {return truckStartNode;}
     virtual bool checkDisconnectedNode(int addr) =0;
-
+    virtual bool checkBorderNode(int addr) =0;
+    virtual bool checkRedZoneNode(int addr) =0;
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
@@ -76,6 +79,10 @@ protected:
 
 	inline virtual int getCollectionPointAddress() const {
 		return collectionPointAddress;
+	}
+
+	inline virtual const std::set<int>& getSetOfBorderNodes() const {
+		return setOfBorderNodes;
 	}
 };
 
