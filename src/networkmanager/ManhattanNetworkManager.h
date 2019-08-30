@@ -44,6 +44,13 @@ protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
     virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) override;
+	void buildSetOfNodesInRedZone();
+	void buildsetOfBorderNodes();
+	std::set<int> buildSetOfDestroyedNodes();
+	void buildSetOfNodesInRedZone(std::set<int> auxSet);
+	void buildSetOfBorderNodes();
+	void buildTruckStartNode();
+
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
@@ -53,7 +60,9 @@ protected:
     virtual bool isValidAddress(int nodeAddr) override;
     virtual bool checkDisconnectedNode(int addr) override;
 
-
+	const std::set<int>& getSetOfBorderNodes() const {
+		return setOfBorderNodes;
+	}
 };
 
 #endif

@@ -17,6 +17,47 @@
 
 Define_Module(ManhattanNetworkManager);
 
+std::set<int> ManhattanNetworkManager::buildSetOfDestroyedNodes() {
+	// Creation of destroyed nodes set
+	if (disasterRadius > 0)
+		setOfDestroyedNodes.insert(epicenterAddress);
+
+	std::set<int> auxSet;
+	for (int i = 1; i < disasterRadius; i++) {
+		for (auto elem : setOfDestroyedNodes)
+			auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
+		setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
+	}
+	return auxSet;
+}
+
+void ManhattanNetworkManager::buildSetOfNodesInRedZone(std::set<int> auxSet) {
+	// Creation of red zones nodes set
+	for (auto elem : setOfDestroyedNodes)
+		auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
+	setOfNodesInRedZone.insert(auxSet.begin(), auxSet.end());
+	// Get nodes in red zones
+	for (auto elem : setOfDestroyedNodes)
+		setOfNodesInRedZone.erase(elem);
+}
+
+void ManhattanNetworkManager::buildSetOfBorderNodes() {
+	for (int i = 0; i < columns; i++) {
+		for (int j = 0; j < rows; j++) {
+			if (i == 0 || j == 0 || i == (columns - 1) || j == (rows - 1)) {
+				setOfBorderNodes.insert(j + i * rows);
+			}
+		}
+	}
+}
+
+void ManhattanNetworkManager::buildTruckStartNode() {
+	int rnd = intuniform(0, setOfBorderNodes.size() - 1);
+	std::set<int>::const_iterator it(setOfBorderNodes.begin());
+	advance(it, rnd);
+	truckStartNode = *it;
+}
+
 void ManhattanNetworkManager::initialize()
 {
     cModule* parentModule = getParentModule();
@@ -43,32 +84,22 @@ void ManhattanNetworkManager::initialize()
 
 	additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"),parentModule->par("acceleration"));
 
-	if (disasterRadius > 0)
-		setOfDestroyedNodes.insert(epicenterAddress);
 
-	std::set<int> auxSet;
+	// Creation of destroyed nodes set
+	std::set<int> auxSet = buildSetOfDestroyedNodes();
+	// Creation of red zones nodes set
+	buildSetOfNodesInRedZone(auxSet); // Don't change the order
 
-	for (int i = 1; i < disasterRadius; i++) {
+	// Creation of border zones nodes set
+	buildSetOfBorderNodes();
 
-		for(auto elem : setOfDestroyedNodes)
-			auxSet=propagateEarthquakeBetweenNodes(elem, auxSet);
 
-		setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
-	}
+	// initialize truck start node
+    buildTruckStartNode();
 
-	for (int i=0;i<columns;i++){
-	    for(int j=0;j<rows;j++){
-	        if(i==0||j==0||i==(columns-1)||j==(rows-1)){
-	            setOfBorderNodes.insert(j+i*rows);
-	        }
 
-	    }
-	}
-    int rnd = intuniform(0,setOfBorderNodes.size()-1);
-    std::set<int>::const_iterator it(setOfBorderNodes.begin());
-    advance(it, rnd);
-    truckStartNode = *it;
-    EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTRucks"<<numberOfTrucks<< endl;
+    EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
+
     vehiclesPerNode[truckStartNode]=numberOfTrucks;
 
 
@@ -180,7 +211,10 @@ std::set<int> ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epice
             auxSet.insert(neighbour->getModule()->getIndex());
 
         }
+
+
     }
+    delete topo;
     return auxSet;
 }
 
