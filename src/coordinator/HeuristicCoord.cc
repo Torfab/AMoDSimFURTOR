@@ -49,7 +49,6 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr)
         if (tr->getIsSpecial() == 1) {  //hospital
             if (x.first->getSpecialVehicle() == 1 && !x.first->isBusyState() ) {   //e' un'ambulanza
 
-//
                 //dobbiamo assegnare il viaggio all'ambulanza
                 StopPointOrderingProposal *tmp = eval_requestAssignment(x.first->getID(), tr);
                 if (tmp && !tmp->getSpList().empty()){
@@ -58,6 +57,16 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr)
 
 			}
 
+        }
+        if (tr->getIsSpecial()== 2) { // coordination point - truck request
+        	   if (x.first->getSpecialVehicle() == 2 && !x.first->isBusyState() ) {   //it'a truck
+					//assign trip to truck
+				StopPointOrderingProposal *tmp = eval_requestAssignment(x.first->getID(), tr);
+				if (tmp && !tmp->getSpList().empty()) {
+					vehicleProposals[x.first->getID()] = tmp;
+				}
+
+			}
         }
         else {
             //non e' una emergency request
@@ -80,6 +89,12 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr)
          emergencyAssignment(vehicleProposals, tr);
 
     }
+    // //Assign the request to the emergency vehicle
+    else if (tr->getIsSpecial() == 2) {
+             EV << "+++"<< vehicleProposals.size() << " Trucks are available for proposal" << endl;
+             truckAssignment(vehicleProposals, tr);
+
+        }
     //Assign the request to the vehicle which minimize the waiting time
     else if(requestAssignmentStrategy == 0)
         minCostAssignment(vehicleProposals, tr);

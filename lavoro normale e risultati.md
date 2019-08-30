@@ -10,11 +10,6 @@
 
 # TODONEXTTIME:
 
-
-
-
-6. mezzo pesante circuito in zone di ammassamento = implementare una truck request
-
 7. traffico (civile) che scappa
 
 8. ambulanza più posti
@@ -92,6 +87,8 @@ refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
  controllo se esistono nodi non raggiungibili (djistra)
 
+evitare di chiedere sono un ospedale o un bordernode o sono morto -> unica funzione per gestire tutto
+
 # DONE:
 
 -- vettore di feromoni invece che hardcoded 4 feromoni. - in manhattanrouting.cc e ned
@@ -131,6 +128,7 @@ parametrizzare raggio di esplosione e rendere possibile la non esplosione
 
 1. ottimizzazione bomba
 
+6. mezzo pesante circuito in zone di ammassamento = implementare una truck request
 
 
 # Limiti del simulatore:

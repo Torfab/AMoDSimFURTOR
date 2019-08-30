@@ -73,6 +73,10 @@ protected:
 	int getDisasterRadius() const {
 		return disasterRadius;
 	}
+
+	inline virtual int getCollectionPointAddress() const {
+		return collectionPointAddress;
+	}
 };
 
 

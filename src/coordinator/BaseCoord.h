@@ -93,7 +93,7 @@ private:
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
         int minCostAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the cost
         int emergencyAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to an emergency vehicle
-
+        int truckAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to a truck
 
         StopPoint* getRequestPickup(std::list<StopPoint*> spList, int requestID);
         StopPoint* getRequestDropOff(std::list<StopPoint*> spList, int requestID);

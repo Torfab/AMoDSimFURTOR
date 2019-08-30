@@ -120,6 +120,46 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
       return vehicleID;
 }
 
+
+/**
+ * Assign the new trip request to the first truck available in the vehicles proposal.
+ *
+ * @param vehicleProposal The vehicles proposals
+ * @param tr The new TripRequest
+ *
+ * @return The ID of the vehicle which will serve the request or -1 otherwise.
+ */
+int BaseCoord::truckAssignment(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr) {
+//    double pickupDeadline = tr->getPickupSP()->getTime()+ tr->getPickupSP()->getMaxDelay()*100; //
+    double additionalCost = -1.0;
+    int vehicleID = -1;
+
+    //The request has been evaluated
+    TripRequest *preq = pendingRequests[tr->getID()];
+    pendingRequests.erase(tr->getID());
+    delete preq;
+    if (!vehicleProposal.empty()) {
+        double curAdditionalCost =vehicleProposal.begin()->second->getAdditionalCost();
+        vehicleID = vehicleProposal.begin()->first;
+        additionalCost = curAdditionalCost;
+
+    }
+    if (additionalCost > -1) {
+        EV << "Accepted request of truck" << vehicleID << " for request: "
+                  << tr->getID() << " .The time cost is: " << additionalCost << endl;
+
+        updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
+    } else {
+        EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
+        uRequests[tr->getID()] = new TripRequest(*tr);
+        delete tr;
+        return -1;
+    }
+    delete tr;
+
+    return vehicleID;
+}
+
 /**
  * Assign the new trip request to the first emergency vehicle available in the vehicles proposal.
  *

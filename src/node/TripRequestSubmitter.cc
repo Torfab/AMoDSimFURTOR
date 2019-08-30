@@ -35,6 +35,7 @@ class TripRequestSubmitter : public cSimpleModule
 
         cMessage *generatePacket;
         cMessage *emergencyPacket;
+        cMessage *truckPacket;
         long pkCounter;
 
 
@@ -51,6 +52,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual void handleMessage(cMessage *msg);
         virtual TripRequest* buildEmergencyRequest();
         virtual TripRequest* buildTripRequest();
+        virtual TripRequest* buildTruckRequest();
 };
 
 Define_Module(TripRequestSubmitter);
@@ -64,6 +66,8 @@ TripRequestSubmitter::TripRequestSubmitter()
 TripRequestSubmitter::~TripRequestSubmitter()
 {
     cancelAndDelete(generatePacket);
+    cancelAndDelete(emergencyPacket);
+    cancelAndDelete(truckPacket);
 }
 
 void TripRequestSubmitter::initialize()
@@ -81,6 +85,8 @@ void TripRequestSubmitter::initialize()
 
     generatePacket = new cMessage("nextPacket");
     emergencyPacket = new cMessage("nextPacket");
+    truckPacket = new cMessage("nextPacket");
+
 
     tripRequest = registerSignal("tripRequest");
 
@@ -88,16 +94,23 @@ void TripRequestSubmitter::initialize()
     if (disconnected) //AVOID Trip request creations
     	return;
 
-    if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
-        if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-            //richiesta normale
-            scheduleAt(sendIATime->doubleValue(), generatePacket);
-        } else {
-            //richiesta emergenza
-            scheduleAt(sendIATime->doubleValue(), emergencyPacket);
-
-        }
+    if (myAddress == netmanager->getCollectionPointAddress()){
+    	// the node is a coordination point
+    	scheduleAt(sendIATime->doubleValue(), truckPacket);
     }
+    else {
+
+		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
+			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+				//richiesta normale
+				scheduleAt(sendIATime->doubleValue(), generatePacket);
+			} else {
+				//richiesta emergenza
+				scheduleAt(sendIATime->doubleValue(), emergencyPacket);
+
+			}
+		}
+	}
 
 }
 
@@ -131,7 +144,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
             }
         }
     }
-    //EMIT a TRIP REQUEST
+    //EMIT an EMERGENCY REQUEST
        if (msg == emergencyPacket)
        {
            TripRequest *tr = nullptr;
@@ -157,10 +170,67 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
                   }
            }
        }
+       //EMIT an Truck REQUEST
+            if (msg == truckPacket)
+            {
+                TripRequest *tr = nullptr;
+
+                if (ev.isGUI()) getParentModule()->bubble("TRUCK REQUEST");
+                tr = buildTruckRequest();
+
+                EV << "Requiring a TRUCK REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+                EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
+
+                emit(tripRequest, tr);
+
+		//Schedule the next request
+		simtime_t nextTime = simTime() + sendIATime->doubleValue(); //slow request
+		if (maxSubmissionTime < 0 || nextTime.dbl() < maxSubmissionTime) {
+			EV << "Next truck request from node " << myAddress
+						<< "scheduled at: " << nextTime.dbl() << endl;
+
+			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+				////truck request
+				scheduleAt(simTime() + sendIATime->doubleValue()*5, truckPacket);
+			} else {
+				//richiesta emergenza
+				scheduleAt(nextTime, emergencyPacket);
+			}
+
+		}
+	}
 }
 
 /**
- * Build a new Trip Request
+ * Build a new Truck Request
+ */
+TripRequest* TripRequestSubmitter::buildTruckRequest()
+{
+    TripRequest *request = new TripRequest();
+    double simtime = simTime().dbl();
+
+    // Get truck address for the request
+    int destAddress = netmanager->getTruckStartNode();
+
+
+    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+    pickupSP->setXcoord(x_coord);
+    pickupSP->setYcoord(y_coord);
+    pickupSP->setNumberOfPassengers(0);
+
+    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+
+    request->setPickupSP(pickupSP);
+    request->setDropoffSP(dropoffSP);
+
+    request->setIsSpecial(2); //truck request
+
+    return request;
+}
+
+
+/**
+ * Build a new Emergency Request
  */
 TripRequest* TripRequestSubmitter::buildEmergencyRequest()
 {
