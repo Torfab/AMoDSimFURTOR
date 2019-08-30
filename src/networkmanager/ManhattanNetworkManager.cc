@@ -28,6 +28,7 @@ void ManhattanNetworkManager::initialize()
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
     numberOfEmergencyVehicles = par("numberOfEmergencyVehicles");
+    numberOfTrucks = par("numberOfTrucks");
 
     ambulanceSpeed =  par("ambulanceSpeed");
     truckSpeed =  par("truckSpeed");
@@ -36,14 +37,6 @@ void ManhattanNetworkManager::initialize()
     epicenterAddress=par("epicenterAddress");
 
 
-    for (int i = 0; i < numberOfVehicles; i++)
-        {
-        int rand = intuniform(0, numberOfNodes - 1, 4);
-        if (rand != hospitalAddress) //Nessun veicolo civile puo' partire dall'ospedale
-        vehiclesPerNode[rand] += 1;
-        }
-
-    vehiclesPerNode[hospitalAddress] = numberOfEmergencyVehicles;
 
     xChannelLength = parentModule->par("xNodeDistance");
 	yChannelLength = parentModule->par("yNodeDistance");
@@ -71,6 +64,24 @@ void ManhattanNetworkManager::initialize()
 
 	    }
 	}
+    int rnd = intuniform(0,setOfBorderNodes.size()-1);
+    std::set<int>::const_iterator it(setOfBorderNodes.begin());
+    advance(it, rnd);
+    truckStartNode = *it;
+    EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTRucks"<<numberOfTrucks<< endl;
+    vehiclesPerNode[truckStartNode]=numberOfTrucks;
+
+
+
+    for (int i = 0; i < numberOfVehicles; i++)
+                {
+                int rand = intuniform(0, numberOfNodes - 1, 4);
+                if (rand != hospitalAddress) //Nessun veicolo civile puo' partire dall'ospedale
+                vehiclesPerNode[rand] += 1;
+                }
+
+    vehiclesPerNode[hospitalAddress] = numberOfEmergencyVehicles;
+
 //	EV<<"nodi al limite"<<endl;
 //	for(auto elem : setOfBorderNodes)
 //	        EV <<elem<< "|";

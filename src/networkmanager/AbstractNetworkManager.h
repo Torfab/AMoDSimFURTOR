@@ -23,6 +23,7 @@ protected:
     std::map<int,int> vehiclesPerNode;  //Number of vehicles per node at simulation start
     int numberOfVehicles;               //Number of vehicles in the network
     int numberOfNodes;                  //Number of crossroads(nodes) in the network
+    int numberOfTrucks;
     double additionalTravelTime;        //Additional Travel Time due to acceleration and deceleration
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
@@ -30,6 +31,8 @@ protected:
     int collectionPointAddress;
     int epicenterAddress;
     int disasterRadius;
+    int truckStartNode;
+
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -44,10 +47,12 @@ protected:
     virtual bool isValidAddress(int nodeAddr)=0;                     //Check if the specified address is valid
     inline int getNumberOfVehicles(){return numberOfVehicles;}       //Get the fleet size
     inline int getNumberOfNodes(){return numberOfNodes;}            // Get the nodes
+    inline int getNumberOfTrucks(){return numberOfTrucks;}
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
     inline virtual int getHospitalAddress(){return hospitalAddress;}
+    inline virtual int getTruckStartNode() {return truckStartNode;}
     virtual bool checkDisconnectedNode(int addr) =0;
 
 

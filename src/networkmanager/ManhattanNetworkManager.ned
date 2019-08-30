@@ -9,7 +9,10 @@ simple ManhattanNetworkManager like INetworkManager
         int hospitalAddress; 
         int epicenterAddress; 
         int collectionPointAddress;
+        
         int numberOfEmergencyVehicles = default(0);
+        int numberOfTrucks = default(0);
+        
 		double ambulanceSpeed @unit(mps);
 		double truckSpeed @unit(mps);
 		

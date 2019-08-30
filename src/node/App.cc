@@ -42,8 +42,9 @@ class App : public cSimpleModule,cListener
     int alightingTime;
     double additionalTravelTime;
     double ambulanceSpeed;
+    double truckSpeed;
     int CivilDestinations;
-//    int civilDest;
+    int numberOfTrucks;
     int CivilTrafficN;
 
 
@@ -101,9 +102,9 @@ void App::initialize()
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
     numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
     additionalTravelTime = netmanager->getAdditionalTravelTime();
-
+    numberOfTrucks=netmanager->getNumberOfTrucks();
     ambulanceSpeed = netmanager->getAmbulanceSpeed();
-
+    truckSpeed= netmanager->getTruckSpeed();
     CivilTrafficN = par("CivilTrafficN");
 
     cTopology* topo = new cTopology("topo");
@@ -142,38 +143,42 @@ void App::initialize()
     // Subscription to civil traffic
     simulation.getSystemModule()->subscribe("newCivilVehicle", this);
 
-
     EV << "I am node " << myAddress << endl;
 
     //If the vehicle is in this node (at startup) subscribe it to "tripRequestSignal"
-    if (numberOfVehicles > 0)
-    {
-        for(int i=0; i<numberOfVehicles; i++)
-        {
-            Vehicle *v = new Vehicle(1, ambulanceSpeed , 1);
-            int hospitalAddress = netmanager->getHospitalAddress();
-            if (myAddress == hospitalAddress){
+    if (numberOfVehicles > 0) {
+        for (int i = 0; i < numberOfVehicles; i++) {
+            Vehicle *v;
+            if (myAddress == netmanager->getHospitalAddress()) {
+                v = new Vehicle(1, ambulanceSpeed, 1);
+
 //                v->setSpecialVehicle(1);  //ambulanza
                 v->setSeats(1);
-            } else
-                v->setSeats(seatsPerVehicle);
+            } else if (myAddress == netmanager->getTruckStartNode() && numberOfTrucks >0) {
 
-            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << "of type "<< v->getSpecialVehicle() << ". It has " << v->getSeats() << " seats." << endl;
+                v = new Vehicle(2, truckSpeed, 20);
+                v->setSeats(0);
+                numberOfTrucks--;
+            } else {
+                Vehicle *v = new Vehicle();
+                v->setSeats(seatsPerVehicle);
+            }
+            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE "
+                      << v->getID() << "of type " << v->getSpecialVehicle()
+                      << ". It has " << v->getSeats() << " seats." << endl;
             tcoord->registerVehicle(v, myAddress);
         }
 
         if (ev.isGUI())
-            getParentModule()->getDisplayString().setTagArg("i",1,"green");
+            getParentModule()->getDisplayString().setTagArg("i", 1, "green");
 
         //When the coordinator assign a new request to a vehicle, local node will be notified
-        simulation.getSystemModule()->subscribe("newTripAssigned",this);
-	}
+        simulation.getSystemModule()->subscribe("newTripAssigned", this);
+    }
 
-	for (int i=0;i<CivilTrafficN;i++)
-	generateCivilTraffic();
-
+    for (int i = 0; i < CivilTrafficN; i++)
+        generateCivilTraffic();
 }
-
 
 void App::handleMessage(cMessage *msg)
 {
