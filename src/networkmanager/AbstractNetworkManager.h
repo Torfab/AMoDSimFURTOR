@@ -29,7 +29,7 @@ protected:
     double truckSpeed;					// Truck Speed
     int hospitalAddress;
     int collectionPointAddress;
-    int epicenterAddress;
+    int numberOfEpicenters;
     int disasterRadius;
     int truckStartNode;
 

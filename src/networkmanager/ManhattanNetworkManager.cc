@@ -18,9 +18,15 @@
 Define_Module(ManhattanNetworkManager);
 
 std::set<int> ManhattanNetworkManager::buildSetOfDestroyedNodes() {
-	// Creation of destroyed nodes set
-	if (disasterRadius > 0)
-		setOfDestroyedNodes.insert(epicenterAddress);
+
+	int epicenterAddresses[numberOfEpicenters];
+
+	for (int i=0; i<numberOfEpicenters; i++){
+		epicenterAddresses[i] = intuniform(0,numberOfNodes-1);
+		EV << "epicenter Address [" << i << " ] "<< epicenterAddresses[i] << endl;
+		if (disasterRadius > 0)	// Creation of destroyed nodes set
+				setOfDestroyedNodes.insert(epicenterAddresses[i]);
+	}
 
 	std::set<int> auxSet;
 	for (int i = 1; i < disasterRadius; i++) {
@@ -75,7 +81,7 @@ void ManhattanNetworkManager::initialize()
     truckSpeed =  par("truckSpeed");
 
     disasterRadius = par("disasterRadius");
-    epicenterAddress=par("epicenterAddress");
+    numberOfEpicenters=par("numberOfEpicenters");
 
 
 
