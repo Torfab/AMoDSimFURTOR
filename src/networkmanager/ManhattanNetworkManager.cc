@@ -51,6 +51,7 @@ void ManhattanNetworkManager::buildSetOfBorderNodes() {
 	}
 }
 int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s){
+	if (s.empty() ) return -1;
 	int rnd = intuniform(0, s.size() - 1);
 	std::set<int>::const_iterator it(s.begin());
 	advance(it, rnd);
@@ -311,4 +312,6 @@ bool ManhattanNetworkManager::checkRedZoneNode(int addr) {
 		return false;
 }
 
-
+int ManhattanNetworkManager::pickRandomNodeInRedZone() {
+	return pickRandomElemFromSet(setOfNodesInRedZone);
+}

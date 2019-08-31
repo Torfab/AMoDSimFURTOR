@@ -63,6 +63,7 @@ protected:
     virtual bool checkDisconnectedNode(int addr) override;
     virtual bool checkBorderNode(int addr) override;
     virtual bool checkRedZoneNode(int addr) override;
+    virtual int pickRandomNodeInRedZone()override;
 };
 
 #endif

@@ -94,10 +94,26 @@ void TripRequestSubmitter::initialize()
     if (disconnected) //AVOID Trip request creations
     	return;
 
+    // Check if the node is a coordination point
     if (myAddress == netmanager->getCollectionPointAddress()){
-    	// the node is a coordination point
     	scheduleAt(sendIATime->doubleValue(), truckPacket);
     }
+
+	if (netmanager->checkRedZoneNode(myAddress)) {
+
+		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
+			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+				//richiesta normale
+				scheduleAt(sendIATime->doubleValue(), generatePacket);
+
+			} else {
+				//richiesta emergenza
+				scheduleAt(sendIATime->doubleValue(), emergencyPacket);
+			}
+		}
+	}
+
+    /*
     else {
 
 		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
@@ -105,12 +121,11 @@ void TripRequestSubmitter::initialize()
 				//richiesta normale
 				scheduleAt(sendIATime->doubleValue(), generatePacket);
 			} else {
-				//richiesta emergenza
-				scheduleAt(sendIATime->doubleValue(), emergencyPacket);
+
 
 			}
 		}
-	}
+	}*/
 
 }
 
@@ -125,7 +140,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
         if (ev.isGUI()) getParentModule()->bubble("TRIP REQUEST");
         tr = buildTripRequest();
 
-        EV << "Requiring a trip request from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+        EV << "Requiring a bus trip request from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
         EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
         emit(tripRequest, tr);
@@ -161,13 +176,13 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
            simtime_t nextTime = simTime() + sendIATime->doubleValue();
            if (maxSubmissionTime < 0 || nextTime.dbl() < maxSubmissionTime) {
                          EV << "Next request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
-                  if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-                      //richiesta normale
-                      scheduleAt(nextTime, generatePacket);
-                  } else {
+//                  if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+//                      //richiesta normale
+//                      scheduleAt(nextTime, generatePacket);
+//                  } else {
                       //richiesta emergenza
                       scheduleAt(nextTime, emergencyPacket);
-                  }
+//                  }
            }
        }
        //EMIT an Truck REQUEST
@@ -262,21 +277,19 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     double simtime = simTime().dbl();
 
     // Generate a random destination address for the request
-    int destAddress = intuniform(0, destAddresses-1, 3);
-    while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength)
-        destAddress = intuniform(0, destAddresses - 1, 3);
+    int destAddress = netmanager->pickRandomNodeInRedZone();
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
     pickupSP->setYcoord(y_coord);
-    pickupSP->setNumberOfPassengers(par("passengersPerRequest"));
+    pickupSP->setNumberOfPassengers(intuniform(1,10,3));
 
     StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
 
     request->setPickupSP(pickupSP);
     request->setDropoffSP(dropoffSP);
 
-    request->setIsSpecial(0); //normal
+    request->setIsSpecial(0); // bus request
 
     return request;
 }

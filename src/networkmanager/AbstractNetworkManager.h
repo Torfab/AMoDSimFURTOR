@@ -58,6 +58,7 @@ protected:
     virtual bool checkDisconnectedNode(int addr) =0;
     virtual bool checkBorderNode(int addr) =0;
     virtual bool checkRedZoneNode(int addr) =0;
+    virtual int pickRandomNodeInRedZone()=0;
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
