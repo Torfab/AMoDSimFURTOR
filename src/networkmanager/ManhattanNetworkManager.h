@@ -39,6 +39,8 @@ private:
     std::set<int> setOfDestroyedNodes;          //nodes without connections
     std::set<int> setOfNodesInRedZone;          //good neighbours of destroyed nodes
 
+private:
+   ~ManhattanNetworkManager();
 
 protected:
     virtual void initialize() override;
@@ -51,6 +53,7 @@ protected:
 	void buildSetOfBorderNodes();
 	void buildTruckStartNode();
 	int pickRandomElemFromSet(std::set<int> s);
+	void buildHospitalNodes();
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
@@ -63,7 +66,9 @@ protected:
     virtual bool checkDisconnectedNode(int addr) override;
     virtual bool checkBorderNode(int addr) override;
     virtual bool checkRedZoneNode(int addr) override;
+    virtual bool checkHospitalNode(int addr) override;
     virtual int pickRandomNodeInRedZone()override;
+    virtual int pickClosestHospitalFromNode(int addr) override;
 };
 
 #endif

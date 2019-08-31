@@ -64,12 +64,21 @@ int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s){
 	return *it;
 }
 
+
+ManhattanNetworkManager::~ManhattanNetworkManager() {
+	delete  hospitalAddresses;
+}
+
 void ManhattanNetworkManager::initialize()
 {
     cModule* parentModule = getParentModule();
     rows = parentModule->par("width");
     columns = parentModule->par("height");
-    hospitalAddress=par("hospitalAddress");
+    numberOfHospitals=par("numberOfHospitals");
+
+    hospitalAddresses = new int[numberOfHospitals];
+
+
     collectionPointAddress=par("collectionPointAddress");
 
     numberOfVehicles = par("numberOfVehicles");
@@ -108,21 +117,19 @@ void ManhattanNetworkManager::initialize()
 
     vehiclesPerNode[truckStartNode]=numberOfTrucks;
 
+    buildHospitalNodes();
 
+    // Ambulances creation
 
     for (int i = 0; i < numberOfVehicles; i++)
                 {
                 int rand = intuniform(0, numberOfNodes - 1, 4);
-                if (rand != hospitalAddress) //Nessun veicolo civile puo' partire dall'ospedale
+                if (checkHospitalNode(rand)) //Nessun veicolo civile puo' partire dall'ospedale
                 vehiclesPerNode[rand] += 1;
                 }
 
-    vehiclesPerNode[hospitalAddress] = numberOfEmergencyVehicles;
-
-//	EV<<"nodi al limite"<<endl;
-//	for(auto elem : setOfBorderNodes)
-//	        EV <<elem<< "|";
-//	EV<<endl;
+	for (int i = 0; i < numberOfHospitals; i++)
+		vehiclesPerNode[hospitalAddresses[i]] = numberOfEmergencyVehicles;
 
 
 
@@ -317,6 +324,50 @@ bool ManhattanNetworkManager::checkRedZoneNode(int addr) {
 		}
 		return false;
 }
+
+void ManhattanNetworkManager::buildHospitalNodes() {
+	int safeHospital;
+
+	do{ safeHospital = intuniform(0, numberOfNodes-1);	}
+	while (setOfDestroyedNodes.find(safeHospital) != setOfDestroyedNodes.end());
+
+	EV << "HOSPITAL" << safeHospital << endl;
+
+	for (int i = 1; i<numberOfHospitals;i++){
+	hospitalAddresses[i] = intuniform(0, numberOfNodes-1);
+	EV << "HOSPITAL" << hospitalAddresses[i] << endl;
+	}
+
+
+
+
+
+}
+
+bool ManhattanNetworkManager::checkHospitalNode(int addr) {
+	for (int i = 0; i < numberOfHospitals; i++) {
+		if (hospitalAddresses[i] == addr)
+			return true;
+	}
+	return false;
+
+}
+
+
+int ManhattanNetworkManager::pickClosestHospitalFromNode(int addr) {
+	int destAddress = hospitalAddresses[0];
+	int min = numberOfNodes;
+	for (int i = 0; i < numberOfHospitals; i++) {
+		if (getHopDistance(addr, hospitalAddresses[i]) < min) {
+			destAddress = hospitalAddresses[i];
+			min = getHopDistance(addr, hospitalAddresses[i]);
+		}
+	}
+
+	return destAddress;
+
+}
+
 
 int ManhattanNetworkManager::pickRandomNodeInRedZone() {
 	return pickRandomElemFromSet(setOfNodesInRedZone);

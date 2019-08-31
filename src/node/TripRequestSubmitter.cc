@@ -252,9 +252,8 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
     TripRequest *request = new TripRequest();
     double simtime = simTime().dbl();
 
-    // Generate a random destination address for the request
-    int destAddress = par("hospitalAddress");
-
+    // Generate emergency request to the closest hospital
+    int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
@@ -268,6 +267,7 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
 
     request->setIsSpecial(1); //hospital request
 
+    EV << "emergency from " << myAddress << " to the hospital in node: " << destAddress << endl;
     return request;
 }
 

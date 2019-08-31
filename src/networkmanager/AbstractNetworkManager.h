@@ -27,11 +27,13 @@ protected:
     double additionalTravelTime;        //Additional Travel Time due to acceleration and deceleration
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
-    int hospitalAddress;
+    int numberOfHospitals;
     int collectionPointAddress;
     int numberOfEpicenters;
     int disasterRadius;
     int truckStartNode;
+
+    int * hospitalAddresses;
 
     std::set<int> setOfBorderNodes;             //nodes in the border of the grid
 
@@ -53,12 +55,14 @@ protected:
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
-    inline virtual int getHospitalAddress(){return hospitalAddress;}
+
     inline virtual int getTruckStartNode() {return truckStartNode;}
     virtual bool checkDisconnectedNode(int addr) =0;
     virtual bool checkBorderNode(int addr) =0;
     virtual bool checkRedZoneNode(int addr) =0;
+    virtual bool checkHospitalNode(int addr) = 0;
     virtual int pickRandomNodeInRedZone()=0;
+    virtual int pickClosestHospitalFromNode(int addr) = 0;
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
@@ -84,6 +88,14 @@ protected:
 
 	inline virtual const std::set<int>& getSetOfBorderNodes() const {
 		return setOfBorderNodes;
+	}
+
+	virtual int* getHospitalAddresses() const {
+		return hospitalAddresses;
+	}
+
+	int getNumberOfHospitals() const {
+		return numberOfHospitals;
 	}
 };
 

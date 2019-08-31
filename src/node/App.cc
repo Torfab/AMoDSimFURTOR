@@ -115,9 +115,7 @@ void App::initialize()
     cTopology::Node *node = topo->getNode(myAddress);
 
     if (netmanager->checkDisconnectedNode(myAddress)) {
-        //KABOOM
         // disconnects channels
-
         for (int j = 0; j < node->getNumOutLinks(); j++) {
 //            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
             cGate *gate = node->getLinkOut(j)->getLocalGate();
@@ -150,7 +148,8 @@ void App::initialize()
     if (numberOfVehicles > 0) {
         for (int i = 0; i < numberOfVehicles; i++) {
             Vehicle *v;
-            if (myAddress == netmanager->getHospitalAddress()) {
+            if (netmanager->checkHospitalNode(myAddress)) {
+
                 v = new Vehicle(1, ambulanceSpeed, 1);
 
 //                v->setSpecialVehicle(1);  //ambulanza
@@ -170,12 +169,19 @@ void App::initialize()
             tcoord->registerVehicle(v, myAddress);
         }
 
-        if (ev.isGUI())
-            getParentModule()->getDisplayString().setTagArg("i", 1, "green");
+		if (netmanager->checkHospitalNode(myAddress))
+			if (ev.isGUI())
+				getParentModule()->getDisplayString().setTagArg("i", 3,	"white");
+
+			else
+				if (ev.isGUI())
+				getParentModule()->getDisplayString().setTagArg("i", 1,	"green");
 
         //When the coordinator assign a new request to a vehicle, local node will be notified
         simulation.getSystemModule()->subscribe("newTripAssigned", this);
     }
+
+
 
 
     // Sono un nodo in red zone?
@@ -263,8 +269,8 @@ void App::handleMessage(cMessage *msg)
         EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
         tcoord->registerVehicle(vehicle, myAddress);
 
-        if (ev.isGUI())
-            getParentModule()->getDisplayString().setTagArg("i",1,"green");
+//        if (ev.isGUI())
+//            getParentModule()->getDisplayString().setTagArg("i",1,"green");
 
         if (!simulation.getSystemModule()->isSubscribed("newTripAssigned",this))
             simulation.getSystemModule()->subscribe("newTripAssigned",this);
