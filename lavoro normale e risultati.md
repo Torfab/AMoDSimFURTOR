@@ -10,8 +10,12 @@
 
 # TODONEXTTIME:
 
-9. le emergenze dovrebbero essere nella zona rossa
 10. autobus: punti di raccolta taxi ride sharing
+	gli autobus girano per tutti i nodi della redzone
+	i nodi hanno un certo numero di persone raccolte da salvare
+	gli autobus raccolgono le persone e le scaricano al punto di raccolta
+	riprendono il circuito e si fermano quando non trovano più nessuno
+	
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
 12. ambulanza più posti
@@ -51,9 +55,10 @@ risultati
 	* Differenza tempo minimo di esecuzione (in assenza di traffico) con tempo reale di esecuzione
 	 
 algoritmi
+	* Custom nostro: manhattan + circumnaviga
 	* ACO (network manager)
 	* AAA (network manager)
-	* Custom nostro
+	
 
 scenari
 	* emergenziali non ospedalieri
@@ -141,6 +146,7 @@ parametrizzare raggio di esplosione e rendere possibile la non esplosione
 3. Delay di canale nel nodo ricevitore
 	~ L'idea è mettere tempo di canale = 0 e trasferire la logica temporale nel concetto del selfmessage nel routing.
 
+9. le emergenze dovrebbero essere nella zona rossa
 
 
 
