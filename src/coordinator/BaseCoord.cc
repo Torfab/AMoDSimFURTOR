@@ -187,16 +187,6 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 			}
 		}
 
-
-
-    	/*
-        double curAdditionalCost =vehicleProposal.begin()->second->getAdditionalCost();
-        vehicleID = vehicleProposal.begin()->first;
-        additionalCost = curAdditionalCost;
-        /// min hop cost
-        */
-
-
     }
     if (vehicleID != -1) {
         EV << "Accepted request of emergency vehicle " << vehicleID << " for request: "
