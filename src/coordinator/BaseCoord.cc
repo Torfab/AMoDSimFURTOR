@@ -193,6 +193,9 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
                   << tr->getID() << " .The time cost is: " << additionalCost << endl;
 
         updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
+        EV << "stop points updated! " << endl;
+        for (auto elem : vehicleProposal[vehicleID]->getSpList())
+        	EV << elem->getLocation() << endl;
     } else {
         EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
         uRequests[tr->getID()] = new TripRequest(*tr);
