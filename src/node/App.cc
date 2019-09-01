@@ -46,6 +46,7 @@ class App : public cSimpleModule,cListener
     int CivilDestinations;
     int numberOfTrucks;
     int CivilTrafficN;
+    bool enableCivilTraffic;
 
 
     BaseCoord *tcoord;
@@ -185,12 +186,12 @@ void App::initialize()
     }
 
 
-
+    enableCivilTraffic = par("enableCivilTraffic");
 
     // Sono un nodo in red zone?
     // si -> genero traffico
     // no -> nice
-    if (netmanager->checkRedZoneNode(myAddress))
+    if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic)
         generateCivilTraffic();// panico
 }
 
@@ -209,7 +210,7 @@ void App::handleMessage(cMessage *msg)
     }
 
     EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
-    vehicle->setBusyState(false);
+//    vehicle->setBusyState(false);
 
 
     // Civil vehicle

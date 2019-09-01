@@ -29,6 +29,7 @@ protected:
     void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) override;
     void handleTripRequest(TripRequest *tr) override;
     StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) override;
+    StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) override;
 };
 
 #endif /* HEURISTICCOORD_H_ */

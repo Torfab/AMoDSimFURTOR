@@ -21,7 +21,7 @@
 12. ambulanza più posti
 
 
-Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121)
+Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121 )
 
 #scoprirecomefareivettori.help.andrea
 4. più esplosioni  soluzione:vettore

@@ -93,9 +93,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 	int trafficWeight = pk->getTrafficWeight();
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
-		EV << "Vehicle arrived in the stop point " << myAddress
-					<< ". Traveled distance: " << pk->getTraveledDistance()
-					<< endl;
+		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
 		send(pk, "localOut");
 		return;
 	}

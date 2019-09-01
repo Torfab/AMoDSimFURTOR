@@ -104,7 +104,7 @@ void TripRequestSubmitter::initialize()
 		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
 			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
 				//richiesta normale
-				scheduleAt(sendIATime->doubleValue(), generatePacket);
+//				scheduleAt(sendIATime->doubleValue(), generatePacket);
 
 			} else {
 				//richiesta emergenza
