@@ -21,6 +21,8 @@
 12. ambulanza più posti
 
 
+Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121)
+
 #scoprirecomefareivettori.help.andrea
 4. più esplosioni  soluzione:vettore
 5. punti di ammassamento in ingresso e uscita ai bordi della mesh   soluzione:vettore
@@ -134,6 +136,14 @@ parametrizzare raggio di esplosione e rendere possibile la non esplosione
 
 6. mezzo pesante circuito in zone di ammassamento = implementare una truck request
 7. traffico (civile) che scappa
+9. le emergenze dovrebbero essere nella zona rossa
+
+epicentri multipli random
+numero di ospedali dinamico
+--il primo ospedale è sicuramente buono
+--gli altri ospedali potrebbero essere distrutti
+
+emergency request valuta l'ospedale più vicino per partire
 
 # Limiti del simulatore:
 
@@ -146,7 +156,6 @@ parametrizzare raggio di esplosione e rendere possibile la non esplosione
 3. Delay di canale nel nodo ricevitore
 	~ L'idea è mettere tempo di canale = 0 e trasferire la logica temporale nel concetto del selfmessage nel routing.
 
-9. le emergenze dovrebbero essere nella zona rossa
 
 
 

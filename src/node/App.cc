@@ -145,24 +145,27 @@ void App::initialize()
     EV << "I am node " << myAddress << endl;
 
     //If the vehicle is in this node (at startup) subscribe it to "tripRequestSignal"
+
+    bool hospital = netmanager->checkHospitalNode(myAddress);
+
     if (numberOfVehicles > 0) {
         for (int i = 0; i < numberOfVehicles; i++) {
             Vehicle *v;
-            if (netmanager->checkHospitalNode(myAddress)) {
 
+            if (hospital) {
                 v = new Vehicle(1, ambulanceSpeed, 1);
-
-//                v->setSpecialVehicle(1);  //ambulanza
                 v->setSeats(1);
-            } else if (myAddress == netmanager->getTruckStartNode() && numberOfTrucks >0) {
-
+            }
+            else if (myAddress == netmanager->getTruckStartNode() && numberOfTrucks >0) {
                 v = new Vehicle(2, truckSpeed, 20);
                 v->setSeats(0);
                 numberOfTrucks--;
-            } else {
+            }
+            else {
                 Vehicle *v = new Vehicle();
                 v->setSeats(seatsPerVehicle);
             }
+
             EV << "I am node " << myAddress << ". I HAVE THE VEHICLE "
                       << v->getID() << "of type " << v->getSpecialVehicle()
                       << ". It has " << v->getSeats() << " seats." << endl;

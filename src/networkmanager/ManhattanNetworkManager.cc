@@ -119,8 +119,7 @@ void ManhattanNetworkManager::initialize()
 
     buildHospitalNodes();
 
-    // Ambulances creation
-
+    // Vehicles creation
     for (int i = 0; i < numberOfVehicles; i++)
                 {
                 int rand = intuniform(0, numberOfNodes - 1, 4);
@@ -128,6 +127,7 @@ void ManhattanNetworkManager::initialize()
                 vehiclesPerNode[rand] += 1;
                 }
 
+    // Ambulances creation
 	for (int i = 0; i < numberOfHospitals; i++)
 		vehiclesPerNode[hospitalAddresses[i]] = numberOfEmergencyVehicles;
 
@@ -330,8 +330,9 @@ void ManhattanNetworkManager::buildHospitalNodes() {
 
 	do{ safeHospital = intuniform(0, numberOfNodes-1);	}
 	while (setOfDestroyedNodes.find(safeHospital) != setOfDestroyedNodes.end());
+	hospitalAddresses[0] = safeHospital;
 
-	EV << "HOSPITAL" << safeHospital << endl;
+	EV << "HOSPITAL Safe: " << hospitalAddresses[0] << endl;
 
 	for (int i = 1; i<numberOfHospitals;i++){
 	hospitalAddresses[i] = intuniform(0, numberOfNodes-1);
