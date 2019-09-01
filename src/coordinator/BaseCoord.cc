@@ -169,7 +169,7 @@ int BaseCoord::truckAssignment(std::map<int, StopPointOrderingProposal*> vehicle
  * @return The ID of the vehicle which will serve the request or -1 otherwise.
  */
 int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr) {
-//    double pickupDeadline = tr->getPickupSP()->getTime()+ tr->getPickupSP()->getMaxDelay()*100; //
+
     double additionalCost = -1.0;
     int vehicleID = -1;
 
@@ -178,12 +178,27 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
     pendingRequests.erase(tr->getID());
     delete preq;
     if (!vehicleProposal.empty()) {
+		int min = netmanager->getNumberOfNodes();
+		for (auto const &x : vehicleProposal) { /// Ricerca del minimo numero di hop
+			// hospital closest to last vehicle location
+			if (netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) < min) {
+				vehicleID = x.first;
+				min = netmanager->getHopDistance(getLastVehicleLocation(x.first),tr->getPickupSP()->getLocation());
+			}
+		}
+
+
+
+    	/*
         double curAdditionalCost =vehicleProposal.begin()->second->getAdditionalCost();
         vehicleID = vehicleProposal.begin()->first;
         additionalCost = curAdditionalCost;
+        /// min hop cost
+        */
+
 
     }
-    if (additionalCost > -1) {
+    if (vehicleID != -1) {
         EV << "Accepted request of emergency vehicle " << vehicleID << " for request: "
                   << tr->getID() << " .The time cost is: " << additionalCost << endl;
 
