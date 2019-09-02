@@ -175,7 +175,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 	        	additionalCost = 0;
 	        	StopPoint *last = new StopPoint(*old.back());
 
-				for(auto elem : old)
+				for(auto const elem : old)
 				{
 				  // tratta  presa -- ospedale
 					additionalCost += netmanager->getHopDistance(elem->getLocation() ,netmanager->pickClosestHospitalFromNode(elem-> getLocation()));
@@ -186,7 +186,6 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 							 EV << "+COST H->R :" << additionalCost <<" FROM " << netmanager->pickClosestHospitalFromNode(elem-> getLocation()) <<" to " << getVehicleByID(vehicleID)->getDestAddr()  << endl;
 							additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(elem->getLocation()), getVehicleByID(vehicleID)->getDestAddr() );
 						}
-							newList.push_back(elem);
 
 
 				}
@@ -200,21 +199,14 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 				newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
 				newTRdropoff->setActualNumberOfPassengers(0);
 
-				StopPoint* newSPcopy = new StopPoint(*tr->getPickupSP());
-	            newList.push_back(newSPcopy);
-	            newList.push_back(newTRdropoff);
+		for (auto const &x : old)
+			newList.push_back(new StopPoint(*x));
 
+		newList.push_back(newTRpickup);
+		newList.push_back(newTRdropoff);
 
-//	            for (auto elem : newList)
-//	            	EV << elem->getLocation() << endl;
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID,additionalCost, simTime().dbl(), newList);
 
-	            //Andrebbero uncommentati in teoria
-//	            delete newTRpickup;
-//	            delete newTRdropoff;
-//	            delete last;
-
-	            // TODO: decommentare questo e simulare senza crash è l'obiettivo
-//	            toReturn = new StopPointOrderingProposal(vehicleID, vehicleID,	additionalCost, simTime().dbl(), newList);
 
 	        }
 
