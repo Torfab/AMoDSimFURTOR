@@ -109,6 +109,8 @@ void App::initialize()
 
     CivilTrafficN = par("CivilTrafficN");
 
+
+    // Destroying nodes part
     cTopology* topo = new cTopology("topo");
     std::vector<std::string> nedTypes;
     nedTypes.push_back("src.node.Node");
@@ -145,33 +147,31 @@ void App::initialize()
 
     EV << "I am node " << myAddress << endl;
 
-    //If the vehicle is in this node (at startup) subscribe it to "tripRequestSignal"
 
     bool hospital = netmanager->checkHospitalNode(myAddress);
+    int truckStart = netmanager->getTruckStartNode();
 
-    if (numberOfVehicles > 0) {
-        for (int i = 0; i < numberOfVehicles; i++) {
-            Vehicle *v;
+	if (numberOfVehicles > 0) {
+		for (int i = 0; i < numberOfVehicles; i++) {
+			Vehicle *v;
 
-            if (hospital) {
-                v = new Vehicle(1, ambulanceSpeed, 1);
-                v->setSeats(1);
-            }
-            else if (myAddress == netmanager->getTruckStartNode() && numberOfTrucks >0) {
-                v = new Vehicle(2, truckSpeed, 20);
-                v->setSeats(0);
-                numberOfTrucks--;
-            }
-            else {
-                Vehicle *v = new Vehicle();
-                v->setSeats(seatsPerVehicle);
-            }
+			if (hospital) {
+				v = new Vehicle(1, ambulanceSpeed, 1);
+				v->setSeats(1);
+			} else if (truckStart == myAddress && numberOfTrucks > 0) {
+				v = new Vehicle(2, truckSpeed, 20);
+				v->setSeats(0);
+				numberOfTrucks--;
+			}
 
-            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE "
-                      << v->getID() << "of type " << v->getSpecialVehicle()
-                      << ". It has " << v->getSeats() << " seats." << endl;
-            tcoord->registerVehicle(v, myAddress);
-        }
+			else {
+				v = new Vehicle(-1, 9.7, 1);
+				v->setSeats(seatsPerVehicle);
+			}
+
+			EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << " of type " << v->getSpecialVehicle() << ". It has " << v->getSeats() << " seats." << endl;
+			tcoord->registerVehicle(v, myAddress);
+		}
 
 		if (netmanager->checkHospitalNode(myAddress))
 			if (ev.isGUI())

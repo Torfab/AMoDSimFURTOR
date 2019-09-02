@@ -66,7 +66,8 @@ int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s){
 
 
 ManhattanNetworkManager::~ManhattanNetworkManager() {
-	delete  hospitalAddresses;
+	delete hospitalAddresses;
+	delete collectionPointsAddresses;
 }
 
 void ManhattanNetworkManager::initialize()
@@ -74,12 +75,14 @@ void ManhattanNetworkManager::initialize()
     cModule* parentModule = getParentModule();
     rows = parentModule->par("width");
     columns = parentModule->par("height");
-    numberOfHospitals=par("numberOfHospitals");
 
+    numberOfHospitals=par("numberOfHospitals");
     hospitalAddresses = new int[numberOfHospitals];
 
 
-    collectionPointAddress=par("collectionPointAddress");
+    numberOfCollectionPoints=par("numberOfCollectionPoints");
+    collectionPointsAddresses = new int[numberOfCollectionPoints];
+
 
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
@@ -108,22 +111,14 @@ void ManhattanNetworkManager::initialize()
 	// Creation of border zones nodes set
 	buildSetOfBorderNodes();
 
-
-	// initialize truck start node
-	truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
-
-
-    EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
-
-    vehiclesPerNode[truckStartNode]=numberOfTrucks;
-
     buildHospitalNodes();
+    buildCollectionPointNodes();
 
     // Vehicles creation
     for (int i = 0; i < numberOfVehicles; i++)
                 {
                 int rand = intuniform(0, numberOfNodes - 1, 4);
-                if (checkHospitalNode(rand)) //Nessun veicolo civile puo' partire dall'ospedale
+                if (!checkHospitalNode(rand)) //Nessun veicolo civile puo' partire dall'ospedale
                 vehiclesPerNode[rand] += 1;
                 }
 
@@ -132,7 +127,11 @@ void ManhattanNetworkManager::initialize()
 		vehiclesPerNode[hospitalAddresses[i]] = numberOfEmergencyVehicles;
 
 
-
+	// initialize truck start node
+	truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
+    EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
+    // initialize trucks in start node
+    vehiclesPerNode[truckStartNode]=numberOfTrucks; //TODO verificare +=
 }
 
 /**
@@ -354,6 +353,23 @@ bool ManhattanNetworkManager::checkHospitalNode(int addr) {
 
 }
 
+/*
+ * Assign random nodes from border to the collection points.
+ * These nodes aren't destroyed.
+ */
+void ManhattanNetworkManager::buildCollectionPointNodes() {
+
+	for (int i = 0; i < numberOfCollectionPoints; i++) {
+		do {
+			collectionPointsAddresses[i] = pickRandomElemFromSet(setOfBorderNodes);
+		} while ( setOfDestroyedNodes.find(collectionPointsAddresses[i] ) != setOfDestroyedNodes.end());
+
+		EV << "CollectionPoint: " << collectionPointsAddresses[i] << endl;
+	}
+
+
+
+}
 
 int ManhattanNetworkManager::pickClosestHospitalFromNode(int addr) {
 	int destAddress = hospitalAddresses[0];
@@ -372,4 +388,27 @@ int ManhattanNetworkManager::pickClosestHospitalFromNode(int addr) {
 
 int ManhattanNetworkManager::pickRandomNodeInRedZone() {
 	return pickRandomElemFromSet(setOfNodesInRedZone);
+}
+
+bool ManhattanNetworkManager::checkCollectionPointNode(int addr) {
+	for (int i = 0; i < numberOfCollectionPoints; i++) {
+		if (collectionPointsAddresses[i] == addr)
+			return true;
+	}
+	return false;
+
+}
+
+int ManhattanNetworkManager::pickClosestCollectionPointFromNode(int addr) {
+	int destAddress = collectionPointsAddresses[0];
+	int min = numberOfNodes;
+	for (int i = 0; i < numberOfCollectionPoints; i++) {
+		if (getHopDistance(addr, collectionPointsAddresses[i]) < min) {
+			destAddress = collectionPointsAddresses[i];
+			min = getHopDistance(addr, collectionPointsAddresses[i]);
+		}
+	}
+
+	return destAddress;
+
 }

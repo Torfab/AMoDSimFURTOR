@@ -6,9 +6,11 @@ simple ManhattanNetworkManager like INetworkManager
     parameters:
         int numberOfVehicles = default(1);
         int numberOfNodes;      
-        int numberOfHospitals; 
+
         int numberOfEpicenters = default(0); 
-        int collectionPointAddress;
+        
+        int numberOfCollectionPoints;
+        int numberOfHospitals; 
         
         int numberOfEmergencyVehicles = default(0);
         int numberOfTrucks = default(0);

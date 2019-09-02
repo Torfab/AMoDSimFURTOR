@@ -21,6 +21,10 @@
 12. ambulanza più posti
 
 
+la truck request valuta il collectionpointAddress più vicino per partire - questa cosa va sistemata e testata
+
+creazione dei veicoli in app. Ci sono e stanno fermi?
+
 Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121 )
 
 #scoprirecomefareivettori.help.andrea

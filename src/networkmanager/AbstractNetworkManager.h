@@ -28,12 +28,13 @@ protected:
     double ambulanceSpeed;				// Ambulance Speed
     double truckSpeed;					// Truck Speed
     int numberOfHospitals;
-    int collectionPointAddress;
+    int numberOfCollectionPoints;
     int numberOfEpicenters;
     int disasterRadius;
     int truckStartNode;
 
     int * hospitalAddresses;
+    int * collectionPointsAddresses;
 
     std::set<int> setOfBorderNodes;             //nodes in the border of the grid
 
@@ -64,6 +65,9 @@ protected:
     virtual int pickRandomNodeInRedZone()=0;
     virtual int pickClosestHospitalFromNode(int addr) = 0;
 
+    virtual bool checkCollectionPointNode(int addr) = 0;
+    virtual int pickClosestCollectionPointFromNode(int addr) = 0;
+
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
         if(acceleration<=0) {additionalTravelTime=0; return 0;}
@@ -82,10 +86,6 @@ protected:
 		return disasterRadius;
 	}
 
-	inline virtual int getCollectionPointAddress() const {
-		return collectionPointAddress;
-	}
-
 	inline virtual const std::set<int>& getSetOfBorderNodes() const {
 		return setOfBorderNodes;
 	}
@@ -96,6 +96,14 @@ protected:
 
 	int getNumberOfHospitals() const {
 		return numberOfHospitals;
+	}
+
+	int* getCollectionPointsAddresses() const {
+		return collectionPointsAddresses;
+	}
+
+	int getNumberOfcollectionPoints() const {
+		return numberOfCollectionPoints;
 	}
 };
 

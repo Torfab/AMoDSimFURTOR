@@ -54,6 +54,10 @@ protected:
 	void buildTruckStartNode();
 	int pickRandomElemFromSet(std::set<int> s);
 	void buildHospitalNodes();
+	void buildCollectionPointNodes();
+
+
+
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
@@ -69,6 +73,8 @@ protected:
     virtual bool checkHospitalNode(int addr) override;
     virtual int pickRandomNodeInRedZone()override;
     virtual int pickClosestHospitalFromNode(int addr) override;
+    virtual bool checkCollectionPointNode(int addr) override;
+    virtual int pickClosestCollectionPointFromNode(int addr) override;
 };
 
 #endif

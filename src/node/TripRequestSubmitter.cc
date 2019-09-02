@@ -95,7 +95,7 @@ void TripRequestSubmitter::initialize()
     	return;
 
     // Check if the node is a coordination point
-    if (myAddress == netmanager->getCollectionPointAddress()){
+    if (netmanager->checkCollectionPointNode(myAddress)){
     	scheduleAt(sendIATime->doubleValue(), truckPacket);
     }
 
@@ -218,6 +218,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 
 /**
  * Build a new Truck Request
+ * From truck start node to a collection point
  */
 TripRequest* TripRequestSubmitter::buildTruckRequest()
 {
@@ -225,8 +226,8 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
     double simtime = simTime().dbl();
 
     // Get truck address for the request
-    int destAddress = netmanager->getTruckStartNode();
-
+//    int destAddress = netmanager->getTruckStartNode();
+    int destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress);
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
