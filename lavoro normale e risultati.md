@@ -17,12 +17,16 @@
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
-12. meta di chi scappa invece di andare a bordo va all ammassamento piu vicino (facciamo 50% con rand
-
-12. ambulanza più posti
 
 
-la truck request valuta il collectionpointAddress più vicino per partire - questa cosa va sistemata e testata
+
+routing semplice con circumnavigazione
+
+altro routing
+	-coordinatore sceglie e determina lista
+	-veicolo legge lista di indicazioni
+
+
 
 creazione dei veicoli in app. Ci sono e stanno fermi?
 
@@ -149,6 +153,9 @@ numero di ospedali dinamico
 --gli altri ospedali potrebbero essere distrutti
 
 emergency request valuta l'ospedale più vicino per partire
+12. meta di chi scappa invece di andare a bordo va all ammassamento piu vicino (facciamo 50% con rand
+
+la truck request è diretta verso un collectionpointAddress random
 
 # Limiti del simulatore:
 

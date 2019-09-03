@@ -75,6 +75,7 @@ protected:
     virtual int pickClosestHospitalFromNode(int addr) override;
     virtual bool checkCollectionPointNode(int addr) override;
     virtual int pickClosestCollectionPointFromNode(int addr) override;
+    virtual int pickRandomCollectionPointNode() override;
 };
 
 #endif

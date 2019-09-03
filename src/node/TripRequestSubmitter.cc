@@ -185,28 +185,27 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 //                  }
            }
        }
-       //EMIT an Truck REQUEST
-            if (msg == truckPacket)
-            {
-                TripRequest *tr = nullptr;
+	//EMIT an Truck REQUEST
+	if (msg == truckPacket) {
+		TripRequest *tr = nullptr;
 
-                if (ev.isGUI()) getParentModule()->bubble("TRUCK REQUEST");
-                tr = buildTruckRequest();
+		if (ev.isGUI())
+			getParentModule()->bubble("TRUCK REQUEST");
+		tr = buildTruckRequest();
 
-                EV << "Requiring a TRUCK REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
-                EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
+		EV << "Requiring a TRUCK REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+		EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
-                emit(tripRequest, tr);
+		emit(tripRequest, tr);
 
 		//Schedule the next request
 		simtime_t nextTime = simTime() + sendIATime->doubleValue(); //slow request
 		if (maxSubmissionTime < 0 || nextTime.dbl() < maxSubmissionTime) {
-			EV << "Next truck request from node " << myAddress
-						<< "scheduled at: " << nextTime.dbl() << endl;
+			EV << "Next truck request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
 
 			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
 				////truck request
-				scheduleAt(simTime() + sendIATime->doubleValue()*5, truckPacket);
+				scheduleAt(simTime() + sendIATime->doubleValue() * 5, truckPacket);
 			} else {
 				//richiesta emergenza
 				scheduleAt(nextTime, emergencyPacket);
@@ -227,7 +226,7 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
 
     // Get truck address for the request
 //    int destAddress = netmanager->getTruckStartNode();
-    int destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress);
+    int destAddress = netmanager->pickRandomCollectionPointNode(); //pickClosestCollectionPointFromNode(myAddress);
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);

@@ -128,7 +128,13 @@ void ManhattanNetworkManager::initialize()
 
 
 	// initialize truck start node
-	truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
+
+	do {
+		truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
+	} while (setOfDestroyedNodes.find(truckStartNode) != setOfDestroyedNodes.end());
+
+
+
     EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
     // initialize trucks in start node
     vehiclesPerNode[truckStartNode]=numberOfTrucks; //TODO verificare +=
@@ -411,4 +417,8 @@ int ManhattanNetworkManager::pickClosestCollectionPointFromNode(int addr) {
 
 	return destAddress;
 
+}
+
+int ManhattanNetworkManager::pickRandomCollectionPointNode() {
+		return collectionPointsAddresses[intuniform(0,numberOfCollectionPoints-1)];
 }

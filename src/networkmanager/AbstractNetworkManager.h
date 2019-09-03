@@ -67,6 +67,7 @@ protected:
 
     virtual bool checkCollectionPointNode(int addr) = 0;
     virtual int pickClosestCollectionPointFromNode(int addr) = 0;
+    virtual int pickRandomCollectionPointNode()=0;
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
