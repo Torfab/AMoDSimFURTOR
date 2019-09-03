@@ -202,14 +202,8 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 		simtime_t nextTime = simTime() + sendIATime->doubleValue(); //slow request
 		if (maxSubmissionTime < 0 || nextTime.dbl() < maxSubmissionTime) {
 			EV << "Next truck request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
-
-			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-				////truck request
-				scheduleAt(simTime() + sendIATime->doubleValue() * 5, truckPacket);
-			} else {
-				//richiesta emergenza
-				scheduleAt(nextTime, emergencyPacket);
-			}
+			////truck request
+			scheduleAt(simTime() + sendIATime->doubleValue(), truckPacket);
 
 		}
 	}
