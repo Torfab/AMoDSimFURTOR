@@ -1,17 +1,17 @@
 /*
-########################################################
-##           __  __       _____   _____ _             ##
-##     /\   |  \/  |     |  __ \ / ____(_)            ##
-##    /  \  | \  / | ___ | |  | | (___  _ _ __ ___    ##
-##   / /\ \ | |\/| |/ _ \| |  | |\___ \| | '_ ` _ \   ##
-##  / ____ \| |  | | (_) | |__| |____) | | | | | | |  ##
-## /_/    \_\_|  |_|\___/|_____/|_____/|_|_| |_| |_|  ##
-##                                                    ##
-## Author:                                            ##
-##    Andrea Di Maria                                 ##
-##    <andrea.dimaria90@gmail.com>                    ##
-########################################################
-*/
+ ########################################################
+ ##           __  __       _____   _____ _             ##
+ ##     /\   |  \/  |     |  __ \ / ____(_)            ##
+ ##    /  \  | \  / | ___ | |  | | (___  _ _ __ ___    ##
+ ##   / /\ \ | |\/| |/ _ \| |  | |\___ \| | '_ ` _ \   ##
+ ##  / ____ \| |  | | (_) | |__| |____) | | | | | | |  ##
+ ## /_/    \_\_|  |_|\___/|_____/|_____/|_|_| |_| |_|  ##
+ ##                                                    ##
+ ## Author:                                            ##
+ ##    Andrea Di Maria                                 ##
+ ##    <andrea.dimaria90@gmail.com>                    ##
+ ########################################################
+ */
 
 #ifdef _MSC_VER
 #pragma warning(disable:4786)
@@ -27,75 +27,68 @@
 #include "AbstractNetworkManager.h"
 #include <sstream>
 
-
 /**
  * Node's Application level.
  */
-class App : public cSimpleModule,cListener
-{
-  private:
-    // configuration
-    int myAddress;
-    int numberOfVehicles;
-    int seatsPerVehicle;
-    int boardingTime;
-    int alightingTime;
-    double additionalTravelTime;
-    double ambulanceSpeed;
-    double truckSpeed;
-    int CivilDestinations;
-    int numberOfTrucks;
-    int CivilTrafficN;
-    bool enableCivilTraffic;
+class App: public cSimpleModule, cListener {
+private:
+	// configuration
+	int myAddress;
+	int numberOfVehicles;
+	int seatsPerVehicle;
+	int boardingTime;
+	int alightingTime;
+	double additionalTravelTime;
+	double ambulanceSpeed;
+	double truckSpeed;
+	int CivilDestinations;
+	int numberOfTrucks;
+	int CivilTrafficN;
+	bool enableCivilTraffic;
 
+	BaseCoord *tcoord;
+	AbstractNetworkManager *netmanager;
 
-    BaseCoord *tcoord;
-    AbstractNetworkManager *netmanager;
+	// signals
+	simsignal_t newTripAssigned;
+	// Travel time related signals
+	simsignal_t signal_ambulanceDelayTravelTime;
+	simsignal_t signal_truckDelayTravelTime;
+	simsignal_t signal_civilDelayTravelTime;
 
-    // signals
-    simsignal_t newTripAssigned;
-    // Travel time related signals
-    simsignal_t signal_ambulanceDelayTravelTime;
-    simsignal_t signal_truckDelayTravelTime;
-    simsignal_t signal_civilDelayTravelTime;
+public:
+	App();
+	virtual ~App();
 
-  public:
-    App();
-    virtual ~App();
-
-
-  protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-    virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
+protected:
+	virtual void initialize();
+	virtual void handleMessage(cMessage *msg);
+	virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
 	void generateCivilTraffic();
 };
 
 Define_Module(App);
 
-
-App::App()
-{
-    tcoord = NULL;
+App::App() {
+	tcoord = NULL;
 }
 
-App::~App()
-{
+App::~App() {
 }
 
 void App::generateCivilTraffic() {
 
-	Vehicle* civile = new Vehicle(-1,9.7, 1);
+	Vehicle* civile = new Vehicle(-1, 9.7, 1);
 	int destAddress;
 	bool cp;
 
 	civile->setSrcAddr(myAddress);
 
-	if (netmanager->checkBorderNode(myAddress)){
+	if (netmanager->checkBorderNode(myAddress)) {
 		civile->setDestAddr(myAddress);
-		 send(civile, "out");
-		 EV << "Vehicle already on border, running away" << endl;
-		 return;
+		send(civile, "out");
+		EV << "Vehicle already on border, running away" << endl;
+		return;
 	}
 
 	if (intuniform(0, 1) == 0) {  // 50% chances: border node - collection point
@@ -109,25 +102,24 @@ void App::generateCivilTraffic() {
 	civile->setDestAddr(destAddress);
 
 	if (cp)
-	 EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << endl;
+		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << endl;
 	else
 		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr() << endl;
 
 //	 double delay=uniform(0,3); //Send delayed
-	 send(civile, "out");
+	send(civile, "out");
 }
 
-void App::initialize()
-{
-    myAddress = par("address");
-    seatsPerVehicle = par("seatsPerVehicle");
-    alightingTime = getParentModule()->getParentModule()->par("alightingTime");
-    boardingTime = getParentModule()->getParentModule()->par("boardingTime");
-    tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
-    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
-    numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
-    additionalTravelTime = netmanager->getAdditionalTravelTime();
-    numberOfTrucks=netmanager->getNumberOfTrucks();
+void App::initialize() {
+	myAddress = par("address");
+	seatsPerVehicle = par("seatsPerVehicle");
+	alightingTime = getParentModule()->getParentModule()->par("alightingTime");
+	boardingTime = getParentModule()->getParentModule()->par("boardingTime");
+	tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
+	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+	numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
+	additionalTravelTime = netmanager->getAdditionalTravelTime();
+	numberOfTrucks = netmanager->getNumberOfTrucks();
 	ambulanceSpeed = netmanager->getAmbulanceSpeed();
 	truckSpeed = netmanager->getTruckSpeed();
 
@@ -136,47 +128,45 @@ void App::initialize()
 
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
 
+	// Destroying nodes part
+	cTopology* topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
+	cTopology::Node *node = topo->getNode(myAddress);
 
-    // Destroying nodes part
-    cTopology* topo = new cTopology("topo");
-    std::vector<std::string> nedTypes;
-    nedTypes.push_back("src.node.Node");
-    topo->extractByNedTypeName(nedTypes);
-    cTopology::Node *node = topo->getNode(myAddress);
-
-    if (netmanager->checkDisconnectedNode(myAddress)) {
-        // disconnects channels
-        for (int j = 0; j < node->getNumOutLinks(); j++) {
+	if (netmanager->checkDisconnectedNode(myAddress)) {
+		// disconnects channels
+		for (int j = 0; j < node->getNumOutLinks(); j++) {
 //            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-            cGate *gate = node->getLinkOut(j)->getLocalGate();
-            gate->disconnect();
+			cGate *gate = node->getLinkOut(j)->getLocalGate();
+			gate->disconnect();
 
-        }
-        return;
-    } else {
-        for (int j = 0; j < node->getNumOutLinks(); j++) {
-            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+		}
+		return;
+	} else {
+		for (int j = 0; j < node->getNumOutLinks(); j++) {
+			cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
 
-            if (netmanager->checkDisconnectedNode(neighbour->getModule()->getIndex())){
-                cGate *gate = node->getLinkOut(j)->getLocalGate();
-                gate->disconnect();
-            }
-        }
+			if (netmanager->checkDisconnectedNode(neighbour->getModule()->getIndex())) {
+				cGate *gate = node->getLinkOut(j)->getLocalGate();
+				gate->disconnect();
+			}
+		}
 
-    }
+	}
 
-    delete topo;
-    newTripAssigned = registerSignal("newTripAssigned");
+	delete topo;
+	newTripAssigned = registerSignal("newTripAssigned");
 
-    CivilDestinations = netmanager->getNumberOfNodes();
-    // Subscription to civil traffic
-    simulation.getSystemModule()->subscribe("newCivilVehicle", this);
+	CivilDestinations = netmanager->getNumberOfNodes();
+	// Subscription to civil traffic
+	simulation.getSystemModule()->subscribe("newCivilVehicle", this);
 
-    EV << "I am node " << myAddress << endl;
+	EV << "I am node " << myAddress << endl;
 
-
-    bool hospital = netmanager->checkHospitalNode(myAddress);
-    int truckStart = netmanager->getTruckStartNode();
+	bool hospital = netmanager->checkHospitalNode(myAddress);
+	int truckStart = netmanager->getTruckStartNode();
 
 	if (numberOfVehicles > 0) {
 		for (int i = 0; i < numberOfVehicles; i++) {
@@ -202,45 +192,41 @@ void App::initialize()
 
 		if (netmanager->checkHospitalNode(myAddress))
 			if (ev.isGUI())
-				getParentModule()->getDisplayString().setTagArg("i", 3,	"white");
+				getParentModule()->getDisplayString().setTagArg("i", 3, "white");
 
-			else
-				if (ev.isGUI())
-				getParentModule()->getDisplayString().setTagArg("i", 1,	"green");
+			else if (ev.isGUI())
+				getParentModule()->getDisplayString().setTagArg("i", 1, "green");
 
-        //When the coordinator assign a new request to a vehicle, local node will be notified
-        simulation.getSystemModule()->subscribe("newTripAssigned", this);
-    }
+		//When the coordinator assign a new request to a vehicle, local node will be notified
+		simulation.getSystemModule()->subscribe("newTripAssigned", this);
+	}
 
+	enableCivilTraffic = par("enableCivilTraffic");
 
-    enableCivilTraffic = par("enableCivilTraffic");
-
-    // Sono un nodo in red zone?
-    // si -> genero traffico
-    // no -> nice
-    if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic)
-        generateCivilTraffic();// panico
+	// Sono un nodo in red zone?
+	// si -> genero traffico
+	// no -> nice
+	if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic)
+		generateCivilTraffic();    // panico
 }
 
-void App::handleMessage(cMessage *msg)
-{
-    Vehicle *vehicle = NULL;
+void App::handleMessage(cMessage *msg) {
+	Vehicle *vehicle = NULL;
 
-    double sendDelayTime = additionalTravelTime;// * trafficFactor;
+	double sendDelayTime = additionalTravelTime;    // * trafficFactor;
 
-    try{
-        //A vehicle is here
-        vehicle = check_and_cast<Vehicle *>(msg);
-    }catch (cRuntimeError e) {
-        EV << "Can not handle received message! Ignoring..." << endl;
-        return ;
-    }
+	try {
+		//A vehicle is here
+		vehicle = check_and_cast<Vehicle *>(msg);
+	} catch (cRuntimeError e) {
+		EV << "Can not handle received message! Ignoring..." << endl;
+		return;
+	}
 
-    EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
+	EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " << vehicle->getSpecialVehicle() << endl;
 //    vehicle->setBusyState(false);
 
-
-    int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr());
+	int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr());
 
 	switch (vehicle->getSpecialVehicle()) {
 	case -1: //civil
@@ -250,14 +236,14 @@ void App::handleMessage(cMessage *msg)
 		return;
 
 	case 1:	//ambulance
-		if (netmanager->checkHospitalNode(myAddress)){
-		emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
-		EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+		if (netmanager->checkHospitalNode(myAddress)) {
+			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+			EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
 		}
 		break;
 	case 2:
 		emit(signal_truckDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
-		EV << "Truck Tempo reale: " << vehicle->getCurrentTraveledTime()  << " stimato: " <<  vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+		EV << "Truck Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
 		break;
 	default:
 		break;
@@ -291,66 +277,53 @@ void App::handleMessage(cMessage *msg)
 //			sendDelayed(vehicle, sendDelayTime + delays, "out");
 //		return;
 
+	StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
+	if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup()) {
+		//This is a PICK-UP stop-point
+		double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
+		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
 
-    StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
+	}
 
-    if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup())
-    {
-        //This is a PICK-UP stop-point
-        double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
-        EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
+	//Ask to coordinator for next stop point
+	StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
+	if (nextStopPoint != NULL) {
 
-    }
+		//There is another stop point for the vehicle!
+		EV << "The next stop point for the vehicle " << vehicle->getID() << " is: " << nextStopPoint->getLocation() << endl;
+		vehicle->setSrcAddr(myAddress);
+		vehicle->setDestAddr(nextStopPoint->getLocation());
 
+		// reset times
+		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+		vehicle->setCurrentTraveledTime(0);
+		vehicle->setHopCount(0);
 
-    //Ask to coordinator for next stop point
-    StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
-    if(nextStopPoint != NULL)
-    {
+		//Time for boarding or drop-off passengers
+		double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());
+		if (delays < 0)
+			delays = 0;
 
-        //There is another stop point for the vehicle!
-        EV << "The next stop point for the vehicle " << vehicle->getID() << " is: " << nextStopPoint->getLocation() << endl;
-        vehicle->setSrcAddr(myAddress);
-        vehicle->setDestAddr(nextStopPoint->getLocation());
+		if (nextStopPoint->getLocation() == myAddress)
+			sendDelayed(vehicle, delays, "out");
+		else
+			sendDelayed(vehicle, sendDelayTime + delays, "out");
+	}
 
-
-
-        // reset times
-        vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
-        vehicle->setCurrentTraveledTime(0);
-        vehicle->setHopCount(0);
-
-
-
-        //Time for boarding or drop-off passengers
-        double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());
-        if(delays <0)
-            delays=0;
-
-        if(nextStopPoint->getLocation() == myAddress)
-            sendDelayed(vehicle,delays,"out");
-        else
-            sendDelayed(vehicle,sendDelayTime+delays,"out");
-    }
-
-    //No other stop point for the vehicle. The vehicle stay here
-    else
-    {
-        EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
-        tcoord->registerVehicle(vehicle, myAddress);
-
+	//No other stop point for the vehicle. The vehicle stay here
+	else {
+		EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
+		tcoord->registerVehicle(vehicle, myAddress);
 
 //        if (ev.isGUI())
 //            getParentModule()->getDisplayString().setTagArg("i",1,"green");
 
-        if (!simulation.getSystemModule()->isSubscribed("newTripAssigned",this))
-            simulation.getSystemModule()->subscribe("newTripAssigned",this);
-    }
-
+		if (!simulation.getSystemModule()->isSubscribed("newTripAssigned", this))
+			simulation.getSystemModule()->subscribe("newTripAssigned", this);
+	}
 
 }
-
 
 /**
  * Handle an Omnet signal.
@@ -359,61 +332,53 @@ void App::handleMessage(cMessage *msg)
  * @param signalID
  * @param obj
  */
-void App::receiveSignal(cComponent *source, simsignal_t signalID,
-        double vehicleID) {
+void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID) {
 
-    /**
-     * The coordinator has accepted a trip proposal
-     */
-    if (signalID == newTripAssigned) {
-           if (tcoord->getLastVehicleLocation(vehicleID) == myAddress) {
-            //The vehicle that should serve the request is in this node
-            Vehicle *veic = tcoord->getVehicleByID(vehicleID);
+	/**
+	 * The coordinator has accepted a trip proposal
+	 */
+	if (signalID == newTripAssigned) {
+		if (tcoord->getLastVehicleLocation(vehicleID) == myAddress) {
+			//The vehicle that should serve the request is in this node
+			Vehicle *veic = tcoord->getVehicleByID(vehicleID);
 
+			if (veic != NULL) {
 
-            if (veic != NULL) {
+				veic->setBusyState(true);
 
-            	veic->setBusyState(true);
+				double sendDelayTime = additionalTravelTime;
 
-                double sendDelayTime = additionalTravelTime;
+				StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());
+				EV << "The proposal of vehicle: " << veic->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
+				veic->setSrcAddr(myAddress);
+				veic->setDestAddr(sp->getLocation());
 
-                StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());
-                EV << "The proposal of vehicle: " << veic->getID()
-                          << " has been accepted for requestID:  "
-                          << sp->getRequestID() << endl;
-                veic->setSrcAddr(myAddress);
-                veic->setDestAddr(sp->getLocation());
+				// reset times
+				veic->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / veic->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+				veic->setCurrentTraveledTime(0);
+				veic->setHopCount(0);
 
-                // reset times
-                veic->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / veic->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
-                veic->setCurrentTraveledTime(0);
-                veic->setHopCount(0);
+				//Time for boarding or dropoff
+				double delays = (sp->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, sp->getLocation());
+				if (delays < 0)
+					delays = 0;
 
-                //Time for boarding or dropoff
-                double delays = (sp->getActualTime() - simTime().dbl())
-                        - netmanager->getTimeDistance(myAddress,
-                                sp->getLocation());
-                if (delays < 0)
-                    delays = 0;
+				if (sp->getLocation() == myAddress)
+					sendDelayTime = delays;
+				else
+					sendDelayTime = sendDelayTime + delays;
 
-                if (sp->getLocation() == myAddress)
-                    sendDelayTime = delays;
-                else
-                    sendDelayTime = sendDelayTime + delays;
+				EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to " << veic->getDestAddr() << endl;
+				Enter_Method
+				("sendDelayed", veic, sendDelayTime, "out");
+				sendDelayed(veic, sendDelayTime, "out");
 
-                EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to "
-                          << veic->getDestAddr() << endl;
-                Enter_Method
-                ("sendDelayed", veic, sendDelayTime, "out");
-                sendDelayed(veic, sendDelayTime, "out");
-
-                if (ev.isGUI())
-                    getParentModule()->getDisplayString().setTagArg("i", 1,
-                            "gold");
-                //if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
-                //  simulation.getSystemModule()->unsubscribe("tripRequestCoord",this);
-            }
-        }
-    }
+				if (ev.isGUI())
+					getParentModule()->getDisplayString().setTagArg("i", 1, "gold");
+				//if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
+				//  simulation.getSystemModule()->unsubscribe("tripRequestCoord",this);
+			}
+		}
+	}
 
 }
