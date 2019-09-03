@@ -15,8 +15,14 @@ simple App like IApp
         
         
           // ------ SIGNALS -------- //
-        @signal[signalDelayTravelTime](type="double");       	//Traveled distance per vehicle
-        @statistic[signalDelayTravelTime](title="Delay between ideal time to serve a request and actual time to serve that request";source="signalDelayTravelTime";record=vector,stats;interpolation=none);
+        @signal[signal_ambulanceDelayTravelTime](type="double");       	
+        @statistic[signal_ambulanceDelayTravelTime](title="Ambulances Delay between ideal time to serve a request and actual time to serve that request";source="signal_ambulanceDelayTravelTime";record=vector,stats;interpolation=none);
+
+        @signal[signal_truckDelayTravelTime](type="double");       	
+        @statistic[signal_truckDelayTravelTime](title="Truck Delay between ideal time to serve a request and actual time to serve that request";source="signal_truckDelayTravelTime";record=vector,stats;interpolation=none);
+
+        @signal[signal_civilDelayTravelTime](type="double");       
+        @statistic[signal_civilDelayTravelTime](title="Civil Delay between ideal time to serve a request and actual time to serve that request";source="signal_civilDelayTravelTime";record=vector,stats;interpolation=none);
         
     gates:
         input in;

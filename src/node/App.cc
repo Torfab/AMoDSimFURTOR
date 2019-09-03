@@ -55,7 +55,9 @@ class App : public cSimpleModule,cListener
     // signals
     simsignal_t newTripAssigned;
     // Travel time related signals
-    simsignal_t signalDelayTravelTime;
+    simsignal_t signal_ambulanceDelayTravelTime;
+    simsignal_t signal_truckDelayTravelTime;
+    simsignal_t signal_civilDelayTravelTime;
 
   public:
     App();
@@ -126,10 +128,13 @@ void App::initialize()
     numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
     additionalTravelTime = netmanager->getAdditionalTravelTime();
     numberOfTrucks=netmanager->getNumberOfTrucks();
-    ambulanceSpeed = netmanager->getAmbulanceSpeed();
-    truckSpeed= netmanager->getTruckSpeed();
+	ambulanceSpeed = netmanager->getAmbulanceSpeed();
+	truckSpeed = netmanager->getTruckSpeed();
 
-    signalDelayTravelTime=registerSignal("signalDelayTravelTime");
+	signal_truckDelayTravelTime = registerSignal("signal_truckDelayTravelTime");
+	signal_ambulanceDelayTravelTime = registerSignal("signal_ambulanceDelayTravelTime");
+
+	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
 
 
     // Destroying nodes part
@@ -234,21 +239,43 @@ void App::handleMessage(cMessage *msg)
     EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
 //    vehicle->setBusyState(false);
 
-    // Emits
-    int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr())*2;
-    emit(signalDelayTravelTime,(vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime())/numHops);
 
-    EV << "Tempo reale: " << vehicle->getCurrentTraveledTime()  << " stimato: " <<  vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+    int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr());
 
+	switch (vehicle->getSpecialVehicle()) {
+	case -1: //civil
+		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr() << " partito da " << vehicle->getSrcAddr() << endl;
+		emit(signal_civilDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+		delete vehicle;
+		return;
 
-    // Civil vehicle
-    if (vehicle->getSpecialVehicle() == -1){
-    	if (vehicle->getDestAddr() == myAddress) {
-    		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr()<< " partito da "<< vehicle->getSrcAddr() <<endl;
-//    		generateCivilTraffic();
-    		 delete vehicle;
-    		return;
-    	}
+	case 1:	//ambulance
+		if (netmanager->checkHospitalNode(myAddress)){
+		emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+		EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+		}
+		break;
+	case 2:
+		emit(signal_truckDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+		EV << "Truck Tempo reale: " << vehicle->getCurrentTraveledTime()  << " stimato: " <<  vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+		break;
+	default:
+		break;
+	}
+//
+//    // Civil vehicle
+//    if (vehicle->getSpecialVehicle() == -1){
+//    	if (vehicle->getDestAddr() == myAddress) {
+//    		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr()<< " partito da "<< vehicle->getSrcAddr() <<endl;
+////    		generateCivilTraffic();
+//
+//    		emit(signal_civilDelayTravelTime,(vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime())/numHops);
+//
+//    		delete vehicle;
+//    		return;
+//    	}
+//    }
+
 //        int destAddress = intuniform(0, CivilDestinations, 3);
 //                   while (destAddress == myAddress)
 //                       destAddress = intuniform(0, CivilDestinations - 1, 3);
@@ -263,7 +290,7 @@ void App::handleMessage(cMessage *msg)
 //		else
 //			sendDelayed(vehicle, sendDelayTime + delays, "out");
 //		return;
-	}
+
 
 
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
@@ -276,19 +303,24 @@ void App::handleMessage(cMessage *msg)
 
     }
 
+
     //Ask to coordinator for next stop point
     StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
     if(nextStopPoint != NULL)
     {
+
         //There is another stop point for the vehicle!
         EV << "The next stop point for the vehicle " << vehicle->getID() << " is: " << nextStopPoint->getLocation() << endl;
         vehicle->setSrcAddr(myAddress);
         vehicle->setDestAddr(nextStopPoint->getLocation());
 
+
+
         // reset times
         vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
         vehicle->setCurrentTraveledTime(0);
         vehicle->setHopCount(0);
+
 
 
         //Time for boarding or drop-off passengers
@@ -308,6 +340,7 @@ void App::handleMessage(cMessage *msg)
         EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
         tcoord->registerVehicle(vehicle, myAddress);
 
+
 //        if (ev.isGUI())
 //            getParentModule()->getDisplayString().setTagArg("i",1,"green");
 
@@ -317,6 +350,7 @@ void App::handleMessage(cMessage *msg)
 
 
 }
+
 
 /**
  * Handle an Omnet signal.
