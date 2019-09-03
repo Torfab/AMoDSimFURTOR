@@ -83,7 +83,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 	// //Assign the request to the emergency vehicle
 	else if (tr->getIsSpecial() == 2) {
 		EV << "+++" << vehicleProposals.size() << " Trucks are available for proposal" << endl;
-		truckAssignment(vehicleProposals, tr);
+		emergencyAssignment(vehicleProposals, tr);
 
 	}
 	//Assign the request to the vehicle which minimize the waiting time
@@ -194,6 +194,11 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 
 	return toReturn;
 }
+
+
+
+
+
 
 /**
  * Sort the stop-points related to the specified vehicle
