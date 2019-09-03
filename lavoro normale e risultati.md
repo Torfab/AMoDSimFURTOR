@@ -19,22 +19,29 @@
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
 
+punto della situazione
+
 emit e segnali
+	scoprire altri segnali interessanti
+
+dijkstra pesato
+ 
+
+altro routing
+	-coordinatore sceglie e determina lista
+	-veicolo legge lista di indicazioni
+
+
+10. TruckStartNodes  soluzione:vettore
+
+-rilascio feromone secondo tipo
+
 
 creazione dei veicoli in app. Ci sono e stanno fermi?
 
 Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121 )
 
- 
-altro routing
-	-coordinatore sceglie e determina lista
-	-veicolo legge lista di indicazioni
-10. TruckStartNodes  soluzione:vettore
 
-
-
-
--rilascio feromone secondo tipo
 
 
 
@@ -150,7 +157,8 @@ la truck request è diretta verso un collectionpointAddress random
 
 routing semplice con circumnavigazione DONE CON DIJKSTRA
 
-
+emit e segnali
+	differenza normalizzata tra tempo stimato nel caso migliore contro caso reale
 
 
 
