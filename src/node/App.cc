@@ -82,14 +82,34 @@ App::~App()
 void App::generateCivilTraffic() {
 
 	Vehicle* civile = new Vehicle(-1,9.7, 1);
-	int destAddress = tcoord->getClosestExitNode(myAddress); //
+	int destAddress;
+	bool cp;
 
 	civile->setSrcAddr(myAddress);
+
+	if (netmanager->checkBorderNode(myAddress)){
+		civile->setDestAddr(myAddress);
+		 send(civile, "out");
+		 EV << "Vehicle already on border, running away" << endl;
+		 return;
+	}
+
+	if (intuniform(0, 1) == 0) {  // 50% chances: border node - collection point
+		destAddress = tcoord->getClosestExitNode(myAddress); // look for a border node
+		cp = false;
+	} else {
+		destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress); // look for a collection point
+		cp = true;
+	}
+
 	civile->setDestAddr(destAddress);
 
-	 EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to dest: " << civile->getDestAddr() << endl;
+	if (cp)
+	 EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << endl;
+	else
+		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr() << endl;
 
-//	 double delay=uniform(0,3);
+//	 double delay=uniform(0,3); //Send delayed
 	 send(civile, "out");
 }
 

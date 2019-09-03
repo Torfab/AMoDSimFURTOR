@@ -17,6 +17,7 @@
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
+12. meta di chi scappa invece di andare a bordo va all ammassamento piu vicino (facciamo 50% con rand
 
 12. ambulanza più posti
 
