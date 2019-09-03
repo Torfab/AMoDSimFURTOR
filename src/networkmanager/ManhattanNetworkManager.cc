@@ -138,6 +138,8 @@ void ManhattanNetworkManager::initialize()
     EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
     // initialize trucks in start node
     vehiclesPerNode[truckStartNode]=numberOfTrucks; //TODO verificare +=
+
+
 }
 
 /**
@@ -172,18 +174,19 @@ double ManhattanNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
  */
 double ManhattanNetworkManager::getHopDistance(int srcAddr, int dstAddr)
 {
-    double hopDistance = 0;
 
-    int xSource = srcAddr % rows;
-    int xDest = dstAddr % rows;
+	cTopology* topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
 
-    int ySource = srcAddr / rows;
-    int yDest = dstAddr / rows;
+	cTopology::Node *node = topo->getNode(srcAddr);
+	cTopology::Node *targetnode = topo->getNode(dstAddr);
+	topo->calculateUnweightedSingleShortestPathsTo(targetnode);
 
-    hopDistance += abs(xSource - xDest);
-    hopDistance += abs(ySource - yDest);
+	delete topo;
 
-    return hopDistance;
+	return node->getDistanceToTarget();
 }
 
 /**
