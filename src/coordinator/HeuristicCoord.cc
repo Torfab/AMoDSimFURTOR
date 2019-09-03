@@ -133,7 +133,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 		// costo che ci vuole per la prima richiesta
 
 		// tratta presa - ospedale
-		additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getDestAddr(), netmanager->pickClosestHospitalFromNode(last->getLocation()));
+		additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), netmanager->pickClosestHospitalFromNode(last->getLocation()));
 		EV << "R->H Cost :" << additionalCost << " FROM " << (last)->getLocation() << " to " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << endl;
 
 		additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(last->getLocation()), newTRpickup->getLocation());

@@ -173,6 +173,7 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
     double additionalCost = -1.0;
     int vehicleID = -1;
 
+
     //The request has been evaluated
     TripRequest *preq = pendingRequests[tr->getID()];
     pendingRequests.erase(tr->getID());
@@ -181,9 +182,9 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		int min = netmanager->getNumberOfNodes();
 		for (auto const &x : vehicleProposal) { /// Ricerca del minimo numero di hop
 			// hospital closest to last vehicle location
-			if (netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) < min) {
+			if (x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) < min) {
 				vehicleID = x.first;
-				min = netmanager->getHopDistance(getLastVehicleLocation(x.first),tr->getPickupSP()->getLocation());
+				min = x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),tr->getPickupSP()->getLocation());
 			}
 		}
 
