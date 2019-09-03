@@ -32,6 +32,9 @@ class Vehicle: public Packet {
 
         double speed;  // Avg. speed of vehicle in channel
         
+        double currentTraveledTime;
+        double optimalEstimatedTravelTime;
+
     public:
         Vehicle();
         Vehicle(int specialVehicle, double speed, int trafficWeight);
@@ -51,6 +54,10 @@ class Vehicle: public Packet {
         virtual bool isBusyState() const;
         virtual void setBusyState(bool busyState);
         virtual int getTrafficWeight() const;
+        virtual double getCurrentTraveledTime() const;
+        virtual void setCurrentTraveledTime(double currentTraveledTime);
+        virtual double getOptimalEstimatedTravelTime() const;
+        virtual void setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime);
 };
 
 #endif /* VEHICLE_H_ */

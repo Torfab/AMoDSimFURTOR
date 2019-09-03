@@ -220,7 +220,9 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
 
     // Get truck address for the request
 //    int destAddress = netmanager->getTruckStartNode();
+
     int destAddress = netmanager->pickRandomCollectionPointNode(); //pickClosestCollectionPointFromNode(myAddress);
+    if (destAddress == myAddress) destAddress = netmanager->getTruckStartNode();
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);

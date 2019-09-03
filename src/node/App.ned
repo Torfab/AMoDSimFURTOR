@@ -14,6 +14,10 @@ simple App like IApp
         int CivilTrafficN; 		//Times every node generates civil vehicles
         
         
+          // ------ SIGNALS -------- //
+        @signal[signalDelayTravelTime](type="double");       	//Traveled distance per vehicle
+        @statistic[signalDelayTravelTime](title="Delay between ideal time to serve a request and actual time to serve that request";source="signalDelayTravelTime";record=vector,stats;interpolation=none);
+        
     gates:
         input in;
         output out;

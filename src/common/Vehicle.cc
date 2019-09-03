@@ -32,7 +32,7 @@ Vehicle::Vehicle() {
      *  2 truck
      */
     specialVehicle=0;
-
+    currentTraveledTime = 0.0;
     /**
      * default speed = 9.7 mps
      *  (35 km/h)
@@ -55,6 +55,7 @@ Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
 
     this->specialVehicle=specialVehicle;
 
+    currentTraveledTime = 0.0;
     /**
      * default speed = 9.7 mps
      *  (35 km/h)
@@ -116,6 +117,22 @@ double Vehicle::getSpeed() const {
 
 bool Vehicle::isBusyState() const {
 	return busyState;
+}
+
+double Vehicle::getCurrentTraveledTime() const {
+	return currentTraveledTime;
+}
+
+void Vehicle::setCurrentTraveledTime(double currentTraveledTime) {
+	this->currentTraveledTime = currentTraveledTime;
+}
+
+double Vehicle::getOptimalEstimatedTravelTime() const {
+	return optimalEstimatedTravelTime;
+}
+
+void Vehicle::setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime) {
+	this->optimalEstimatedTravelTime = optimalEstimatedTravelTime;
 }
 
 int Vehicle::getTrafficWeight() const {

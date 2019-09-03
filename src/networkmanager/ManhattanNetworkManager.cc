@@ -131,8 +131,8 @@ void ManhattanNetworkManager::initialize()
 
 	do {
 		truckStartNode = pickRandomElemFromSet(setOfBorderNodes);
-	} while (setOfDestroyedNodes.find(truckStartNode) != setOfDestroyedNodes.end());
-
+	} while (setOfDestroyedNodes.find(truckStartNode) != setOfDestroyedNodes.end() );
+//	truckStartNode = 0;
 
 
     EV <<"TRUCKSTARTNODE  "<<truckStartNode<< " numberofTrucks "<<numberOfTrucks<< endl;
@@ -298,6 +298,10 @@ double ManhattanNetworkManager::getChannelLength(int nodeAddr, int gateIndex)
     return -1;
 }
 
+double ManhattanNetworkManager::getXChannelLength() {
+	return xChannelLength;
+}
+
 void ManhattanNetworkManager::handleMessage(cMessage *msg)
 {
 
@@ -371,7 +375,7 @@ void ManhattanNetworkManager::buildCollectionPointNodes() {
 	for (int i = 0; i < numberOfCollectionPoints; i++) {
 		do {
 			collectionPointsAddresses[i] = pickRandomElemFromSet(setOfBorderNodes);
-		} while ( setOfDestroyedNodes.find(collectionPointsAddresses[i] ) != setOfDestroyedNodes.end());
+		} while ( setOfDestroyedNodes.find(collectionPointsAddresses[i] ) != setOfDestroyedNodes.end() && collectionPointsAddresses[i] != truckStartNode);
 
 		EV << "CollectionPoint: " << collectionPointsAddresses[i] << endl;
 	}

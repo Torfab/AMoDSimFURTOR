@@ -64,6 +64,7 @@ protected:
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
     virtual double getHopDistance(int srcAddr, int dstAddr) override;
     virtual double getChannelLength(int nodeAddr, int gateIndex) override;
+    virtual double getXChannelLength() override;
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;

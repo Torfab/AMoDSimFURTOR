@@ -54,6 +54,8 @@ class App : public cSimpleModule,cListener
 
     // signals
     simsignal_t newTripAssigned;
+    // Travel time related signals
+    simsignal_t signalDelayTravelTime;
 
   public:
     App();
@@ -127,7 +129,7 @@ void App::initialize()
     ambulanceSpeed = netmanager->getAmbulanceSpeed();
     truckSpeed= netmanager->getTruckSpeed();
 
-    CivilTrafficN = par("CivilTrafficN");
+    signalDelayTravelTime=registerSignal("signalDelayTravelTime");
 
 
     // Destroying nodes part
@@ -232,6 +234,12 @@ void App::handleMessage(cMessage *msg)
     EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " <<  vehicle->getSpecialVehicle() <<endl;
 //    vehicle->setBusyState(false);
 
+    // Emits
+    int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr())*2;
+    emit(signalDelayTravelTime,(vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime())/numHops);
+
+    EV << "Tempo reale: " << vehicle->getCurrentTraveledTime()  << " stimato: " <<  vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+
 
     // Civil vehicle
     if (vehicle->getSpecialVehicle() == -1){
@@ -265,6 +273,7 @@ void App::handleMessage(cMessage *msg)
         //This is a PICK-UP stop-point
         double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
         EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
+
     }
 
     //Ask to coordinator for next stop point
@@ -275,6 +284,12 @@ void App::handleMessage(cMessage *msg)
         EV << "The next stop point for the vehicle " << vehicle->getID() << " is: " << nextStopPoint->getLocation() << endl;
         vehicle->setSrcAddr(myAddress);
         vehicle->setDestAddr(nextStopPoint->getLocation());
+
+        // reset times
+        vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+        vehicle->setCurrentTraveledTime(0);
+        vehicle->setHopCount(0);
+
 
         //Time for boarding or drop-off passengers
         double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());
@@ -334,6 +349,11 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID,
                           << sp->getRequestID() << endl;
                 veic->setSrcAddr(myAddress);
                 veic->setDestAddr(sp->getLocation());
+
+                // reset times
+                veic->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / veic->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+                veic->setCurrentTraveledTime(0);
+                veic->setHopCount(0);
 
                 //Time for boarding or dropoff
                 double delays = (sp->getActualTime() - simTime().dbl())

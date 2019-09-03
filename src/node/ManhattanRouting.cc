@@ -156,18 +156,18 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			cTopology::LinkOut *path = node->getPath(0);
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
-			EV << endl;
-			while (node != topo->getTargetNode()) {
-			    EV << "We are in " << node->getModule()->getFullPath() << endl;
-			    EV << node->getDistanceToTarget() << " hops to go\n";
-			    EV << "There are " << node->getNumPaths()
-			       << " equally good directions, taking the first one\n";
-			    cTopology::LinkOut *path = node->getPath(0);
-			    EV << "Taking gate " << path->getLocalGate()->getFullName()
-			       << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath()
-			       << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-			    node = path->getRemoteNode();
-			  }
+//			EV << endl;
+//			while (node != topo->getTargetNode()) {
+//			    EV << "We are in " << node->getModule()->getFullPath() << endl;
+//			    EV << node->getDistanceToTarget() << " hops to go\n";
+//			    EV << "There are " << node->getNumPaths()
+//			       << " equally good directions, taking the first one\n";
+//			    cTopology::LinkOut *path = node->getPath(0);
+//			    EV << "Taking gate " << path->getLocalGate()->getFullName()
+//			       << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath()
+//			       << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+//			    node = path->getRemoteNode();
+//			  }
 
 
 		}
@@ -205,6 +205,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		if (trafficDelay < simTime() )
 			trafficDelay = simTime(); // .dbl() doesn't work
 
+		pk->setCurrentTraveledTime(pk->getCurrentTraveledTime() + channelTravelTime.dbl() + trafficDelay.dbl() - simTime().dbl());
 
 		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
 		EV << "++Travel Time: " << channelTravelTime << endl;
@@ -234,7 +235,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		}
 		EV << endl;
 
-//    pk->setHopCount(pk->getHopCount()+1);
+    pk->setHopCount(pk->getHopCount()+1);
 //    pk->setTraveledDistance(pk->getTraveledDistance() + distance);
 //
 //    //send the vehicle to the next node
