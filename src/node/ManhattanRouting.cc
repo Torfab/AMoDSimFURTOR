@@ -64,16 +64,12 @@ void ManhattanRouting::initialize() {
 	// Traffic
 	traffic = new Traffic();
 
-	// Topology
-	topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
+
 }
 
 ManhattanRouting::~ManhattanRouting() {
 	delete pheromone;
-	delete topo;
+
 }
 
 bool ManhattanRouting::checkAvailableGate(int proposal){
@@ -88,6 +84,7 @@ bool ManhattanRouting::checkAvailableGate(int proposal){
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg) {
+
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
 	int trafficWeight = pk->getTrafficWeight();
@@ -97,6 +94,8 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		send(pk, "localOut");
 		return;
 	}
+
+
 	if (msg->isSelfMessage()) { //The vehicle has waited a delay to simulate the traffic in chosen channel
 		int pkChosenGate = pk->getChosenGate();
 		pk->setHopCount(pk->getHopCount() + 1);
@@ -136,24 +135,58 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			lastUpdateTime = simTime().dbl();
 		}
 
+		// Topology
+		topo = new cTopology("topo");
+		std::vector<std::string> nedTypes;
+		nedTypes.push_back("src.node.Node");
+		topo->extractByNedTypeName(nedTypes);
 
+		int destination = pk->getDestAddr();
+		cTopology::Node *node = topo->getNode(myAddress);
+		cTopology::Node *targetnode = topo->getNode(destination);
 
+		topo->calculateUnweightedSingleShortestPathsTo(targetnode); //dijkstra to target
 
-		if (myX < destX && checkAvailableGate(1)) {
-			pk->setChosenGate(1); //right
-
-
-		} else if (myX > destX && checkAvailableGate(3)) {
-			pk->setChosenGate(3); //left
-
-		} else if (myY < destY && checkAvailableGate(2)) {
-			pk->setChosenGate(2); //sud
-
-		} else if (checkAvailableGate(0)){
-			pk->setChosenGate(0); //north
-		}
-		else
+		if (node->getNumPaths() == 0) {
+			EV << "No path to destination.\n";
+			//node->disable();
+			delete topo;
 			return;
+		} else {
+			cTopology::LinkOut *path = node->getPath(0);
+			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+			pk->setChosenGate(path->getLocalGate()->getIndex());
+			EV << endl;
+			while (node != topo->getTargetNode()) {
+			    EV << "We are in " << node->getModule()->getFullPath() << endl;
+			    EV << node->getDistanceToTarget() << " hops to go\n";
+			    EV << "There are " << node->getNumPaths()
+			       << " equally good directions, taking the first one\n";
+			    cTopology::LinkOut *path = node->getPath(0);
+			    EV << "Taking gate " << path->getLocalGate()->getFullName()
+			       << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath()
+			       << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+			    node = path->getRemoteNode();
+			  }
+
+
+		}
+
+		delete topo;
+		/*
+			if (myX < destX && checkAvailableGate(1)) {
+				pk->setChosenGate(1); //right
+
+			} else if (myX > destX && checkAvailableGate(3)) {
+				pk->setChosenGate(3); //left
+
+			} else if (myY < destY && checkAvailableGate(2)) {
+				pk->setChosenGate(2); //sud
+
+			} else if (checkAvailableGate(0)) {
+				pk->setChosenGate(0); //north
+			}
+		*/
 
 		// Traffic delay logic
 

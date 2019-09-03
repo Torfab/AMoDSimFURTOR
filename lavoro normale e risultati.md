@@ -19,36 +19,27 @@
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
 
-
-routing semplice con circumnavigazione
-
-altro routing
-	-coordinatore sceglie e determina lista
-	-veicolo legge lista di indicazioni
-
-
+emit e segnali
 
 creazione dei veicoli in app. Ci sono e stanno fermi?
 
 Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121 )
 
-#scoprirecomefareivettori.help.andrea
-4. più esplosioni  soluzione:vettore
-5. punti di ammassamento in ingresso e uscita ai bordi della mesh   soluzione:vettore
-9. più ospedalieri	soluzione:vettore
+ 
+altro routing
+	-coordinatore sceglie e determina lista
+	-veicolo legge lista di indicazioni
 10. TruckStartNodes  soluzione:vettore
 
 
 
 
-
-routing - djstra!?
-
-
-
 -rilascio feromone secondo tipo
 
-// esploratore?? ci serve?!
+
+
+
+
 # TITOLI:
 algoritmi bioispirati coordinamento ambulanze
 l'altro, gestione dell emergency managment, simmulazione dinamiche produzione informazioni, concetto mezzo pesante,
@@ -156,6 +147,16 @@ emergency request valuta l'ospedale più vicino per partire
 12. meta di chi scappa invece di andare a bordo va all ammassamento piu vicino (facciamo 50% con rand
 
 la truck request è diretta verso un collectionpointAddress random
+
+routing semplice con circumnavigazione DONE CON DIJKSTRA
+
+
+
+
+
+
+
+
 
 # Limiti del simulatore:
 
