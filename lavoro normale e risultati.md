@@ -16,8 +16,6 @@ altro routing
 
 10. TruckStartNodes  soluzione:vettore
 
--rilascio feromone secondo tipo
-
 
 creazione dei veicoli in app. Ci sono e stanno fermi?
 
@@ -148,7 +146,7 @@ emit e segnali
 
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
-
+-creato feromone secondo tipo ma non rilasciato
 
 
 # Limiti del simulatore:
