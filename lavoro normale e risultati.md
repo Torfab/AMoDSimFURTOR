@@ -168,7 +168,7 @@ per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
 
 
-* opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..1
+opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..143
 
 -j7 simulazioni contemporanee
 ./AMoD_Simulator  fa riferimento al .exe

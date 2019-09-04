@@ -10,7 +10,6 @@ network AMoD
 	    double pheromoneDecayFactor = default(0.1);  			// 10% 	Feromone decay factor
 	    double pheromoneDecayTime @unit(s) = default(600s); // Feromone increase factor
 		double alpha = default (0.7);
-		int seed = default (0);
 	    
 	    
 	    //------Network Parameters------
