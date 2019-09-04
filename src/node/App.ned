@@ -24,6 +24,10 @@ simple App like IApp
         @signal[signal_civilDelayTravelTime](type="double");       
         @statistic[signal_civilDelayTravelTime](title="Civil Delay between ideal time to serve a request and actual time to serve that request";source="signal_civilDelayTravelTime";record=vector,stats;interpolation=none);
         
+        @signal[signal_ambulancesIdle](type="int");       
+        @statistic[signal_ambulancesIdle](title="Number of idle ambulances in hospital";source="signal_ambulancesIdle";record=vector,stats;interpolation=none);
+       
+        
     gates:
         input in;
         output out;

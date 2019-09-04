@@ -52,7 +52,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 
 		}
 		if (tr->getIsSpecial() == 2) { // coordination point - truck request
-			if (x.first->getSpecialVehicle() == 2 && !x.first->isBusyState()) { //it'a truck
+			if (x.first->getSpecialVehicle() == 2 ) { //it'a truck
 			//assign trip to truck
 
 				StopPointOrderingProposal *tmp = eval_TruckRequestAssignment(x.first->getID(), tr);

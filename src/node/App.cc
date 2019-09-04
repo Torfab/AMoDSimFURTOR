@@ -43,8 +43,9 @@ private:
 	double truckSpeed;
 	int CivilDestinations;
 	int numberOfTrucks;
-	int CivilTrafficN;
+	int currentVehiclesInNode;
 	bool enableCivilTraffic;
+
 
 	BaseCoord *tcoord;
 	AbstractNetworkManager *netmanager;
@@ -55,6 +56,8 @@ private:
 	simsignal_t signal_ambulanceDelayTravelTime;
 	simsignal_t signal_truckDelayTravelTime;
 	simsignal_t signal_civilDelayTravelTime;
+	// Idle signal
+	simsignal_t signal_ambulancesIdle;
 
 public:
 	App();
@@ -125,8 +128,11 @@ void App::initialize() {
 
 	signal_truckDelayTravelTime = registerSignal("signal_truckDelayTravelTime");
 	signal_ambulanceDelayTravelTime = registerSignal("signal_ambulanceDelayTravelTime");
-
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
+
+	signal_ambulancesIdle = registerSignal("signal_ambulancesIdle");
+
+	currentVehiclesInNode = numberOfVehicles;
 
 	// Destroying nodes part
 	cTopology* topo = new cTopology("topo");
@@ -190,12 +196,16 @@ void App::initialize() {
 			tcoord->registerVehicle(v, myAddress);
 		}
 
-		if (netmanager->checkHospitalNode(myAddress))
+		if (netmanager->checkHospitalNode(myAddress)){
+			emit(signal_ambulancesIdle,currentVehiclesInNode);
+
 			if (ev.isGUI())
 				getParentModule()->getDisplayString().setTagArg("i", 3, "white");
 
-			else if (ev.isGUI())
-				getParentModule()->getDisplayString().setTagArg("i", 1, "green");
+
+		}
+//			else if (ev.isGUI())
+//				getParentModule()->getDisplayString().setTagArg("i", 1, "green");
 
 		//When the coordinator assign a new request to a vehicle, local node will be notified
 		simulation.getSystemModule()->subscribe("newTripAssigned", this);
@@ -239,6 +249,7 @@ void App::handleMessage(cMessage *msg) {
 		if (netmanager->checkHospitalNode(myAddress)) {
 			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
 			EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
+//			emit(signal_ambulancesIdle,++currentVehiclesInNode);
 		}
 		break;
 	case 2:
@@ -316,6 +327,10 @@ void App::handleMessage(cMessage *msg) {
 		EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
 		tcoord->registerVehicle(vehicle, myAddress);
 
+
+		if (netmanager->checkHospitalNode(myAddress)){
+						emit(signal_ambulancesIdle,++currentVehiclesInNode);
+					}
 //        if (ev.isGUI())
 //            getParentModule()->getDisplayString().setTagArg("i",1,"green");
 
@@ -344,7 +359,8 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
 
 			if (veic != NULL) {
 
-				veic->setBusyState(true);
+//				veic->setBusyState(true);
+
 
 				double sendDelayTime = additionalTravelTime;
 
@@ -367,6 +383,10 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
 					sendDelayTime = delays;
 				else
 					sendDelayTime = sendDelayTime + delays;
+
+				if (netmanager->checkHospitalNode(myAddress)){
+					emit(signal_ambulancesIdle,--currentVehiclesInNode);
+				}
 
 				EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to " << veic->getDestAddr() << endl;
 				Enter_Method

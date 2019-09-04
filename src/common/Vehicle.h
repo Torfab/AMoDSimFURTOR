@@ -24,7 +24,7 @@ class Vehicle: public Packet {
         int id;
         int seats;
         int traveledDistance;
-        bool busyState;
+//        bool busyState;
         int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza (TODO: enum)
         int trafficWeight;  // influence of single vehicle in traffic channel. It increases the travel times of other vehicles.
 
@@ -51,8 +51,6 @@ class Vehicle: public Packet {
         virtual void setChosenGate(int gate);
         virtual double getSpeed() const;
         virtual void setSpeed(double speed);
-        virtual bool isBusyState() const;
-        virtual void setBusyState(bool busyState);
         virtual int getTrafficWeight() const;
         virtual double getCurrentTraveledTime() const;
         virtual void setCurrentTraveledTime(double currentTraveledTime);

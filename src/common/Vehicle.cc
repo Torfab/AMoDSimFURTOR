@@ -22,7 +22,7 @@ Vehicle::Vehicle() {
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-    busyState = false; //IDLE
+//    busyState = false; //IDLE
     trafficWeight = 1;
 
     /*  veicolo di emergenza
@@ -50,7 +50,7 @@ Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-    busyState = false; //IDLE
+//    busyState = false; //IDLE
     this->trafficWeight = trafficWeight;
 
     this->specialVehicle=specialVehicle;
@@ -115,9 +115,6 @@ double Vehicle::getSpeed() const {
 	return speed;
 }
 
-bool Vehicle::isBusyState() const {
-	return busyState;
-}
 
 double Vehicle::getCurrentTraveledTime() const {
 	return currentTraveledTime;
@@ -139,9 +136,6 @@ int Vehicle::getTrafficWeight() const {
 	return trafficWeight;
 }
 
-void Vehicle::setBusyState(bool busyState) {
-	this->busyState = busyState;
-}
 
 void Vehicle::setSpeed(double speed) {
 	this->speed = speed;
