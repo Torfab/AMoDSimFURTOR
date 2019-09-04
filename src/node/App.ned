@@ -26,7 +26,7 @@ simple App like IApp
         
         @signal[signal_ambulancesIdle](type="int");       
         @statistic[signal_ambulancesIdle](title="Number of idle ambulances in hospital";source="signal_ambulancesIdle";record=vector,stats;interpolation=none);
-    
+       
         
     gates:
         input in;

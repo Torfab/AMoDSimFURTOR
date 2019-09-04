@@ -54,6 +54,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 		if (tr->getIsSpecial() == 2) { // coordination point - truck request
 			if (x.first->getSpecialVehicle() == 2 ) { //it'a truck
 			//assign trip to truck
+
 				StopPointOrderingProposal *tmp = eval_Assignment(x.first->getID(), tr);
 				if (tmp && !tmp->getSpList().empty()) {
 					vehicleProposals[x.first->getID()] = tmp;
@@ -93,9 +94,112 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 		minWaitingTimeAssignment(vehicleProposals, tr);
 }
 
+StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int vehicleID, TripRequest* tr) {
+
+	std::list<StopPoint*> old = rPerVehicle[vehicleID];
+	std::list<StopPoint*> newList;
+	StopPoint* newTRpickup = new StopPoint(*tr->getPickupSP());
+	StopPoint* newTRdropoff = new StopPoint(*tr->getDropoffSP());
+	StopPointOrderingProposal* toReturn = NULL;
+	newTRdropoff->setNumberOfPassengers(-newTRpickup->getNumberOfPassengers());
+	double additionalCost = -1;
+
+	//The vehicle is empty
+	if (rPerVehicle.find(vehicleID) == rPerVehicle.end() || old.empty()) {
+		//      EV << "The vehicle " << vehicleID << " has not other stop points!" << endl;
+		// la richiesta è il numero di hop che serve a prendere il paziente dall'ospedale
+		additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation());
+
+		EV << "COST :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
+
+		double timeToPickup = simTime().dbl() + additionalCost;
+
+		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
+		newTRdropoff->setActualNumberOfPassengers(0);
+		newList.push_back(newTRpickup);
+		newList.push_back(newTRdropoff);
+
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
+
+//            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
+//            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
+
+	}
+
+	//The vehicle has 1 stop point
+	else if (old.size() == 1) {
+		EV << " The vehicle " << vehicleID << " has only 1 SP. This means ambulance is going to an hospital." << endl;
+
+		StopPoint *last = new StopPoint(*old.back());
+		// costo che ci vuole per la prima richiesta
+
+		// tratta presa - ospedale
+		additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), netmanager->pickClosestHospitalFromNode(last->getLocation()));
+		EV << "R->H Cost :" << additionalCost << " FROM " << (last)->getLocation() << " to " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << endl;
+
+		additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(last->getLocation()), newTRpickup->getLocation());
+		EV << "+COST H->R :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << " to " << (newTRpickup)->getLocation() << endl;
+
+		double timeToPickup = additionalCost + last->getActualTime() + (alightingTime * abs(last->getNumberOfPassengers())); // useless
+		newTRdropoff->setActualTime(newTRpickup->getActualTime() + netmanager->getTimeDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()) + (boardingTime * newTRpickup->getNumberOfPassengers()));
+
+		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
+		newTRdropoff->setActualNumberOfPassengers(0);
+		newList.push_back(last);
+		newList.push_back(newTRpickup);
+		newList.push_back(newTRdropoff);
+
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
+		//            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
+		//            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
+//	            delete last;
+	}
+	//The vehicle has more stop points
+	else {
+		EV << " The vehicle " << vehicleID << " has more stop points..." << endl;
+
+		additionalCost = 0;
+		StopPoint *last = new StopPoint(*old.back());
+
+		for (auto const elem : old) {
+			// tratta  presa -- ospedale
+			additionalCost += netmanager->getHopDistance(elem->getLocation(), netmanager->pickClosestHospitalFromNode(elem->getLocation()));
+			EV << "COST R->H :" << additionalCost << " FROM " << elem->getLocation() << " to " << netmanager->pickClosestHospitalFromNode(elem->getLocation()) << endl;
+
+			if (!(elem)->getIsPickup()) {
+				// tratta ospedale - presa
+				EV << "+COST H->R :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode(elem->getLocation()) << " to " << getVehicleByID(vehicleID)->getDestAddr() << endl;
+				additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(elem->getLocation()), getVehicleByID(vehicleID)->getDestAddr());
+			}
+
+		}
+		EV << "last COST R->H :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode(last->getLocation()) << " to " << newTRpickup->getLocation() << endl;
+
+		additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(last->getLocation()), newTRpickup->getLocation());
+
+		additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
+
+		EV << " Total cost " << additionalCost << " for Request " << tr->getID() << endl;
+		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
+		newTRdropoff->setActualNumberOfPassengers(0);
+
+		for (auto const &x : old)
+			newList.push_back(new StopPoint(*x));
+
+		newList.push_back(newTRpickup);
+		newList.push_back(newTRdropoff);
+
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, simTime().dbl(), newList);
+
+	}
+
+	return toReturn;
+}
+
+
 
 /**
- * Evaluates an emergency (truck or ambulance) request
+ * Evaluates a truck request
  */
 StopPointOrderingProposal* HeuristicCoord::eval_Assignment(int vehicleID, TripRequest* tr) {
 
@@ -116,6 +220,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_Assignment(int vehicleID, TripRe
 		additionalCost += netmanager->getHopDistance( newTRpickup->getLocation(), newTRdropoff->getLocation());
 
 		EV << "Vehicle[" << vehicleID << "]: Cost to operate :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
+		EV << "COST :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
 
 //		double timeToPickup = 0; //simTime().dbl() + additionalCost;
 
