@@ -44,7 +44,7 @@ private:
 	int CivilDestinations;
 	int numberOfTrucks;
 	int currentVehiclesInNode;
-	bool enableCivilTraffic;
+//	bool enableCivilTraffic;
 	int numberOfCivils;
 
 	simtime_t civilEscapeInterval;
@@ -215,14 +215,14 @@ void App::initialize() {
 		simulation.getSystemModule()->subscribe("newTripAssigned", this);
 	}
 
-	enableCivilTraffic = par("enableCivilTraffic");
-
+//	enableCivilTraffic = par("enableCivilTraffic");
+	numberOfCivils = par("numberOfCivils");
 	// Sono un nodo in red zone?
 	// si -> genero traffico
 	// no -> nice
-	if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic) {
+	if (netmanager->checkRedZoneNode(myAddress)) {
 		civilEscapeInterval = par("civilEscapeInterval");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < numberOfCivils; i++) {
 			generateCivilTraffic(exponential(civilEscapeInterval));
 		}
 	}

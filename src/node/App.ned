@@ -8,11 +8,10 @@ simple App like IApp
     parameters:
         int address;  			//local node address
         volatile int seatsPerVehicle = default(1);
-        bool enableCivilTraffic = default(true);
         double civilEscapeInterval @unit(s) = default(600s); 
+        int numberOfCivils = default(1);
         @display("i=block/browser");
-        
-        int CivilTrafficN; 		//Times every node generates civil vehicles
+
         
         
           // ------ SIGNALS -------- //
