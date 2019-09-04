@@ -115,7 +115,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_Assignment(int vehicleID, TripRe
 		additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation());
 		additionalCost += netmanager->getHopDistance( newTRpickup->getLocation(), newTRdropoff->getLocation());
 
-		EV << "Vehicle[" << vehicleID"]: Cost to operate :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
+		EV << "Vehicle[" << vehicleID << "]: Cost to operate :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
 
 //		double timeToPickup = 0; //simTime().dbl() + additionalCost;
 
