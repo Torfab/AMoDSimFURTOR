@@ -54,4 +54,10 @@ simple BaseCoord like ICoord
 		
 		@signal[freeVehiclesPerTime](type="double");
 		@statistic[freeVehiclesPerTime](title="Free Vehicles Per Time";source="freeVehiclesPerTime";record=vector;interpolationmode=none);
+			   
+        @signal[signal_civilEvacuated](type="int");       
+        @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,stats;interpolation=none);
+       
+
+
 }

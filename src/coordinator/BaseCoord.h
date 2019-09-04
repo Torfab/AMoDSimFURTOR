@@ -68,6 +68,10 @@ private:
         simsignal_t droppedoffRequestsPerTime;
         simsignal_t freeVehiclesPerTime;
 
+        // evacuated civil traffic
+    	simsignal_t signal_civilEvacuated;
+        int civilCounter;
+
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
         std::map<int, double> rAssignedPerVehicle; //Number of requests assigned per vehicle
@@ -91,7 +95,7 @@ private:
         bool eval_feasibility(int vehicleID, StopPoint *sp); //Evaluate if the new stop-point is feasible by a vehicle
         virtual StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) = 0; //Sort the stop-points related to the specified vehicle including the new request's pickup and dropoff point, if feasible.
         virtual StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) = 0;
-        virtual StopPointOrderingProposal* eval_TruckRequestAssignment(int vehicleID, TripRequest* newTR)  = 0;
+        virtual StopPointOrderingProposal* eval_Assignment(int vehicleID, TripRequest* newTR)  = 0;
 
 
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
@@ -120,6 +124,7 @@ private:
         StopPoint* getNewAssignedStopPoint(int vehicleID);
         inline double getMinTripLength(){return minTripLength;}
         int getClosestExitNode(int address);
+        virtual void evacuateCivil(int address);
 };
 
 #endif /* BASECOORD_H_ */

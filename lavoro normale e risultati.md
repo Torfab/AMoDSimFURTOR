@@ -1,13 +1,3 @@
-# COSE DA CHIEDERE AD ANDREA:
---lanciare omnet da riga di comando
-
-~~ --Il simulatore è errato: il tempo calcolato da setAdditionalTravelTime in abstractnetworkmanager.h tiene conto dell'accelerazione ma è finta. Omnet tira dritto e non conta l'accelerazione ~~
-
---ha senso imporre la velocità al veicolo, la velocità di canale = 0 e utilizzare il self message per determinare i tempi?
-	(speed in manhattanrouting.cc e .h hardcoded)
-
-
-
 # TODONEXTTIME:
 
 10. autobus: punti di raccolta taxi ride sharing
@@ -16,17 +6,9 @@
 	gli autobus raccolgono le persone e le scaricano al punto di raccolta
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
-11. civili che scappano in maniera realistica: burst subito e poi sempre meno
-
-
-punto della situazione
-
-emit e segnali
-	scoprire altri segnali interessanti
+	
 
 dijkstra pesato
- 
-
 altro routing
 	-coordinatore sceglie e determina lista
 	-veicolo legge lista di indicazioni
@@ -158,10 +140,13 @@ la truck request è diretta verso un collectionpointAddress random
 routing semplice con circumnavigazione DONE CON DIJKSTRA
 
 emit e segnali
-	differenza normalizzata tra tempo stimato nel caso migliore contro caso reale
+	differenza normalizzata tra tempo stimato nel caso migliore contro caso reale ambulanza
+	grafico ambulanze idle
+	civili in quanto scappano
+	feromone
+	traffico
 
-
-
+11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
 
 

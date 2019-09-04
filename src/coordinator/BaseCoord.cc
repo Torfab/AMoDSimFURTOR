@@ -38,6 +38,11 @@ void BaseCoord::initialize()
     droppedoffRequestsPerTime = registerSignal("droppedoffRequestsPerTime");
     freeVehiclesPerTime = registerSignal("freeVehiclesPerTime");
 
+
+    signal_civilEvacuated = registerSignal("signal_civilEvacuated");
+
+
+    civilCounter = 0;
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
     totalPickedupRequests = 0.0;
@@ -194,9 +199,13 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
                   << tr->getID() << " .The time cost is: " << additionalCost << endl;
 
         updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
-        EV << "stop points updated! " << endl;
+//        EV << "stop points updated! " << endl;
         for (auto elem : vehicleProposal[vehicleID]->getSpList())
         	EV << elem->getLocation() << endl;
+
+        // emit pending request on a vehicle
+        emit(signal_pendingRequest, *(vehicleProposal[vehicleID])->getSpList().size()/2);
+
     } else {
         EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
         uRequests[tr->getID()] = new TripRequest(*tr);
@@ -848,4 +857,8 @@ int BaseCoord::getClosestExitNode(int address) {
 	return closestAddr;
 
 
+}
+
+void BaseCoord::evacuateCivil(int address) {
+	emit(signal_civilEvacuated, ++civilCounter);
 }

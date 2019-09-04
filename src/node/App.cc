@@ -47,6 +47,8 @@ private:
 //	bool enableCivilTraffic;
 	int numberOfCivils;
 
+
+
 	simtime_t civilEscapeInterval;
 
 	BaseCoord *tcoord;
@@ -61,6 +63,7 @@ private:
 	// Idle signal
 	simsignal_t signal_ambulancesIdle;
 
+
 public:
 	App();
 	virtual ~App();
@@ -74,6 +77,7 @@ protected:
 
 Define_Module(App);
 
+
 App::App() {
 	tcoord = NULL;
 }
@@ -83,18 +87,20 @@ App::~App() {
 
 void App::generateCivilTraffic(simtime_t interval) {
 
+	if (netmanager->checkBorderNode(myAddress)) {
+	//		civile->setDestAddr(myAddress);
+	//		send(civile, "out");
+	//		EV << "Vehicle already on border, running away" << endl;
+			return;
+		}
+
 	Vehicle* civile = new Vehicle(-1, 9.7, 1);
 	int destAddress;
 	bool cp;
 
 	civile->setSrcAddr(myAddress);
 
-	if (netmanager->checkBorderNode(myAddress)) {
-		civile->setDestAddr(myAddress);
-		send(civile, "out");
-		EV << "Vehicle already on border, running away" << endl;
-		return;
-	}
+
 
 	if (intuniform(0, 1) == 0) {  // 50% chances: border node - collection point
 		destAddress = tcoord->getClosestExitNode(myAddress); // look for a border node
@@ -134,6 +140,7 @@ void App::initialize() {
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
 
 	signal_ambulancesIdle = registerSignal("signal_ambulancesIdle");
+
 
 	currentVehiclesInNode = numberOfVehicles;
 	int numberOfCivils;
@@ -250,6 +257,8 @@ void App::handleMessage(cMessage *msg) {
 	case -1: //civil
 		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr() << " partito da " << vehicle->getSrcAddr() << endl;
 		emit(signal_civilDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+		tcoord->evacuateCivil(myAddress);
+
 		delete vehicle;
 		return;
 
