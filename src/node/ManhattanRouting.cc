@@ -69,6 +69,7 @@ void ManhattanRouting::initialize() {
 
 ManhattanRouting::~ManhattanRouting() {
 	delete pheromone;
+	delete pheromoneEmergency;
 
 }
 
@@ -117,8 +118,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		int destX = pk->getDestAddr() % rows;
 		int destY = pk->getDestAddr() / rows;
 
-		// todo: memorizzare tempo e decadimento feromone
-		// non e' la verita': il feromone viene aggiornato solo quando un veicolo attraversa il nodo. Il valore e' corretto ma non aggiornato in maniera continua nel tempo
+		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
 
 		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
 
@@ -156,38 +156,10 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			cTopology::LinkOut *path = node->getPath(0);
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
-//			EV << endl;
-//			while (node != topo->getTargetNode()) {
-//			    EV << "We are in " << node->getModule()->getFullPath() << endl;
-//			    EV << node->getDistanceToTarget() << " hops to go\n";
-//			    EV << "There are " << node->getNumPaths()
-//			       << " equally good directions, taking the first one\n";
-//			    cTopology::LinkOut *path = node->getPath(0);
-//			    EV << "Taking gate " << path->getLocalGate()->getFullName()
-//			       << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath()
-//			       << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-//			    node = path->getRemoteNode();
-//			  }
-
 
 		}
 
 		delete topo;
-		/*
-			if (myX < destX && checkAvailableGate(1)) {
-				pk->setChosenGate(1); //right
-
-			} else if (myX > destX && checkAvailableGate(3)) {
-				pk->setChosenGate(3); //left
-
-			} else if (myY < destY && checkAvailableGate(2)) {
-				pk->setChosenGate(2); //sud
-
-			} else if (checkAvailableGate(0)) {
-				pk->setChosenGate(0); //north
-			}
-		*/
-
 		// Traffic delay logic
 
 		int distanceToTravel = 0;
@@ -200,7 +172,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
-//		(xNodeDistance)/(speed)
 		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
 		if (trafficDelay < simTime() )
 			trafficDelay = simTime(); // .dbl() doesn't work
