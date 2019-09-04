@@ -72,6 +72,8 @@ ManhattanNetworkManager::~ManhattanNetworkManager() {
 
 void ManhattanNetworkManager::initialize()
 {
+
+
     cModule* parentModule = getParentModule();
     rows = parentModule->par("width");
     columns = parentModule->par("height");

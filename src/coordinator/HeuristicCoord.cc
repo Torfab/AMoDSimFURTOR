@@ -210,6 +210,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_TruckRequestAssignment(int vehic
 	StopPointOrderingProposal* toReturn = NULL;
 	newTRdropoff->setNumberOfPassengers(-newTRpickup->getNumberOfPassengers());
 	double additionalCost = -1;
+	double timeToPickup = 0;
 
 	//The vehicle is empty
 	if (rPerVehicle.find(vehicleID) == rPerVehicle.end() || old.empty()) {
@@ -220,7 +221,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_TruckRequestAssignment(int vehic
 
 		EV << "COST :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
 
-		double timeToPickup = simTime().dbl() + additionalCost;
+//		double timeToPickup = 0; //simTime().dbl() + additionalCost;
 
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
 		newTRdropoff->setActualNumberOfPassengers(0);
@@ -244,7 +245,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_TruckRequestAssignment(int vehic
 		additionalCost += netmanager->getHopDistance(getVehicleByID(vehicleID)->getDestAddr(), newTRpickup->getLocation());
 		EV << "+COST Endpoint->newR :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << " to  " << (newTRpickup)->getLocation() << endl;
 
-		double timeToPickup = additionalCost + last->getActualTime() + (alightingTime * abs(last->getNumberOfPassengers())); // useless
+//		double timeToPickup = additionalCost + last->getActualTime() + (alightingTime * abs(last->getNumberOfPassengers())); // useless
 		newTRdropoff->setActualTime(newTRpickup->getActualTime() + netmanager->getTimeDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()) + (boardingTime * newTRpickup->getNumberOfPassengers()));
 
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
@@ -294,7 +295,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_TruckRequestAssignment(int vehic
 		newList.push_back(newTRpickup);
 		newList.push_back(newTRdropoff);
 
-		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, simTime().dbl(), newList);
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
 
 	}
 

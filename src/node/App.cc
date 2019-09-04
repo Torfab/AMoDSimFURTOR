@@ -45,7 +45,9 @@ private:
 	int numberOfTrucks;
 	int currentVehiclesInNode;
 	bool enableCivilTraffic;
+	int numberOfCivils;
 
+	simtime_t civilEscapeInterval;
 
 	BaseCoord *tcoord;
 	AbstractNetworkManager *netmanager;
@@ -67,7 +69,7 @@ protected:
 	virtual void initialize();
 	virtual void handleMessage(cMessage *msg);
 	virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
-	void generateCivilTraffic();
+	void generateCivilTraffic(simtime_t interval);
 };
 
 Define_Module(App);
@@ -79,7 +81,7 @@ App::App() {
 App::~App() {
 }
 
-void App::generateCivilTraffic() {
+void App::generateCivilTraffic(simtime_t interval) {
 
 	Vehicle* civile = new Vehicle(-1, 9.7, 1);
 	int destAddress;
@@ -105,12 +107,13 @@ void App::generateCivilTraffic() {
 	civile->setDestAddr(destAddress);
 
 	if (cp)
-		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << endl;
+		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << " scheduled at " << interval << endl;
 	else
-		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr() << endl;
+		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr()<< " scheduled at " << interval  << endl;
 
-//	 double delay=uniform(0,3); //Send delayed
-	send(civile, "out");
+
+	sendDelayed(civile, interval, "out");
+
 }
 
 void App::initialize() {
@@ -133,6 +136,7 @@ void App::initialize() {
 	signal_ambulancesIdle = registerSignal("signal_ambulancesIdle");
 
 	currentVehiclesInNode = numberOfVehicles;
+	int numberOfCivils;
 
 	// Destroying nodes part
 	cTopology* topo = new cTopology("topo");
@@ -216,8 +220,12 @@ void App::initialize() {
 	// Sono un nodo in red zone?
 	// si -> genero traffico
 	// no -> nice
-	if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic)
-		generateCivilTraffic();    // panico
+	if (netmanager->checkRedZoneNode(myAddress) && enableCivilTraffic) {
+		civilEscapeInterval = par("civilEscapeInterval");
+		for (int i = 0; i < 10; i++) {
+			generateCivilTraffic(exponential(civilEscapeInterval));
+		}
+	}
 }
 
 void App::handleMessage(cMessage *msg) {
