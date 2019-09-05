@@ -43,6 +43,8 @@ private:
         int alightingTime;
         AbstractNetworkManager* netmanager;
 
+        cTopology* topo;
+
         //Trip related signals
         simsignal_t tripRequest;
         simsignal_t newTripAssigned;
@@ -95,6 +97,7 @@ private:
         virtual StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) = 0;
         virtual StopPointOrderingProposal* eval_Assignment(int vehicleID, TripRequest* newTR)  = 0;
 
+        void updateLinkWeight(int pkChosenGate, cTopology::LinkOut* path);
 
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
         int minCostAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the cost
@@ -108,8 +111,8 @@ private:
         virtual void updateStateElapsedTime(int vehicleID, int stateID);
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
-
-
+	void updateTopology();
+	void updateTopology();
 
     public:
         StopPoint* getNextStopPoint(int vehicleID);
@@ -123,6 +126,10 @@ private:
         inline double getMinTripLength(){return minTripLength;}
         int getClosestExitNode(int address);
         virtual void evacuateCivil(int address);
+
+	 cTopology*& getTopo()  {
+		return topo;
+	}
 };
 
 #endif /* BASECOORD_H_ */

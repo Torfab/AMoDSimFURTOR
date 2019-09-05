@@ -16,6 +16,16 @@
 #include <BaseCoord.h>
 #include <sstream>
 
+void BaseCoord::updateTopology() {
+	if (topo != NULL){
+	// Topology
+	topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
+	}
+}
+
 void BaseCoord::initialize()
 {
     /* ---- REGISTER SIGNALS ---- */
@@ -57,6 +67,11 @@ void BaseCoord::initialize()
     civilCounter = 0;
 
     simulation.getSystemModule()->subscribe("tripRequest",this);
+
+    // Topology null initialization
+    topo = NULL;
+    updateTopology();
+
 }
 
 /**
@@ -422,6 +437,9 @@ void BaseCoord::finish()
 
 
     /*------------------------------- CLEAN ENVIRONMENT -------------------------------*/
+
+    delete topo;
+
 
     for(std::map<int, TripRequest*>::iterator itr = pendingRequests.begin(); itr != pendingRequests.end(); itr++)
         delete itr->second;
@@ -851,6 +869,18 @@ int BaseCoord::getClosestExitNode(int address) {
 	return closestAddr;
 
 
+}
+
+void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
+	cTopology::LinkOut *path = node->getPath(0);
+	ev << "We are in " << node->getModule()->getFullPath() << endl;
+	EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " <<path->getWeight()<< " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+	pk->setChosenGate(path->getLocalGate()->getIndex());
+
+	traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
+
+	int pkChosenGate = pk->getChosenGate();
+	path->setWeight(traffic->getTraffic(pkChosenGate));
 }
 
 void BaseCoord::evacuateCivil(int address) {
