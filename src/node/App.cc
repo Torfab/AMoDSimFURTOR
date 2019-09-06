@@ -85,9 +85,7 @@ void App::generateCivilTraffic(simtime_t interval) {
 
 
 	if (netmanager->checkBorderNode(myAddress)) {
-	//		civile->setDestAddr(myAddress);
-	//		send(civile, "out");
-	//		EV << "Vehicle already on border, running away" << endl;
+		tcoord->evacuateCivil(myAddress);
 			return;
 		}
 	Vehicle* civile;// = new Vehicle(-1, 9.7, 1);

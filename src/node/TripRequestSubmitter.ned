@@ -13,6 +13,13 @@ simple TripRequestSubmitter
         volatile int passengersPerRequest = default(1);
         bool emergencyVehicle = default(false); //emergency vehicle
         int hospitalAddress = default(1);
+        
+        int numberOfEmergencies;
+        
         @display("i=block/user");
+        
+        @signal[emergencyRequests](type="int");       
+        @statistic[emergencyRequests](title="Emergency requests in time";source="emergencyRequests";record=vector,stats;interpolation=none);
+       
 
 }

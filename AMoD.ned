@@ -20,6 +20,8 @@ network AMoD
         double h @unit(m)= height * yNodeDistance + 100m; 	//simulation area: y size
         double w @unit(m) = width * xNodeDistance + 100m; 	//simulation area: x size
         
+        int density = default(100);
+        
         //------Vehicle Parameters------
         double speed @unit(mps) = default (9.7mps); 		//Vehicles speed
         double acceleration @unit(mpss) = default (1.676mpss); //Vehicles acceleration/deceleration

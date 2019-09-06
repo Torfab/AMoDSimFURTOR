@@ -16,6 +16,8 @@
 #include <omnetpp.h>
 #include "TripRequest.h"
 #include "AbstractNetworkManager.h"
+#include <algorithm>
+#include <vector>
 
 class TripRequestSubmitter : public cSimpleModule
 {
@@ -38,11 +40,13 @@ class TripRequestSubmitter : public cSimpleModule
         cMessage *truckPacket;
         long pkCounter;
 
-
+        std::vector<double> v;
 
         // signals
         simsignal_t tripRequest;
-
+        simsignal_t emergencyRequests;
+        int emergencyRequestCounter;
+        int totalEmergenciesPerNode;
       public:
         TripRequestSubmitter();
         virtual ~TripRequestSubmitter();
@@ -53,6 +57,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual TripRequest* buildEmergencyRequest();
         virtual TripRequest* buildTripRequest();
         virtual TripRequest* buildTruckRequest();
+	void buildEmergencySchedule(int totalEmergencies);
 };
 
 Define_Module(TripRequestSubmitter);
@@ -68,6 +73,22 @@ TripRequestSubmitter::~TripRequestSubmitter()
     cancelAndDelete(generatePacket);
     cancelAndDelete(emergencyPacket);
     cancelAndDelete(truckPacket);
+}
+
+void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
+	int fiftypercent = totalEmergencies * 0.5;
+	for (int i = 0; i < fiftypercent; i++) {
+		v.push_back(uniform(0, 120));
+	}
+	int thirtypercent = totalEmergencies * 0.3;
+	for (int i = 0; i < thirtypercent; i++) {
+		v.push_back(uniform(120, 600));
+	}
+	int twentypercent = totalEmergencies * 0.2;
+	for (int i = 0; i < twentypercent; i++) {
+		v.push_back(uniform(600, 3600));
+	}
+	sort(v.begin(), v.end());
 }
 
 void TripRequestSubmitter::initialize()
@@ -87,7 +108,7 @@ void TripRequestSubmitter::initialize()
     emergencyPacket = new cMessage("nextPacket");
     truckPacket = new cMessage("nextPacket");
 
-
+    emergencyRequests = registerSignal("emergencyRequests");
     tripRequest = registerSignal("tripRequest");
 
     bool disconnected = netmanager->checkDisconnectedNode(myAddress);
@@ -99,15 +120,24 @@ void TripRequestSubmitter::initialize()
     	scheduleAt(sendIATime->doubleValue(), truckPacket);
     }
 
+
+
+//	for (auto n : v)
+//		ev << n << endl;
+
 	if (netmanager->checkRedZoneNode(myAddress)) {
 
-		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
-			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+		totalEmergenciesPerNode = par("numberOfEmergencies");
+		emergencyRequestCounter = 0;
 
-				scheduleAt(exponential(2), emergencyPacket);
-			}
-		}
+		buildEmergencySchedule(totalEmergenciesPerNode);
+
+		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+		emit(emergencyRequests, emergencyRequestCounter);
+
+
 	}
+
 
 }
 
@@ -141,6 +171,12 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
             }
         }
     }
+
+
+
+
+
+
     //EMIT an EMERGENCY REQUEST
        if (msg == emergencyPacket)
        {
@@ -156,24 +192,15 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 
 
 		//Schedule the next request
-		simtime_t nextTime = simTime();//;
-
-		EV << "Next request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
+//		simtime_t nextTime = simTime();                //;
 
 
-		if (simTime().dbl() < 120) {
-			scheduleAt(nextTime + exponential(60), emergencyPacket);
-		}
-		else if(simTime().dbl() < 600) {
-			scheduleAt(nextTime + exponential(300), emergencyPacket);
-		}
-		else if(simTime().dbl() < 1800) {
-			scheduleAt(nextTime + exponential(900), emergencyPacket);
-		}
-		else {
-			//scheduleAt(nextTime+exponential(1800), emergencyPacket);
-		}
+		if (emergencyRequestCounter < v.size()){
+		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+		EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
+		emit(emergencyRequests, emergencyRequestCounter);
+		}
 	}
 	//EMIT an Truck REQUEST
 	if (msg == truckPacket) {
