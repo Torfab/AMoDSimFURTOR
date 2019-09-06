@@ -90,20 +90,29 @@ void App::generateCivilTraffic(simtime_t interval) {
 	//		EV << "Vehicle already on border, running away" << endl;
 			return;
 		}
-	Vehicle* civile = new Vehicle(-1, 9.7, 1);
+	Vehicle* civile;// = new Vehicle(-1, 9.7, 1);
 	int destAddress;
 	bool cp;
 
-	civile->setSrcAddr(myAddress);
+
 
 	if (intuniform(0, 1) == 0) {  // 50% chances: border node - collection point
-		destAddress = tcoord->getClosestExitNode(myAddress); // look for a border node
+		civile=new Vehicle(-1, 9.7, 1);
+	    destAddress = tcoord->getClosestExitNode(myAddress); // look for a border node
 		cp = false;
 	} else {
+
 		destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress); // look for a collection point
+		if (netmanager->getHopDistance(myAddress,destAddress)<=3){
+		    civile=new Vehicle(-1, 1, 0); //il civile appiedato 1m/s 0 traffico
+		    EV<<"civile appiedato"<<endl;
+		}else{
+		    civile=new Vehicle(-1, 9.7, 1);
+		}
 		cp = true;
 	}
 
+	civile->setSrcAddr(myAddress);
 	civile->setDestAddr(destAddress);
 
 	if (cp)

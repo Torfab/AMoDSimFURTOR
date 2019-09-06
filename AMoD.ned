@@ -15,8 +15,8 @@ network AMoD
 	    //------Network Parameters------
         int height @prompt("Number of rows") = default(5); 	//nodes on y axes
         int width @prompt("Nodes per row") = default(5); 	//nodes on x axes
-        double xNodeDistance @unit(m) = default(1000m);		//Distance between nodes on X axes
-        double yNodeDistance @unit(m) = default(1000m);		//Distance between nodes on Y axes
+        double xNodeDistance @unit(m) = default(200m);		//Distance between nodes on X axes
+        double yNodeDistance @unit(m) = default(200m);		//Distance between nodes on Y axes
         double h @unit(m)= height * yNodeDistance + 100m; 	//simulation area: y size
         double w @unit(m) = width * xNodeDistance + 100m; 	//simulation area: x size
         

@@ -15,13 +15,11 @@ burst/2 nella restante mezzora
 
 grafico tempi di risposta con tempi assoluti e non differenza
 
-distanza 500
-se 3 hop non prendo la macchina
-
-dislocazione zone di raccolta
  
 propagazione a %
-variare densità popolazione - dimensione zona
+
+
+variare densità popolazione - dimensione zona (da parametrizzare)
 
 dijkstra pesato su traffico, feromone e non pesato per le ambulanze
 aaa per i civili a confronto con dijkstra
@@ -170,6 +168,12 @@ emit e segnali
 -creato feromone secondo tipo ma non rilasciato
 
 differenziare ammassamento e raccolta
+
+distanza 200m
+
+
+se 3 hop non prendo la macchina
+dislocazione zone di raccolta
 
 # Limiti del simulatore:
 

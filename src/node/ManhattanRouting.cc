@@ -143,7 +143,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		topo->extractByNedTypeName(nedTypes);
 
 		int destination = pk->getDestAddr();
-        EV<<"sono arrivato fin qua"<< pk->getDestAddr()<<endl;
+		EV<<"I'm going to"<<pk->getDestAddr();
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
