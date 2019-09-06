@@ -176,7 +176,8 @@ void App::initialize() {
 	EV << "I am node " << myAddress << endl;
 
 	bool hospital = netmanager->checkHospitalNode(myAddress);
-	int truckStart = netmanager->getTruckStartNode();
+	bool storagePoint=netmanager->checkStoragePointNode(myAddress);
+//	int truckStart = netmanager->getTruckStartNode();
 
 	if (numberOfVehicles > 0) {
 		for (int i = 0; i < numberOfVehicles; i++) {
@@ -185,7 +186,7 @@ void App::initialize() {
 			if (hospital) {
 				v = new Vehicle(1, ambulanceSpeed, 1);
 				v->setSeats(1);
-			} else if (truckStart == myAddress && numberOfTrucks > 0) {
+			} else if (storagePoint && numberOfTrucks > 0) {
 				v = new Vehicle(2, truckSpeed, 20);
 				v->setSeats(0);
 				numberOfTrucks--;

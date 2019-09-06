@@ -222,7 +222,7 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
 //    int destAddress = netmanager->getTruckStartNode();
 
     int destAddress = netmanager->pickRandomCollectionPointNode(); //pickClosestCollectionPointFromNode(myAddress);
-    if (destAddress == myAddress) destAddress = netmanager->getTruckStartNode();
+    if (destAddress == myAddress) destAddress = netmanager->pickRandomStoragePointNode();
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);

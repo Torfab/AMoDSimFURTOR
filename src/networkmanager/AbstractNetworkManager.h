@@ -29,14 +29,16 @@ protected:
     double truckSpeed;					// Truck Speed
     int numberOfHospitals;
     int numberOfCollectionPoints;
+    int numberOfStoragePoints;
     int numberOfEpicenters;
     int disasterRadius;
-    int truckStartNode;
 
     int * hospitalAddresses;
     int * collectionPointsAddresses;
+    int * storagePointsAddresses;
 
-    std::set<int> setOfBorderNodes;             //nodes in the border of the grid
+    std::set<int> setOfBorderNodes;         //nodes in the border of the grid
+
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
@@ -58,13 +60,16 @@ protected:
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
 
-    inline virtual int getTruckStartNode() {return truckStartNode;}
+
+
     virtual bool checkDisconnectedNode(int addr) =0;
     virtual bool checkBorderNode(int addr) =0;
     virtual bool checkRedZoneNode(int addr) =0;
     virtual bool checkHospitalNode(int addr) = 0;
+    virtual int checkStoragePointNode(int addr) =0;
     virtual int pickRandomNodeInRedZone()=0;
     virtual int pickClosestHospitalFromNode(int addr) = 0;
+    virtual int pickRandomStoragePointNode() =0;
 
     virtual bool checkCollectionPointNode(int addr) = 0;
     virtual int pickClosestCollectionPointFromNode(int addr) = 0;
