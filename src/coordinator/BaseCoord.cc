@@ -872,7 +872,7 @@ int BaseCoord::getClosestExitNode(int address) {
 }
 
 void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
-	cTopology::LinkOut *path = node->getPath(0);
+	/*cTopology::LinkOut *path = node->getPath(0);
 	ev << "We are in " << node->getModule()->getFullPath() << endl;
 	EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " <<path->getWeight()<< " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 	pk->setChosenGate(path->getLocalGate()->getIndex());
@@ -881,6 +881,7 @@ void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
 
 	int pkChosenGate = pk->getChosenGate();
 	path->setWeight(traffic->getTraffic(pkChosenGate));
+	*/
 }
 
 void BaseCoord::evacuateCivil(int address) {

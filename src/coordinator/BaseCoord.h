@@ -97,7 +97,8 @@ private:
         virtual StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) = 0;
         virtual StopPointOrderingProposal* eval_Assignment(int vehicleID, TripRequest* newTR)  = 0;
 
-        void updateLinkWeight(int pkChosenGate, cTopology::LinkOut* path);
+        void updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate);
+
 
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
         int minCostAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the cost
@@ -111,7 +112,6 @@ private:
         virtual void updateStateElapsedTime(int vehicleID, int stateID);
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
-	void updateTopology();
 	void updateTopology();
 
     public:

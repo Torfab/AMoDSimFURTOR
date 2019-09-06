@@ -155,6 +155,9 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
+		for (int i = 0 ; i<node->getNumOutLinks(); i++){
+			node->getLinkOut(i)->setWeight(traffic->getTraffic(i));
+		}
 //		topo->calculateUnweightedSingleShortestPathsTo(targetnode); //dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
 
@@ -164,6 +167,8 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 //			delete topo;
 			return;
 		} else {
+
+
 			cTopology::LinkOut *path = node->getPath(0);
 			ev << "We are in " << node->getModule()->getFullPath() << endl;
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " <<path->getWeight()<< " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
@@ -171,7 +176,8 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 			traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
 
-			path->setWeight(traffic->getTraffic(pk->getChosenGate()));
+			int pkChosenGate = pk->getChosenGate();
+			path->setWeight(traffic->getTraffic(pkChosenGate));
 
 			  while (node != topo->getTargetNode())
 			  {

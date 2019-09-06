@@ -138,15 +138,15 @@ void App::initialize() {
 	currentVehiclesInNode = numberOfVehicles;
 	int numberOfCivils;
 
-	/*
+
 	// Destroying nodes part
 	cTopology* topo = new cTopology("topo");
 	std::vector<std::string> nedTypes;
 	nedTypes.push_back("src.node.Node");
 	topo->extractByNedTypeName(nedTypes);
 
-*/
-	topo = tcoord->getTopo();
+
+	//topo = tcoord->getTopo();
 	cTopology::Node *node = topo->getNode(myAddress);
 
 	if (netmanager->checkDisconnectedNode(myAddress)) {
