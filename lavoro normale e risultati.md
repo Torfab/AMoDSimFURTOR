@@ -6,9 +6,30 @@
 	gli autobus raccolgono le persone e le scaricano al punto di raccolta
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
-	
 
-dijkstra pesato
+differenziare ammassamento e raccolta
+
+burst entro 2 minuti chiamate
+burst ridotto entro 10 min
+burst/2 nella restante mezzora
+
+grafico tempi di risposta con tempi assoluti e non differenza
+
+distanza 500
+se 3 hop non prendo la macchina
+
+dislocazione zone di raccolta
+ 
+propagazione a %
+variare densità popolazione - dimensione zona
+
+dijkstra pesato su traffico, feromone e non pesato per le ambulanze
+aaa per i civili a confronto con dijkstra
+
+
+codici di emergenza differenti
+
+
 altro routing
 	-coordinatore sceglie e determina lista
 	-veicolo legge lista di indicazioni
