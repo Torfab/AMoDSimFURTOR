@@ -854,8 +854,9 @@ int BaseCoord::getClosestExitNode(int address) {
 
 	std::set<int> borderNodes = netmanager->getSetOfBorderNodes();
 
-	int closestAddr;
-	int min = netmanager->getNumberOfNodes(); // No roads can be greater that the number of nodes
+
+	int min = netmanager->getNumberOfNodes()-1; // No roads can be greater that the number of nodes
+	int closestAddr=min;
 
 	for (auto elem : borderNodes) {
 		//calcolo min path

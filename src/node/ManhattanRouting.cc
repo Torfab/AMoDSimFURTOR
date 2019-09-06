@@ -136,12 +136,14 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		}
 
 		// Topology
+
 		topo = new cTopology("topo");
 		std::vector<std::string> nedTypes;
 		nedTypes.push_back("src.node.Node");
 		topo->extractByNedTypeName(nedTypes);
 
 		int destination = pk->getDestAddr();
+        EV<<"sono arrivato fin qua"<< pk->getDestAddr()<<endl;
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
@@ -153,6 +155,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			delete topo;
 			return;
 		} else {
+
 			cTopology::LinkOut *path = node->getPath(0);
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());

@@ -46,6 +46,10 @@ void ManhattanNetworkManager::buildSetOfNodesInRedZone(std::set<int> auxSet) {
     // Get nodes in red zones
     for (auto elem : setOfDestroyedNodes)
         setOfNodesInRedZone.erase(elem);
+    EV<< "nodi in redzone ";
+    for (auto elem : setOfNodesInRedZone)
+        EV<<elem<< " ";
+    EV<<endl;
 }
 
 void ManhattanNetworkManager::buildSetOfBorderNodes() {
@@ -106,17 +110,15 @@ void ManhattanNetworkManager::initialize() {
     // Creation of destroyed nodes set
     std::set<int> auxSet = buildSetOfDestroyedNodes();
 
+
+    // DON'T CHANGE THE ORDER
     buildsetOfAvailableNodes();
-
-    // Creation of red zones nodes set
-    buildSetOfNodesInRedZone(auxSet); // Don't change the order
-
-    // Creation of border zones nodes set
-    buildSetOfBorderNodes();
-
+    buildSetOfNodesInRedZone(auxSet);  // Creation of red zones nodes set
+    buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
-    buildCollectionPointNodes();
     buildStoragePointNodes();
+    buildCollectionPointNodes();
+
 
     // Vehicles creation
     for (int i = 0; i < numberOfVehicles; i++) {
@@ -428,8 +430,7 @@ void ManhattanNetworkManager::buildStoragePointNodes() {
     for (int i = 0; i < numberOfStoragePoints; i++) {
         do {
             storagePointsAddresses[i] = pickRandomElemFromSet(setOfBorderNodes);
-        } while (setOfDestroyedNodes.find(storagePointsAddresses[i])
-                != setOfDestroyedNodes.end());
+        } while (setOfDestroyedNodes.find(storagePointsAddresses[i])!= setOfDestroyedNodes.end());
 
         EV << "StoragePoint: " << storagePointsAddresses[i] << endl;
     }
