@@ -103,29 +103,11 @@ void TripRequestSubmitter::initialize()
 
 		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
 			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-				//richiesta normale
-//				scheduleAt(sendIATime->doubleValue(), generatePacket);
 
-			} else {
-				//richiesta emergenza
-				scheduleAt(sendIATime->doubleValue(), emergencyPacket);
+				scheduleAt(exponential(2), emergencyPacket);
 			}
 		}
 	}
-
-    /*
-    else {
-
-		if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime) {
-			if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-				//richiesta normale
-				scheduleAt(sendIATime->doubleValue(), generatePacket);
-			} else {
-
-
-			}
-		}
-	}*/
 
 }
 
@@ -170,21 +152,29 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
            EV << "Requiring a EMERGENCY REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
            EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
-           emit(tripRequest, tr);
+		emit(tripRequest, tr);
 
-           //Schedule the next request
-           simtime_t nextTime = simTime() + sendIATime->doubleValue();
-           if (maxSubmissionTime < 0 || nextTime.dbl() < maxSubmissionTime) {
-                         EV << "Next request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
-//                  if (intuniform(0, 1, 3) == 0) { // con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
-//                      //richiesta normale
-//                      scheduleAt(nextTime, generatePacket);
-//                  } else {
-                      //richiesta emergenza
-                      scheduleAt(nextTime, emergencyPacket);
-//                  }
-           }
-       }
+
+		//Schedule the next request
+		simtime_t nextTime = simTime();//;
+
+		EV << "Next request from node " << myAddress << "scheduled at: " << nextTime.dbl() << endl;
+
+
+		if (simTime().dbl() < 120) {
+			scheduleAt(nextTime + exponential(60), emergencyPacket);
+		}
+		else if(simTime().dbl() < 600) {
+			scheduleAt(nextTime + exponential(300), emergencyPacket);
+		}
+		else if(simTime().dbl() < 1800) {
+			scheduleAt(nextTime + exponential(900), emergencyPacket);
+		}
+		else {
+			//scheduleAt(nextTime+exponential(1800), emergencyPacket);
+		}
+
+	}
 	//EMIT an Truck REQUEST
 	if (msg == truckPacket) {
 		TripRequest *tr = nullptr;
