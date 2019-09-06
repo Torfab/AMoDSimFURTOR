@@ -7,7 +7,7 @@
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
 
-differenziare ammassamento e raccolta
+
 
 burst entro 2 minuti chiamate
 burst ridotto entro 10 min
@@ -169,6 +169,7 @@ emit e segnali
 
 -creato feromone secondo tipo ma non rilasciato
 
+differenziare ammassamento e raccolta
 
 # Limiti del simulatore:
 
