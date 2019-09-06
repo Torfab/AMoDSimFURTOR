@@ -38,6 +38,7 @@ private:
 
     std::set<int> setOfDestroyedNodes;          //nodes without connections
     std::set<int> setOfNodesInRedZone;          //good neighbours of destroyed nodes
+    std::set<int> setOfAvailableNodes;      //nodes not destroyed
 
 private:
    ~ManhattanNetworkManager();
@@ -48,6 +49,7 @@ protected:
     virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) override;
 	void buildSetOfNodesInRedZone();
 	void buildsetOfBorderNodes();
+    void buildsetOfAvailableNodes();
 	std::set<int> buildSetOfDestroyedNodes();
 	void buildSetOfNodesInRedZone(std::set<int> auxSet);
 	void buildSetOfBorderNodes();
@@ -55,6 +57,9 @@ protected:
 	int pickRandomElemFromSet(std::set<int> s);
 	void buildHospitalNodes();
 	void buildCollectionPointNodes();
+	void buildStoragePointNodes();
+	int pickRandomStoragePointNode();
+
 
 
 
@@ -72,6 +77,7 @@ protected:
     virtual bool checkBorderNode(int addr) override;
     virtual bool checkRedZoneNode(int addr) override;
     virtual bool checkHospitalNode(int addr) override;
+    virtual int checkStoragePointNode(int addr) override;
     virtual int pickRandomNodeInRedZone()override;
     virtual int pickClosestHospitalFromNode(int addr) override;
     virtual bool checkCollectionPointNode(int addr) override;

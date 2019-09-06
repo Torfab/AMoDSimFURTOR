@@ -9,7 +9,9 @@ simple ManhattanNetworkManager like INetworkManager
 
         int numberOfEpicenters = default(0); 
         
-        int numberOfCollectionPoints;
+        int numberOfCollectionPoints = default(1);
+        int numberOfStoragePoints= default(1);
+        
         int numberOfHospitals; 
         
         int numberOfEmergencyVehicles = default(0);
