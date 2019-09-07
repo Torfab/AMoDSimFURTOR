@@ -7,22 +7,6 @@
 	riprendono il circuito e si fermano quando non trovano più nessuno
 	
 
-densità = 200 civili per nodo
-veicoli civili che scappano = 50% densità
-chiamate d'emergenza totali = 50% densità
-veicoli civili che scappano + chiamate d'emergenza totali = 100%
-
-
-triprequest: "scheduleat" "selfmessage" "build emergency"
-
-burst entro 2 minuti chiamate  (intuniform 0,120)
-burst ridotto entro 10 min      (intuniform 120 600)
-burst/2 nella restante mezzora	(intuniform 600 1800)
-
-100
-50 33 17
-
-burst1 50% +burst2 33% +burst3 17% = numero fisso di chiamate emergenziali per nodo
 
 
 EMITTERS
@@ -30,7 +14,6 @@ grafico tempi di risposta con tempi assoluti e non differenza
 tempo di attesa da richiesta a pickup
  
 propagazione a %
-
 
 dijkstra pesato su traffico, feromone e non pesato per le ambulanze
 aaa per i civili a confronto con dijkstra
@@ -185,6 +168,23 @@ distanza 200m
 
 se 3 hop non prendo la macchina
 dislocazione zone di raccolta
+
+
+
+
+densità = 200 civili per nodo
+veicoli civili che scappano = 50% densità
+chiamate d'emergenza totali = 50% densità
+veicoli civili che scappano + chiamate d'emergenza totali = 100%
+
+
+triprequest: "scheduleat" "selfmessage" "build emergency"
+
+burst entro 2 minuti chiamate  (uniform 0,120)
+burst ridotto entro 10 min      (uniform 120 600)
+burst/2 nella restante mezzora	(uniform 600 1800)
+
+burst1 50% +burst2 33% +burst3 17% = numero fisso di chiamate emergenziali per nodo
 
 # Limiti del simulatore:
 
