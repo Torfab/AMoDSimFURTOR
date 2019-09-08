@@ -152,10 +152,71 @@ void App::initialize() {
 	nedTypes.push_back("src.node.Node");
 	topo->extractByNedTypeName(nedTypes);
 
-
 	//topo = tcoord->getTopo();
 	cTopology::Node *node = topo->getNode(myAddress);
 
+	std::set<int> s = netmanager->getSetOfEpicenters();
+
+	int count=0;
+	for (auto elem : s){
+		netmanager->getManhattanDistance(myAddress, elem);
+
+		//rompi gate a destra
+
+		//rompi gate in basso
+
+		for (int j = 0; j < node->getNumOutLinks(); j++) {
+
+			if (node->getLinkOut(j)->getLocalGate()->getIndex() == 1 || node->getLinkOut(j)->getLocalGate()->getIndex() == 2) {
+				if (intuniform(0,4) == 4){
+					count++;
+				cGate *gate = node->getLinkOut(j)->getLocalGate();
+				gate->disconnect();
+			}
+			}
+		}
+	}
+	ev << "canali rimossi:  "<< count  << endl;
+	int guardiaW=-1;
+	int guardiaN=-1;
+
+	for (int j = 0; j < node->getNumInLinks(); j++) {
+		ev << "index del nodo" << node->getModule()->getIndex() << " : in: " << node->getLinkIn(j)->getLocalGate()->getIndex() << endl;
+
+		if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3) {
+			// il canale esiste
+			// non succede nulla
+			guardiaW = 1;
+		}
+		if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0) {
+					// il canale esiste
+					// non succede nulla
+			guardiaN = 1;
+		}
+
+	}
+	if (guardiaW == -1) {
+		// controlla se ha un canale in uscita verso quel nodo
+		for (int k = 0; k < node->getNumOutLinks(); k++) {
+			if (node->getLinkOut(k)->getLocalGate()->getIndex() == 3) {
+				cGate *gate = node->getLinkOut(k)->getLocalGate();
+				gate->disconnect();
+			}
+		}
+	}
+	if (guardiaN == -1){
+			// controlla se ha un canale in uscita verso quel nodo
+			for (int k = 0; k < node->getNumOutLinks(); k++) {
+				if (node->getLinkOut(k)->getLocalGate()->getIndex() == 0) {
+					cGate *gate = node->getLinkOut(k)->getLocalGate();
+					gate->disconnect();
+				}
+			}
+		}
+
+
+
+	/*
 	if (netmanager->checkDisconnectedNode(myAddress)) {
 		// disconnects channels
 		for (int j = 0; j < node->getNumOutLinks(); j++) {
@@ -176,7 +237,7 @@ void App::initialize() {
 		}
 
 	}
-
+*/
 	delete topo;
 	newTripAssigned = registerSignal("newTripAssigned");
 
