@@ -5,34 +5,36 @@
 	i nodi hanno un certo numero di persone raccolte da salvare
 	gli autobus raccolgono le persone e le scaricano al punto di raccolta
 	riprendono il circuito e si fermano quando non trovano più nessuno
-	
 
+todo:	
+
+risolvere problema emergenze che non partono (vedi commit)
+
+pulizia initialize app (e netmanager)
+	codice obsoleto
 
 
 EMITTERS
 grafico tempi di risposta con tempi assoluti e non differenza
 tempo di attesa da richiesta a pickup
  
-propagazione a %
 
-dijkstra pesato su traffico, feromone e non pesato per le ambulanze
-aaa per i civili a confronto con dijkstra
+dijkstra pesato su :
+	 traffico
+	feromone e 
+	non pesato per le ambulanze
+	aaa per i civili a confronto con dijkstra
 
 
 codici di emergenza differenti
 
 
-altro routing
-	-coordinatore sceglie e determina lista
-	-veicolo legge lista di indicazioni
-
-
-10. TruckStartNodes  soluzione:vettore
+check 10. TruckStartNodes  soluzione:vettore
 
 
 creazione dei veicoli in app. Ci sono e stanno fermi?
 
-Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 121 )
+Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 202 )
 
 
 
