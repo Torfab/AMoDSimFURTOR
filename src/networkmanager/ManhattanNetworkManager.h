@@ -36,8 +36,8 @@ private:
 
 
 
-    std::set<int> setOfDestroyedNodes;          //nodes without connections
-    std::set<int> setOfNodesInRedZone;          //good neighbours of destroyed nodes
+    std::set<int> setOfDestroyedNodes;
+    std::set<int> setOfNodesInRedZone;      //good neighbours of destroyed nodes
     std::set<int> setOfAvailableNodes;      //nodes not destroyed
 
 private:
@@ -46,12 +46,12 @@ private:
 protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) override;
+    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress);
 	void buildSetOfNodesInRedZone();
 	void buildsetOfBorderNodes();
     void buildsetOfAvailableNodes();
-	std::set<int> buildSetOfDestroyedNodes();
-	void buildSetOfNodesInRedZone(std::set<int> auxSet);
+	void buildSetOfDestroyedNodes();
+//	void buildSetOfNodesInRedZone(std::set<int> auxSet);
 	void buildSetOfBorderNodes();
 	void buildTruckStartNode();
 	int pickRandomElemFromSet(std::set<int> s);
@@ -65,6 +65,13 @@ protected:
 
 
   public:
+	virtual void insertDestroyedNode(int addr) override;
+	virtual void removeRedZoneNode(int addr) override;
+
+	 virtual void insertRedZoneNode(int addr) override;
+	 virtual double getManhattanDistanceX(int srcAddr, int dstAddr) override;  //Get the manhattan distance from srcAddr to dstAddr
+	 virtual double getManhattanDistanceY(int srcAddr, int dstAddr) override;  //Get the manhattan distance from srcAddr to dstAddr
+	 virtual double getManhattanDistance(int srcAddr, int dstAddr) override;
     virtual double getTimeDistance(int srcAddr, int dstAddr) override;
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
     virtual double getHopDistance(int srcAddr, int dstAddr) override;

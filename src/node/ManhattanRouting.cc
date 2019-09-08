@@ -115,8 +115,8 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		traffic->decay(pkChosenGate,trafficWeight);
 
 	} else {
-		int destX = pk->getDestAddr() % rows;
-		int destY = pk->getDestAddr() / rows;
+//		int destX = pk->getDestAddr() % rows;
+//		int destY = pk->getDestAddr() / rows;
 
 		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
 

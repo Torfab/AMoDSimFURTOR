@@ -38,14 +38,20 @@ protected:
     int * storagePointsAddresses;
 
     std::set<int> setOfBorderNodes;         //nodes in the border of the grid
-
+    std::set<int> setOfEpicenters;          //nodes without connections
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
-    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
+//    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
 
-  public:
-    virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
+public:
+	virtual void insertRedZoneNode(int addr) = 0;
+	virtual void insertDestroyedNode(int addr)=0;
+	virtual void removeRedZoneNode(int addr)=0;
+	virtual double getManhattanDistanceX(int srcAddr, int dstAddr)=0; //Get the manhattan distance from srcAddr to dstAddr
+	virtual double getManhattanDistanceY(int srcAddr, int dstAddr)=0; //Get the manhattan distance from srcAddr to dstAddr
+	virtual double getManhattanDistance(int srcAddr, int dstAddr)=0; //Get the manhattan distance from srcAddr to dstAddr
+	virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
     virtual double getSpaceDistance(int srcAddr, int dstAddr)=0;     //Get the space-distance from srcAddr to dstAddr
     virtual double getHopDistance(int srcAddr, int dstAddr)=0;
     virtual double getChannelLength(int nodeAddr, int gateIndex)=0;  //Get the length of the channel connected to the specified gate
@@ -111,6 +117,14 @@ protected:
 
 	int getNumberOfcollectionPoints() const {
 		return numberOfCollectionPoints;
+	}
+
+	int getNumberOfEpicenters() const {
+		return numberOfEpicenters;
+	}
+
+	const std::set<int>& getSetOfEpicenters() const {
+		return setOfEpicenters;
 	}
 };
 

@@ -46,7 +46,7 @@ private:
 	int currentVehiclesInNode;
 //	bool enableCivilTraffic;
 	int numberOfCivils;
-
+    int rows;
 	simtime_t civilEscapeInterval;
 
 	BaseCoord *tcoord;
@@ -145,6 +145,11 @@ void App::initialize() {
 	currentVehiclesInNode = numberOfVehicles;
 	int numberOfCivils;
 
+	rows = getParentModule()->getParentModule()->par("width");
+
+	bool hospital = netmanager->checkHospitalNode(myAddress);
+	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
+	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
 
 	// Destroying nodes part
 	cTopology* topo = new cTopology("topo");
@@ -158,25 +163,61 @@ void App::initialize() {
 	std::set<int> s = netmanager->getSetOfEpicenters();
 
 	int count=0;
-	for (auto elem : s){
-		netmanager->getManhattanDistance(myAddress, elem);
+	int myX = myAddress % rows;
+	int myY = myAddress / rows;
 
+	for (auto elem : s) {
+
+		int epicX = elem % rows;
+		int epicY = elem / rows;
+
+		if (!hospital && !collectionPoint && !storagePoint){
 		//rompi gate a destra
-
 		//rompi gate in basso
-
+		int distance;
 		for (int j = 0; j < node->getNumOutLinks(); j++) {
 
-			if (node->getLinkOut(j)->getLocalGate()->getIndex() == 1 || node->getLinkOut(j)->getLocalGate()->getIndex() == 2) {
-				if (intuniform(0,4) == 4){
+			switch (node->getLinkOut(j)->getLocalGate()->getIndex()) {
+			case 1:  	// EAST
+				distance = netmanager->getManhattanDistance(myAddress, elem);
+				if (myX >= epicX)
+					distance++;
+
+				if (intuniform(0, (distance * distance) - 1) == 0) {
 					count++;
-				cGate *gate = node->getLinkOut(j)->getLocalGate();
-				gate->disconnect();
-			}
+					cGate *gate = node->getLinkOut(j)->getLocalGate();
+					gate->disconnect();
+					netmanager->insertRedZoneNode(myAddress);
+
+				}
+				break;
+			case 2: 	// SOUTH
+				distance = netmanager->getManhattanDistance(myAddress, elem);
+				if (myY >= epicY)
+					distance++;
+
+				if (intuniform(0, (distance * distance) - 1) == 0) {
+					count++;
+					cGate *gate = node->getLinkOut(j)->getLocalGate();
+					gate->disconnect();
+					netmanager->insertRedZoneNode(myAddress);
+
+				}
+				break;
+
+			default:
+				break;
 			}
 		}
-	}
-	ev << "canali rimossi:  "<< count  << endl;
+		ev << "canali rimossi:  " << count << endl;
+
+		if (node->getNumOutLinks() == 0) {
+			netmanager->insertDestroyedNode(myAddress);
+			netmanager->removeRedZoneNode(myAddress);
+		}
+		}
+
+
 	int guardiaW=-1;
 	int guardiaN=-1;
 
@@ -201,6 +242,8 @@ void App::initialize() {
 			if (node->getLinkOut(k)->getLocalGate()->getIndex() == 3) {
 				cGate *gate = node->getLinkOut(k)->getLocalGate();
 				gate->disconnect();
+				netmanager->insertRedZoneNode(myAddress);
+
 			}
 		}
 	}
@@ -210,10 +253,12 @@ void App::initialize() {
 				if (node->getLinkOut(k)->getLocalGate()->getIndex() == 0) {
 					cGate *gate = node->getLinkOut(k)->getLocalGate();
 					gate->disconnect();
+					netmanager->insertRedZoneNode(myAddress);
+
 				}
 			}
 		}
-
+	}
 
 
 	/*
@@ -247,8 +292,7 @@ void App::initialize() {
 
 	EV << "I am node " << myAddress << endl;
 
-	bool hospital = netmanager->checkHospitalNode(myAddress);
-	bool storagePoint=netmanager->checkStoragePointNode(myAddress);
+
 //	int truckStart = netmanager->getTruckStartNode();
 
 	if (numberOfVehicles > 0) {
@@ -294,6 +338,7 @@ void App::initialize() {
 	// si -> genero traffico
 	// no -> nice
 	if (netmanager->checkRedZoneNode(myAddress)) {
+		ev << "nodo: " << myAddress << " in red zone" << endl;
 		civilEscapeInterval = par("civilEscapeInterval");
 		for (int i = 0; i < numberOfCivils; i++) {
 			generateCivilTraffic(exponential(civilEscapeInterval));

@@ -17,7 +17,7 @@
 
 Define_Module(ManhattanNetworkManager);
 
-std::set<int> ManhattanNetworkManager::buildSetOfDestroyedNodes() {
+void ManhattanNetworkManager::buildSetOfDestroyedNodes() {
 
     int epicenterAddresses[numberOfEpicenters];
 
@@ -26,31 +26,110 @@ std::set<int> ManhattanNetworkManager::buildSetOfDestroyedNodes() {
         EV << "epicenter Address [" << i << " ] " << epicenterAddresses[i]
                   << endl;
         if (disasterRadius > 0)	// Creation of destroyed nodes set
-            setOfDestroyedNodes.insert(epicenterAddresses[i]);
-    }
+            setOfEpicenters.insert(epicenterAddresses[i]);
+	}
 
-    std::set<int> auxSet;
-    for (int i = 1; i < disasterRadius; i++) {
-        for (auto elem : setOfDestroyedNodes)
-            auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
-        setOfDestroyedNodes.insert(auxSet.begin(), auxSet.end());
-    }
-    return auxSet;
+}
+/*
+
+    cTopology *topo = new cTopology("topo");
+
+       std::vector<std::string> nedTypes;
+       nedTypes.push_back("src.node.Node");
+       topo->extractByNedTypeName(nedTypes);
+
+
+       double seed = 0.25;
+
+	for (int i = 0; i < numberOfEpicenters; i++) {
+
+		// PER OGNI EPICENTRO
+		cTopology::Node *node = topo->getNode(epicenterAddresses[i]);
+		ev << "epicentro: " << node->getModule()->getFullPath() << endl;
+
+		for (int k = 0; k < disasterRadius; k++) {
+			// DI RAGGIO
+
+			for (int j = 0; j < node->getNumOutLinks(); j++) {
+
+//				if (uniform(0, 1) < seed) {
+					// SCOPPIA I VICINI
+					//raggio volte
+					cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+
+					setOfEpicenters.insert(neighbour->getModule()->getId() - 4);
+
+					EV << neighbour->getModule()->getFullPath() << "   ";
+//				}
+
+			}
+			ev << endl;
+
+
+		}
+
+
+	}
+
+
+
+
+    std::set<int> auxSet = setOfDestroyedNodes;
+	for (int i = 1; i < disasterRadius; i++) {
+		for (auto elem : auxSet) {
+			propagateEarthquakeBetweenNodes(elem);
+		}
+	auxSet = setOfDestroyedNodes;
+
+	}
+delete topo;
+	return setOfEpicenters;
 }
 
-void ManhattanNetworkManager::buildSetOfNodesInRedZone(std::set<int> auxSet) {
-    // Creation of red zones nodes set
-    for (auto elem : setOfDestroyedNodes)
-        auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
-    setOfNodesInRedZone.insert(auxSet.begin(), auxSet.end());
+*/
+/**
+ * Propagate the earthquake from epicenter node to neighbours.
+ */
+void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
+/*
+	setOfDestroyedNodes.insert(epicenterAddress);
+
+    cTopology *topo = new cTopology("topo");
+
+    std::vector<std::string> nedTypes;
+    nedTypes.push_back("src.node.Node");
+    topo->extractByNedTypeName(nedTypes);
+
+    for (int i = 0; i < topo->getNumNodes(); i++) {
+
+        cTopology::Node *node = topo->getNode(epicenterAddress);
+
+        for (int j = 0; j < node->getNumOutLinks(); j++) {
+            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
+            setOfDestroyedNodes.insert(neighbour->getModuleId());
+
+        }
+
+    }
+    delete topo;
+    return auxSet;*/
+}
+
+//void ManhattanNetworkManager::buildSetOfNodesInRedZone(std::set<int> auxSet) {
+ /*
+	// Creation of red zones nodes set
+//    for (auto elem : setOfDestroyedNodes)
+//        auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
+//    setOfNodesInRedZone.insert(auxSet.begin(), auxSet.end());
+
     // Get nodes in red zones
     for (auto elem : setOfDestroyedNodes)
         setOfNodesInRedZone.erase(elem);
     EV<< "nodi in redzone ";
     for (auto elem : setOfNodesInRedZone)
         EV<<elem<< " ";
-    EV<<endl;
-}
+    EV<<endl;*/
+//}
 
 void ManhattanNetworkManager::buildSetOfBorderNodes() {
     for (int i = 0; i < columns; i++) {
@@ -108,12 +187,12 @@ void ManhattanNetworkManager::initialize() {
             parentModule->par("acceleration"));
 
     // Creation of destroyed nodes set
-    std::set<int> auxSet = buildSetOfDestroyedNodes();
+    buildSetOfDestroyedNodes();
 
 
     // DON'T CHANGE THE ORDER
     buildsetOfAvailableNodes();
-    buildSetOfNodesInRedZone(auxSet);  // Creation of red zones nodes set
+//    buildSetOfNodesInRedZone(auxSet);  // Creation of red zones nodes set
     buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
     buildStoragePointNodes();
@@ -156,6 +235,70 @@ double ManhattanNetworkManager::getSpaceDistance(int srcAddr, int dstAddr) {
 
     space_distance += abs(xSource - xDest) * xChannelLength;
     space_distance += abs(ySource - yDest) * yChannelLength;
+
+    return space_distance;
+}
+
+/**
+ * Return the manhattan distance from current node to target one.
+ *
+ * @param srcAddr
+ * @param dstAddress
+ * @return
+ */
+double ManhattanNetworkManager::getManhattanDistance(int srcAddr, int dstAddr) {
+    double space_distance = 0;
+
+    int xSource = srcAddr % rows;
+    int xDest = dstAddr % rows;
+
+    int ySource = srcAddr / rows;
+    int yDest = dstAddr / rows;
+
+    space_distance += abs(xSource - xDest);
+    space_distance += abs(ySource - yDest);
+
+    return space_distance;
+}
+
+/**
+ * Return the X manhattan distance from current node to target one.
+ *
+ * @param srcAddr
+ * @param dstAddress
+ * @return
+ */
+double ManhattanNetworkManager::getManhattanDistanceX(int srcAddr, int dstAddr) {
+    double space_distance = 0;
+
+    int xSource = srcAddr % rows;
+    int xDest = dstAddr % rows;
+
+    int ySource = srcAddr / rows;
+    int yDest = dstAddr / rows;
+
+    space_distance = abs(xSource - xDest);
+
+    return space_distance;
+}
+
+/**
+ * Return the Y manhattan distance from current node to target one.
+ *
+ * @param srcAddr
+ * @param dstAddress
+ * @return
+ */
+double ManhattanNetworkManager::getManhattanDistanceY(int srcAddr, int dstAddr) {
+    double space_distance = 0;
+
+    int xSource = srcAddr % rows;
+    int xDest = dstAddr % rows;
+
+    int ySource = srcAddr / rows;
+    int yDest = dstAddr / rows;
+
+    space_distance = abs(ySource - yDest);
 
     return space_distance;
 }
@@ -225,34 +368,7 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr) {
     return nVehicles;
 }
 
-/**
- * Propagate the earthquake from epicenter node to neighbours.
- */
-std::set<int> ManhattanNetworkManager::propagateEarthquakeBetweenNodes(
-        int epicenterAddress, std::set<int> auxSet) {
 
-    auxSet.insert(epicenterAddress);
-
-    cTopology *topo = new cTopology("topo");
-
-    std::vector<std::string> nedTypes;
-    nedTypes.push_back("src.node.Node");
-    topo->extractByNedTypeName(nedTypes);
-
-    for (int i = 0; i < topo->getNumNodes(); i++) {
-
-        cTopology::Node *node = topo->getNode(epicenterAddress);
-
-        for (int j = 0; j < node->getNumOutLinks(); j++) {
-            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-            auxSet.insert(neighbour->getModule()->getIndex());
-
-        }
-
-    }
-    delete topo;
-    return auxSet;
-}
 
 /**
  * Check if the specified address is valid.
@@ -302,7 +418,7 @@ void ManhattanNetworkManager::handleMessage(cMessage *msg) {
  **/
 bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
 
-    for (auto elem : setOfDestroyedNodes) {
+    for (auto elem : setOfEpicenters) {
 
         if (elem == addr)
             return true;
@@ -330,7 +446,7 @@ void ManhattanNetworkManager::buildHospitalNodes() {
 
     do {
         safeHospital = intuniform(0, numberOfNodes - 1);
-    } while (setOfDestroyedNodes.find(safeHospital) != setOfDestroyedNodes.end());
+    } while (setOfEpicenters.find(safeHospital) != setOfEpicenters.end());
     hospitalAddresses[0] = safeHospital;
 
     EV << "HOSPITAL Safe: " << hospitalAddresses[0] << endl;
@@ -417,7 +533,7 @@ int ManhattanNetworkManager::pickClosestCollectionPointFromNode(int addr) {
 void ManhattanNetworkManager::buildsetOfAvailableNodes() {
     EV << "Nodi available ";
     for (int i = 0; i < numberOfNodes; i++) {
-        if (setOfDestroyedNodes.find(i) == setOfDestroyedNodes.end()) {
+        if (setOfEpicenters.find(i) == setOfEpicenters.end()) {
             setOfAvailableNodes.insert(i);
             EV << i << " ";
 
@@ -430,7 +546,7 @@ void ManhattanNetworkManager::buildStoragePointNodes() {
     for (int i = 0; i < numberOfStoragePoints; i++) {
         do {
             storagePointsAddresses[i] = pickRandomElemFromSet(setOfBorderNodes);
-        } while (setOfDestroyedNodes.find(storagePointsAddresses[i])!= setOfDestroyedNodes.end());
+        } while (setOfEpicenters.find(storagePointsAddresses[i])!= setOfEpicenters.end());
 
         EV << "StoragePoint: " << storagePointsAddresses[i] << endl;
     }
@@ -448,6 +564,19 @@ int ManhattanNetworkManager::pickRandomStoragePointNode() {
     if (numberOfStoragePoints<1)
         return -1;
     return storagePointsAddresses[intuniform(0,numberOfStoragePoints-1)];
+}
+
+void ManhattanNetworkManager::insertRedZoneNode(int addr) {
+	setOfNodesInRedZone.insert(addr);
+}
+
+void ManhattanNetworkManager::insertDestroyedNode(int addr) {
+	setOfDestroyedNodes.insert(addr);
+	setOfAvailableNodes.erase(addr);
+}
+
+void ManhattanNetworkManager::removeRedZoneNode(int addr) {
+	setOfNodesInRedZone.erase(addr);
 }
 
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {
