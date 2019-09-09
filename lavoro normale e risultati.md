@@ -18,12 +18,13 @@ EMITTERS
 grafico tempi di risposta con tempi assoluti e non differenza
 tempo di attesa da richiesta a pickup
  
-
 dijkstra pesato su :
 	 traffico
 	feromone e 
 	non pesato per le ambulanze
 	aaa per i civili a confronto con dijkstra
+
+(Altri emitter da aggiungere riferiti ai dijkstra per confronto)
 
 
 codici di emergenza differenti
