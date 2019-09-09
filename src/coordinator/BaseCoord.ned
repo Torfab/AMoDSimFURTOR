@@ -9,6 +9,7 @@ simple BaseCoord like ICoord
         
         @display("i=block/cogwheel_s");
         
+        
         // ------ SIGNALS -------- //
         @signal[traveledDistance](type="double");       	//Traveled distance per vehicle
         @statistic[traveledDistance](title="Traveled distance per vehicle (km)";source="traveledDistance";unit=km;record=vector,stats;interpolationmode=none);

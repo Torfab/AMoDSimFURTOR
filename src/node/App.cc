@@ -58,6 +58,8 @@ private:
 	simsignal_t signal_ambulanceDelayTravelTime;
 	simsignal_t signal_truckDelayTravelTime;
 	simsignal_t signal_civilDelayTravelTime;
+	simsignal_t signal_civilTravelTime;
+	simsignal_t signal_ambulanceTravelTime;
 	// Idle signal
 	simsignal_t signal_ambulancesIdle;
 
@@ -103,7 +105,7 @@ void App::generateCivilTraffic(simtime_t interval) {
 		destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress); // look for a collection point
 		if (netmanager->getHopDistance(myAddress,destAddress)<=3){
 		    civile=new Vehicle(-1, 1, 0); //il civile appiedato 1m/s 0 traffico
-		    EV<<"civile appiedato"<<endl;
+//		    EV<<"civile appiedato"<<endl;
 		}else{
 		    civile=new Vehicle(-1, 9.7, 1);
 		}
@@ -113,10 +115,10 @@ void App::generateCivilTraffic(simtime_t interval) {
 	civile->setSrcAddr(myAddress);
 	civile->setDestAddr(destAddress);
 
-	if (cp)
-		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << " scheduled at " << interval << endl;
-	else
-		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr()<< " scheduled at " << interval  << endl;
+//	if (cp)
+//		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to collection point: " << civile->getDestAddr() << " scheduled at " << interval << endl;
+//	else
+//		EV << "New (PANIC) civil vehicle " << civile->getID() << " running away to border node: " << civile->getDestAddr()<< " scheduled at " << interval  << endl;
 
 
 	sendDelayed(civile, interval, "out");
@@ -139,151 +141,14 @@ void App::initialize() {
 	signal_truckDelayTravelTime = registerSignal("signal_truckDelayTravelTime");
 	signal_ambulanceDelayTravelTime = registerSignal("signal_ambulanceDelayTravelTime");
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
+	signal_civilTravelTime =registerSignal("signal_civilTravelTime");
+	signal_ambulanceTravelTime =registerSignal("signal_ambulanceTravelTime");
 
 	signal_ambulancesIdle = registerSignal("signal_ambulancesIdle");
 
 	currentVehiclesInNode = numberOfVehicles;
 	int numberOfCivils;
 
-	rows = getParentModule()->getParentModule()->par("width");
-
-	bool hospital = netmanager->checkHospitalNode(myAddress);
-	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
-	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
-
-	// Destroying nodes part
-	cTopology* topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
-
-	//topo = tcoord->getTopo();
-	cTopology::Node *node = topo->getNode(myAddress);
-
-	std::set<int> s = netmanager->getSetOfEpicenters();
-
-	int count=0;
-	int myX = myAddress % rows;
-	int myY = myAddress / rows;
-
-	for (auto elem : s) {
-
-		int epicX = elem % rows;
-		int epicY = elem / rows;
-
-		if (!hospital && !collectionPoint && !storagePoint){
-		//rompi gate a destra
-		//rompi gate in basso
-		int distance;
-		for (int j = 0; j < node->getNumOutLinks(); j++) {
-
-			switch (node->getLinkOut(j)->getLocalGate()->getIndex()) {
-			case 1:  	// EAST
-				distance = netmanager->getManhattanDistance(myAddress, elem);
-				if (myX >= epicX)
-					distance++;
-
-				if (intuniform(0, (distance * distance) - 1) == 0) {
-					count++;
-					cGate *gate = node->getLinkOut(j)->getLocalGate();
-					gate->disconnect();
-					netmanager->insertRedZoneNode(myAddress);
-
-				}
-				break;
-			case 2: 	// SOUTH
-				distance = netmanager->getManhattanDistance(myAddress, elem);
-				if (myY >= epicY)
-					distance++;
-
-				if (intuniform(0, (distance * distance) - 1) == 0) {
-					count++;
-					cGate *gate = node->getLinkOut(j)->getLocalGate();
-					gate->disconnect();
-					netmanager->insertRedZoneNode(myAddress);
-
-				}
-				break;
-
-			default:
-				break;
-			}
-		}
-		ev << "canali rimossi:  " << count << endl;
-
-		if (node->getNumOutLinks() == 0) {
-			netmanager->insertDestroyedNode(myAddress);
-			netmanager->removeRedZoneNode(myAddress);
-		}
-		}
-
-
-	int guardiaW=-1;
-	int guardiaN=-1;
-
-	for (int j = 0; j < node->getNumInLinks(); j++) {
-		ev << "index del nodo" << node->getModule()->getIndex() << " : in: " << node->getLinkIn(j)->getLocalGate()->getIndex() << endl;
-
-		if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3) {
-			// il canale esiste
-			// non succede nulla
-			guardiaW = 1;
-		}
-		if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0) {
-					// il canale esiste
-					// non succede nulla
-			guardiaN = 1;
-		}
-
-	}
-	if (guardiaW == -1) {
-		// controlla se ha un canale in uscita verso quel nodo
-		for (int k = 0; k < node->getNumOutLinks(); k++) {
-			if (node->getLinkOut(k)->getLocalGate()->getIndex() == 3) {
-				cGate *gate = node->getLinkOut(k)->getLocalGate();
-				gate->disconnect();
-				netmanager->insertRedZoneNode(myAddress);
-
-			}
-		}
-	}
-	if (guardiaN == -1){
-			// controlla se ha un canale in uscita verso quel nodo
-			for (int k = 0; k < node->getNumOutLinks(); k++) {
-				if (node->getLinkOut(k)->getLocalGate()->getIndex() == 0) {
-					cGate *gate = node->getLinkOut(k)->getLocalGate();
-					gate->disconnect();
-					netmanager->insertRedZoneNode(myAddress);
-
-				}
-			}
-		}
-	}
-
-
-	/*
-	if (netmanager->checkDisconnectedNode(myAddress)) {
-		// disconnects channels
-		for (int j = 0; j < node->getNumOutLinks(); j++) {
-//            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-			cGate *gate = node->getLinkOut(j)->getLocalGate();
-			gate->disconnect();
-
-		}
-		return;
-	} else {
-		for (int j = 0; j < node->getNumOutLinks(); j++) {
-			cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-
-			if (netmanager->checkDisconnectedNode(neighbour->getModule()->getIndex())) {
-				cGate *gate = node->getLinkOut(j)->getLocalGate();
-				gate->disconnect();
-			}
-		}
-
-	}
-*/
-	delete topo;
 	newTripAssigned = registerSignal("newTripAssigned");
 
 	CivilDestinations = netmanager->getNumberOfNodes();
@@ -292,6 +157,9 @@ void App::initialize() {
 
 	EV << "I am node " << myAddress << endl;
 
+	bool hospital = netmanager->checkHospitalNode(myAddress);
+	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
+	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
 
 //	int truckStart = netmanager->getTruckStartNode();
 
@@ -321,7 +189,7 @@ void App::initialize() {
 			emit(signal_ambulancesIdle,currentVehiclesInNode);
 
 			if (ev.isGUI())
-				getParentModule()->getDisplayString().setTagArg("i", 3, "white");
+				getParentModule()->getDisplayString().setTagArg("i", 1, "white");
 
 
 		}
@@ -368,13 +236,20 @@ void App::handleMessage(cMessage *msg) {
 	case -1: //civil
 		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr() << " partito da " << vehicle->getSrcAddr() << endl;
 		emit(signal_civilDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+
+		emit(signal_civilTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
+
 		delete vehicle;
 		tcoord->evacuateCivil(myAddress);
 		return;
 
+
 	case 1:	//ambulance
 		if (netmanager->checkHospitalNode(myAddress)) {
 			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+
+			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
+
 			EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
 
 		}

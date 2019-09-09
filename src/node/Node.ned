@@ -17,17 +17,17 @@ module Node
         inout port[];
 
     submodules:
-        trsubmitter: TripRequestSubmitter if isRequestGenerator {
+    	trsubmitter: TripRequestSubmitter if isRequestGenerator {
             parameters:
                 address = address;
                 @display("p=228,70");
         }
-
         app: <appType> like IApp {
             parameters:
                 address = address;
                 @display("p=140,60");
         }
+	
         routing: <routingType> like IRouting {
             parameters:
                 @display("p=140,130");
@@ -39,6 +39,8 @@ module Node
             parameters:
                 @display("p=80,200,row");
         }
+        
+
     connections:
         routing.localOut --> app.in;
         routing.localIn <-- app.out;

@@ -27,6 +27,13 @@ simple App like IApp
         @signal[signal_ambulancesIdle](type="int");       
         @statistic[signal_ambulancesIdle](title="Number of idle ambulances in hospital";source="signal_ambulancesIdle";record=vector,stats;interpolation=none);
        
+       
+        @signal[signal_civilTravelTime](type="double");       
+        @statistic[signal_civilTravelTime](title="Civil travel time to reach the destination";source="signal_civilTravelTime";record=vector,stats;interpolation=none);
+    
+   		@signal[signal_ambulanceTravelTime](type="double");       
+        @statistic[signal_ambulanceTravelTime](title="Ambulance travel time to serve a request";source="signal_ambulanceTravelTime";record=vector,stats;interpolation=none);
+
         
     gates:
         input in;

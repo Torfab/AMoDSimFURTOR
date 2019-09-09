@@ -192,7 +192,7 @@ void ManhattanNetworkManager::initialize() {
 
     // DON'T CHANGE THE ORDER
     buildsetOfAvailableNodes();
-//    buildSetOfNodesInRedZone(auxSet);  // Creation of red zones nodes set
+    buildSetOfNodesInRedZone();  // Creation of red zones nodes set
     buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
     buildStoragePointNodes();
@@ -416,10 +416,9 @@ void ManhattanNetworkManager::handleMessage(cMessage *msg) {
  * @param addr
  * @return
  **/
-bool ManhattanNetworkManager::checkDisconnectedNode(int addr) {
+bool ManhattanNetworkManager::checkDestroyedNode(int addr) {
 
-    for (auto elem : setOfEpicenters) {
-
+    for (auto elem : setOfDestroyedNodes) {
         if (elem == addr)
             return true;
     }
@@ -577,6 +576,10 @@ void ManhattanNetworkManager::insertDestroyedNode(int addr) {
 
 void ManhattanNetworkManager::removeRedZoneNode(int addr) {
 	setOfNodesInRedZone.erase(addr);
+}
+
+void ManhattanNetworkManager::buildSetOfNodesInRedZone() {
+//	setOfNodesInRedZone.insert(-1);
 }
 
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {

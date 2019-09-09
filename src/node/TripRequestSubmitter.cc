@@ -27,6 +27,8 @@ class TripRequestSubmitter : public cSimpleModule
         int x_coord;
         int y_coord;
 
+        int rows;
+
         double maxSubmissionTime;
         double minTripLength;
         int destAddresses;
@@ -58,6 +60,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual TripRequest* buildTripRequest();
         virtual TripRequest* buildTruckRequest();
 	void buildEmergencySchedule(int totalEmergencies);
+	bool disconnectChannelsAndCheckRedzone();
 };
 
 Define_Module(TripRequestSubmitter);
@@ -84,11 +87,130 @@ void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
 	for (int i = 0; i < thirtypercent; i++) {
 		v.push_back(uniform(120, 600));
 	}
-	int twentypercent = totalEmergencies * 0.2;
+	int twentypercent = totalEmergencies * 0.2 + 1;  //+1 avoid seg fault when low density
 	for (int i = 0; i < twentypercent; i++) {
 		v.push_back(uniform(600, 3600));
 	}
 	sort(v.begin(), v.end());
+//	for (auto elem : v)  	// print
+//		ev << elem << "   ";
+//	ev << endl;
+}
+
+bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
+	rows = getParentModule()->getParentModule()->par("width");
+	bool hospital = netmanager->checkHospitalNode(myAddress);
+	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
+	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
+	bool redZoneNode = false;
+	// Destroying nodes part
+	cTopology* topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
+	//topo = tcoord->getTopo();
+	cTopology::Node* node = topo->getNode(myAddress);
+	std::set<int> s = netmanager->getSetOfEpicenters();
+	int myX = myAddress % rows;
+	int myY = myAddress / rows;
+	for (auto elem : s) {
+
+		int epicX = elem % rows;
+		int epicY = elem / rows;
+
+		if (!hospital && !collectionPoint && !storagePoint) {
+			//rompi gate a destra
+			//rompi gate in basso
+			int distance;
+
+			for (int j = 0; j < node->getNumOutLinks(); j++) {
+
+				switch (node->getLinkOut(j)->getLocalGate()->getIndex()) {
+				case 1:  	// EAST
+					distance = netmanager->getManhattanDistance(myAddress, elem);
+					if (myX >= epicX)
+						distance++;
+
+					if (intuniform(0, (distance * distance) - 1) == 0) {
+
+						cGate *gate = node->getLinkOut(j)->getLocalGate();
+						gate->disconnect();
+						netmanager->insertRedZoneNode(myAddress);
+						redZoneNode = true;
+
+					}
+					break;
+				case 2: 	// SOUTH
+					distance = netmanager->getManhattanDistance(myAddress, elem);
+					if (myY >= epicY)
+						distance++;
+
+					if (intuniform(0, (distance * distance) - 1) == 0) {
+
+						cGate *gate = node->getLinkOut(j)->getLocalGate();
+						gate->disconnect();
+						netmanager->insertRedZoneNode(myAddress);
+						redZoneNode = true;
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+
+		}
+
+		int guardiaW = -1;
+		int guardiaN = -1;
+
+		for (int j = 0; j < node->getNumInLinks(); j++) {
+			ev << "index del nodo" << node->getModule()->getIndex() << " : in: " << node->getLinkIn(j)->getLocalGate()->getIndex() << endl;
+
+			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3) {
+				// il canale esiste
+				// non succede nulla
+				guardiaW = 1;
+			}
+			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0) {
+				// il canale esiste
+				// non succede nulla
+				guardiaN = 1;
+			}
+
+		}
+		if (guardiaW == -1) {
+			// controlla se ha un canale in uscita verso quel nodo
+			for (int k = 0; k < node->getNumOutLinks(); k++) {
+				if (node->getLinkOut(k)->getLocalGate()->getIndex() == 3) {
+					cGate *gate = node->getLinkOut(k)->getLocalGate();
+					gate->disconnect();
+					netmanager->insertRedZoneNode(myAddress);
+					redZoneNode = true;
+
+				}
+			}
+		}
+		if (guardiaN == -1) {
+			// controlla se ha un canale in uscita verso quel nodo
+			for (int k = 0; k < node->getNumOutLinks(); k++) {
+				if (node->getLinkOut(k)->getLocalGate()->getIndex() == 0) {
+					cGate *gate = node->getLinkOut(k)->getLocalGate();
+					gate->disconnect();
+					netmanager->insertRedZoneNode(myAddress);
+					redZoneNode = true;
+				}
+			}
+		}
+	}
+	if (node->getNumOutLinks() == 0) {
+		netmanager->insertDestroyedNode(myAddress);
+		netmanager->removeRedZoneNode(myAddress);
+		redZoneNode = false;
+	}
+	delete topo;
+	return redZoneNode;
 }
 
 void TripRequestSubmitter::initialize()
@@ -111,7 +233,9 @@ void TripRequestSubmitter::initialize()
     emergencyRequests = registerSignal("emergencyRequests");
     tripRequest = registerSignal("tripRequest");
 
-    bool disconnected = netmanager->checkDisconnectedNode(myAddress);
+
+
+    bool disconnected = netmanager->checkDestroyedNode(myAddress);
     if (disconnected) //AVOID Trip request creations
     	return;
 
@@ -120,12 +244,11 @@ void TripRequestSubmitter::initialize()
     	scheduleAt(sendIATime->doubleValue(), truckPacket);
     }
 
-
-
+	bool redZoneNode = disconnectChannelsAndCheckRedzone();
 //	for (auto n : v)
 //		ev << n << endl;
 
-	if (netmanager->checkRedZoneNode(myAddress)) {
+	if (redZoneNode) {
 
 		totalEmergenciesPerNode = par("numberOfEmergencies");
 		emergencyRequestCounter = 0;

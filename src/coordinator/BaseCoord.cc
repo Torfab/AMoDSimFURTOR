@@ -866,7 +866,7 @@ int BaseCoord::getClosestExitNode(int address) {
 		}
 
 	}
-	EV << "Closest Exit node for node: " << address << " is > " << closestAddr << endl;
+//	EV << "Closest Exit node for node: " << address << " is > " << closestAddr << endl;
 	return closestAddr;
 
 

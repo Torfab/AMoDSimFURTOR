@@ -68,7 +68,7 @@ public:
 
 
 
-    virtual bool checkDisconnectedNode(int addr) =0;
+    virtual bool checkDestroyedNode(int addr) =0;
     virtual bool checkBorderNode(int addr) =0;
     virtual bool checkRedZoneNode(int addr) =0;
     virtual bool checkHospitalNode(int addr) = 0;

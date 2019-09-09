@@ -80,7 +80,7 @@ protected:
     virtual int getOutputGate(int srcAddr, int destAddr) override;
     virtual int getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
-    virtual bool checkDisconnectedNode(int addr) override;
+    virtual bool checkDestroyedNode(int addr) override;
     virtual bool checkBorderNode(int addr) override;
     virtual bool checkRedZoneNode(int addr) override;
     virtual bool checkHospitalNode(int addr) override;
