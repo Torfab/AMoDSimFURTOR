@@ -265,7 +265,7 @@ void TripRequestSubmitter::initialize()
 	bool redZoneNode = disconnectChannelsAndCheckRedzone();
 //	for (auto n : v)
 //		ev << n << endl;
-	ev << " return redzone" << redZoneNode << endl;
+
 	if (redZoneNode) {
 
 		totalEmergenciesPerNode = par("numberOfEmergencies");
@@ -279,7 +279,7 @@ void TripRequestSubmitter::initialize()
 
 	}
 
-
+	netmanager->updateTopology();
 }
 
 

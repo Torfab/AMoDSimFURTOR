@@ -19,7 +19,7 @@
 #include <omnetpp.h>
 #include "Pheromone.h"
 #include "Traffic.h"
-
+#include "AbstractNetworkManager.h"
 class ManhattanRouting : public cSimpleModule
 {
 private:
@@ -42,8 +42,8 @@ private:
 
     double lastUpdateTime;
 
-    cTopology* topo;
-
+//    cTopology* topo;
+    AbstractNetworkManager *netmanager;
     //Feromone related signals
     simsignal_t * signalFeromone;
     //Traffic related signals
@@ -53,7 +53,6 @@ private:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual ~ManhattanRouting();
-    virtual bool checkAvailableGate(int proposal);
 };
 
 #endif

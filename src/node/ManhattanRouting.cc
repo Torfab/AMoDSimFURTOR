@@ -18,9 +18,13 @@
 #include "Pheromone.h"
 #include "Traffic.h"
 
+
 Define_Module(ManhattanRouting);
 
 void ManhattanRouting::initialize() {
+
+	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+
 	signalFeromone = new simsignal_t[4];
 	/* ---- REGISTER SIGNALS ---- */
 	signalFeromone[0] = registerSignal("signalFeromoneN");
@@ -52,10 +56,8 @@ void ManhattanRouting::initialize() {
 	//lastUpdateTime = simTime().dbl();
 
 	//Pheromone
-	pheromoneDecayTime = getParentModule()->getParentModule()->par(
-			"pheromoneDecayTime");
-	pheromoneDecayFactor = getParentModule()->getParentModule()->par(
-			"pheromoneDecayFactor");
+	pheromoneDecayTime = getParentModule()->getParentModule()->par("pheromoneDecayTime");
+	pheromoneDecayFactor = getParentModule()->getParentModule()->par("pheromoneDecayFactor");
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
@@ -73,22 +75,23 @@ ManhattanRouting::~ManhattanRouting() {
 
 }
 
-bool ManhattanRouting::checkAvailableGate(int proposal){
-	// Check if gates exist
-	cTopology::Node *node = topo->getNode(myAddress);
-	for (int j = 0; j < node->getNumOutLinks(); j++) {
-				cGate *gate = node->getLinkOut(j)->getLocalGate();
-				if (proposal == gate->getIndex())
-					return true;
-			}
-	return false;
-}
-
 void ManhattanRouting::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
 	int trafficWeight = pk->getTrafficWeight();
+
+	// Topology
+	cTopology* topo = netmanager->getTopo();
+
+	// Topology
+/*
+	topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
+
+*/
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
@@ -135,12 +138,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			lastUpdateTime = simTime().dbl();
 		}
 
-		// Topology
-
-		topo = new cTopology("topo");
-		std::vector<std::string> nedTypes;
-		nedTypes.push_back("src.node.Node");
-		topo->extractByNedTypeName(nedTypes);
 
 		int destination = pk->getDestAddr();
 		EV<<"I'm going to"<<pk->getDestAddr();
@@ -152,7 +149,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		if (node->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
 			//node->disable();
-			delete topo;
 			return;
 		} else {
 
@@ -162,7 +158,6 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 		}
 
-		delete topo;
 		// Traffic delay logic
 
 		int distanceToTravel = 0;

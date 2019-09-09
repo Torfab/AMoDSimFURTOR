@@ -27,6 +27,7 @@ void ManhattanNetworkManager::buildSetOfDestroyedNodes() {
                   << endl;
         if (disasterRadius > 0)	// Creation of destroyed nodes set
             setOfEpicenters.insert(epicenterAddresses[i]);
+
 	}
 
 }
@@ -480,12 +481,13 @@ int ManhattanNetworkManager::pickRandomStoragePointNode() {
 
 void ManhattanNetworkManager::insertRedZoneNode(int addr) {
 	setOfNodesInRedZone.insert(addr);
+
 }
 
 void ManhattanNetworkManager::insertDestroyedNode(int addr) {
 	setOfDestroyedNodes.insert(addr);
 	setOfAvailableNodes.erase(addr);
-//	setOfNodesInRedZone.erase(addr);
+
 }
 
 void ManhattanNetworkManager::removeRedZoneNode(int addr) {
@@ -501,6 +503,13 @@ void ManhattanNetworkManager::removeRedZoneNode(int addr) {
 
 void ManhattanNetworkManager::buildSetOfNodesInRedZone() {
 //	setOfNodesInRedZone.insert(-1);
+}
+
+void ManhattanNetworkManager::updateTopology() {
+	topo->clear();
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
 }
 
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {

@@ -47,6 +47,7 @@ protected:
 //    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
 
 public:
+	virtual void updateTopology()=0;
  	virtual void insertRedZoneNode(int addr) = 0;
 	virtual void insertDestroyedNode(int addr)=0;
 	virtual void removeRedZoneNode(int addr)=0;

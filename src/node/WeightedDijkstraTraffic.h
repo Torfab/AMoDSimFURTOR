@@ -19,6 +19,7 @@
 #include <omnetpp.h>
 #include "Pheromone.h"
 #include "Traffic.h"
+#include "AbstractNetworkManager.h"
 
 class WeightedDijkstraTraffic : public cSimpleModule
 {
@@ -42,8 +43,8 @@ private:
 
     double lastUpdateTime;
 
-    cTopology* topo;
-
+//    cTopology* topo;
+    AbstractNetworkManager *netmanager;
     //Feromone related signals
     simsignal_t * signalFeromone;
     //Traffic related signals
@@ -53,7 +54,6 @@ private:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual ~WeightedDijkstraTraffic();
-    virtual bool checkAvailableGate(int proposal);
 };
 
 #endif

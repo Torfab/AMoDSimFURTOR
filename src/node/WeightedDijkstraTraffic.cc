@@ -21,6 +21,8 @@
 Define_Module(WeightedDijkstraTraffic);
 
 void WeightedDijkstraTraffic::initialize() {
+	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+
 	signalFeromone = new simsignal_t[4];
 	/* ---- REGISTER SIGNALS ---- */
 	signalFeromone[0] = registerSignal("signalFeromoneN");
@@ -70,25 +72,18 @@ void WeightedDijkstraTraffic::initialize() {
 WeightedDijkstraTraffic::~WeightedDijkstraTraffic() {
 	delete pheromone;
 	delete pheromoneEmergency;
-
+	delete traffic;
 }
 
-bool WeightedDijkstraTraffic::checkAvailableGate(int proposal){
-	// Check if gates exist
-	cTopology::Node *node = topo->getNode(myAddress);
-	for (int j = 0; j < node->getNumOutLinks(); j++) {
-				cGate *gate = node->getLinkOut(j)->getLocalGate();
-				if (proposal == gate->getIndex())
-					return true;
-			}
-	return false;
-}
 
 void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
 	int trafficWeight = pk->getTrafficWeight();
+
+	// Topology
+	cTopology* topo = netmanager->getTopo();
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
@@ -118,11 +113,10 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::LinkOut *path = node->getPath(0);
-		path->setWeight(traffic->getTraffic(pkChosenGate));
+		ev << "sw 3" << endl;
+		path->setWeight(traffic->getTraffic(pkChosenGate)+1);
 
 	} else {
-		int destX = pk->getDestAddr() % rows;
-		int destY = pk->getDestAddr() / rows;
 
 		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
 
@@ -141,34 +135,27 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 			lastUpdateTime = simTime().dbl();
 		}
 
-
-		// Topology
-		topo = new cTopology("topo");
-		std::vector<std::string> nedTypes;
-		nedTypes.push_back("src.node.Node");
-		topo->extractByNedTypeName(nedTypes);
-
-
 //		topo = tcoord->getTopology();
 
 		int destination = pk->getDestAddr();
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
+		// Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0 ; i<node->getNumOutLinks(); i++){
-			node->getLinkOut(i)->setWeight(traffic->getTraffic(i));
+			ev << "sw 1" << endl;
+			node->getLinkOut(i)->setWeight(traffic->getTraffic(i)+1);
 		}
-//		topo->calculateUnweightedSingleShortestPathsTo(targetnode); //dijkstra to target
+
+		//dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
 
 		if (node->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
 			//node->disable();
-//			delete topo;
 			return;
+
 		} else {
-
-
 			cTopology::LinkOut *path = node->getPath(0);
 			ev << "We are in " << node->getModule()->getFullPath() << endl;
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " <<path->getWeight()<< " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
@@ -177,7 +164,8 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 			traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
 
 			int pkChosenGate = pk->getChosenGate();
-			path->setWeight(traffic->getTraffic(pkChosenGate));
+			ev << "sw 2" << endl;
+			path->setWeight(traffic->getTraffic(pkChosenGate)+1);
 
 			  while (node != topo->getTargetNode())
 			  {
