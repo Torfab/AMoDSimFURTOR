@@ -40,12 +40,14 @@ protected:
     std::set<int> setOfBorderNodes;         //nodes in the border of the grid
     std::set<int> setOfEpicenters;          //nodes without connections
 
+    cTopology* topo;
+
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
 //    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
 
 public:
-	virtual void insertRedZoneNode(int addr) = 0;
+ 	virtual void insertRedZoneNode(int addr) = 0;
 	virtual void insertDestroyedNode(int addr)=0;
 	virtual void removeRedZoneNode(int addr)=0;
 	virtual double getManhattanDistanceX(int srcAddr, int dstAddr)=0; //Get the manhattan distance from srcAddr to dstAddr
@@ -126,7 +128,12 @@ public:
 	const std::set<int>& getSetOfEpicenters() const {
 		return setOfEpicenters;
 	}
+
+	cTopology* getTopo() {
+		return topo;
+	}
 };
+
 
 
 #endif /* ABSTRACTNETWORKMANAGER_H_ */

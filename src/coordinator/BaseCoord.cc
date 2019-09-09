@@ -16,15 +16,6 @@
 #include <BaseCoord.h>
 #include <sstream>
 
-void BaseCoord::updateTopology() {
-	if (topo != NULL){
-	// Topology
-	topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
-	}
-}
 
 void BaseCoord::initialize()
 {
@@ -71,9 +62,6 @@ void BaseCoord::initialize()
 
     simulation.getSystemModule()->subscribe("tripRequest",this);
 
-    // Topology null initialization
-    topo = NULL;
-    updateTopology();
 
     emergencyRequestCounter = 0;
 }
@@ -442,7 +430,7 @@ void BaseCoord::finish()
 
     /*------------------------------- CLEAN ENVIRONMENT -------------------------------*/
 
-    delete topo;
+
 
 
     for(std::map<int, TripRequest*>::iterator itr = pendingRequests.begin(); itr != pendingRequests.end(); itr++)

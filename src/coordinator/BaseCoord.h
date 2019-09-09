@@ -46,7 +46,7 @@ private:
 
         AbstractNetworkManager* netmanager;
 
-        cTopology* topo;
+
 
         //Trip related signals
         simsignal_t tripRequest;
@@ -138,9 +138,7 @@ private:
         int getClosestExitNode(int address);
         virtual void evacuateCivil(int address);
 
-	 cTopology*& getTopo()  {
-		return topo;
-	}
+
 };
 
 #endif /* BASECOORD_H_ */

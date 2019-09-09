@@ -30,105 +30,9 @@ void ManhattanNetworkManager::buildSetOfDestroyedNodes() {
 	}
 
 }
-/*
 
-    cTopology *topo = new cTopology("topo");
-
-       std::vector<std::string> nedTypes;
-       nedTypes.push_back("src.node.Node");
-       topo->extractByNedTypeName(nedTypes);
-
-
-       double seed = 0.25;
-
-	for (int i = 0; i < numberOfEpicenters; i++) {
-
-		// PER OGNI EPICENTRO
-		cTopology::Node *node = topo->getNode(epicenterAddresses[i]);
-		ev << "epicentro: " << node->getModule()->getFullPath() << endl;
-
-		for (int k = 0; k < disasterRadius; k++) {
-			// DI RAGGIO
-
-			for (int j = 0; j < node->getNumOutLinks(); j++) {
-
-//				if (uniform(0, 1) < seed) {
-					// SCOPPIA I VICINI
-					//raggio volte
-					cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-
-					setOfEpicenters.insert(neighbour->getModule()->getId() - 4);
-
-					EV << neighbour->getModule()->getFullPath() << "   ";
-//				}
-
-			}
-			ev << endl;
-
-
-		}
-
-
-	}
-
-
-
-
-    std::set<int> auxSet = setOfDestroyedNodes;
-	for (int i = 1; i < disasterRadius; i++) {
-		for (auto elem : auxSet) {
-			propagateEarthquakeBetweenNodes(elem);
-		}
-	auxSet = setOfDestroyedNodes;
-
-	}
-delete topo;
-	return setOfEpicenters;
-}
-
-*/
-/**
- * Propagate the earthquake from epicenter node to neighbours.
- */
-void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
-/*
-	setOfDestroyedNodes.insert(epicenterAddress);
-
-    cTopology *topo = new cTopology("topo");
-
-    std::vector<std::string> nedTypes;
-    nedTypes.push_back("src.node.Node");
-    topo->extractByNedTypeName(nedTypes);
-
-    for (int i = 0; i < topo->getNumNodes(); i++) {
-
-        cTopology::Node *node = topo->getNode(epicenterAddress);
-
-        for (int j = 0; j < node->getNumOutLinks(); j++) {
-            cTopology::Node *neighbour = node->getLinkOut(j)->getRemoteNode();
-            setOfDestroyedNodes.insert(neighbour->getModuleId());
-
-        }
-
-    }
-    delete topo;
-    return auxSet;*/
-}
-
-//void ManhattanNetworkManager::buildSetOfNodesInRedZone(std::set<int> auxSet) {
- /*
-	// Creation of red zones nodes set
-//    for (auto elem : setOfDestroyedNodes)
-//        auxSet = propagateEarthquakeBetweenNodes(elem, auxSet);
-//    setOfNodesInRedZone.insert(auxSet.begin(), auxSet.end());
-
-    // Get nodes in red zones
-    for (auto elem : setOfDestroyedNodes)
-        setOfNodesInRedZone.erase(elem);
-    EV<< "nodi in redzone ";
-    for (auto elem : setOfNodesInRedZone)
-        EV<<elem<< " ";
-    EV<<endl;*/
+//void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
+//
 //}
 
 void ManhattanNetworkManager::buildSetOfBorderNodes() {
@@ -215,6 +119,11 @@ void ManhattanNetworkManager::initialize() {
     for (int i = 0; i < numberOfStoragePoints; i++)
         vehiclesPerNode[storagePointsAddresses[i]] = numberOfTrucks;
 
+	// Topology
+	topo = new cTopology("topo");
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topo->extractByNedTypeName(nedTypes);
 }
 
 /**

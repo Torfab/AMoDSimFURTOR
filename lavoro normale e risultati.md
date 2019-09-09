@@ -10,9 +10,6 @@
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
-
-EMITTERS
-tempo di attesa da richiesta a pickup
  
 dijkstra pesato su :
 	 traffico
@@ -156,6 +153,7 @@ emit e segnali
 	feromone
 	traffico
 	grafico tempi di risposta con tempi assoluti e non differenza
+	tempo di attesa da richiesta a pickup
 
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 

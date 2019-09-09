@@ -63,6 +63,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual TripRequest* buildTruckRequest();
 	void buildEmergencySchedule(int totalEmergencies);
 	bool disconnectChannelsAndCheckRedzone();
+	bool propagateDistance(int distance);
 };
 
 Define_Module(TripRequestSubmitter);
@@ -99,20 +100,25 @@ void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
 //	ev << endl;
 }
 
+bool TripRequestSubmitter::propagateDistance(int distance) {
+	return intuniform(0, 4*(distance)-4) == 0;
+}
+
 bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 	rows = getParentModule()->getParentModule()->par("width");
 	bool hospital = netmanager->checkHospitalNode(myAddress);
 	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
 	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
 	bool redZoneNode = false;
+
+
 	// Destroying nodes part
-	cTopology* topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
+	cTopology *topo = netmanager->getTopo();
 	//topo = tcoord->getTopo();
 	cTopology::Node* node = topo->getNode(myAddress);
+
 	std::set<int> s = netmanager->getSetOfEpicenters();
+
 	int myX = myAddress % rows;
 	int myY = myAddress / rows;
 	for (auto elem : s) {
@@ -133,7 +139,7 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 					if (myX >= epicX)
 						distance++;
 
-					if (intuniform(0, (distance * distance) - 1) == 0) {
+					if (propagateDistance(distance)) {
 
 						cGate *gate = node->getLinkOut(j)->getLocalGate();
 						gate->disconnect();
@@ -147,7 +153,7 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 					if (myY >= epicY)
 						distance++;
 
-					if (intuniform(0, (distance * distance) - 1) == 0) {
+					if (propagateDistance(distance)) {
 
 						cGate *gate = node->getLinkOut(j)->getLocalGate();
 						gate->disconnect();
@@ -170,12 +176,12 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 		for (int j = 0; j < node->getNumInLinks(); j++) {
 			ev << "index del nodo" << node->getModule()->getIndex() << " : in: " << node->getLinkIn(j)->getLocalGate()->getIndex() << endl;
 
-			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3) {
+			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3 &&  node->getLinkIn(j)->getLocalGate()->isConnected()) {
 				// il canale esiste
 				// non succede nulla
 				guardiaW = 1;
 			}
-			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0) {
+			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0  &&  node->getLinkIn(j)->getLocalGate()->isConnected()) {
 				// il canale esiste
 				// non succede nulla
 				guardiaN = 1;
@@ -220,7 +226,7 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 		netmanager->removeRedZoneNode(myAddress);
 		redZoneNode = false;
 	}
-	delete topo;
+
 	return redZoneNode;
 }
 
