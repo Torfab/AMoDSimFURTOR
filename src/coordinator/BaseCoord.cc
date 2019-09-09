@@ -48,6 +48,8 @@ void BaseCoord::initialize()
     droppedoffRequestsPerTime = registerSignal("droppedoffRequestsPerTime");
     freeVehiclesPerTime = registerSignal("freeVehiclesPerTime");
 
+    differenceFromRequestToPickup = registerSignal("differenceFromRequestToPickup");
+
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
     totalPickedupRequests = 0.0;
@@ -883,6 +885,10 @@ void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
 	int pkChosenGate = pk->getChosenGate();
 	path->setWeight(traffic->getTraffic(pkChosenGate));
 	*/
+}
+
+void BaseCoord::emitDifferenceFromRequestToPickup(double diff) {
+	emit(differenceFromRequestToPickup, diff);
 }
 
 void BaseCoord::evacuateCivil(int address) {

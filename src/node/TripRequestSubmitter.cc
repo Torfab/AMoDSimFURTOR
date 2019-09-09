@@ -320,17 +320,15 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
            EV << "Requiring a EMERGENCY REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
            EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
-		emit(tripRequest, tr);
+		emit(tripRequest, tr); //emissione vera e propria tr
 
 
-		//Schedule the next request
-//		simtime_t nextTime = simTime();                //;
-
-
+		//schedulazione nuova
 		if (emergencyRequestCounter < v.size()){
 		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
 		EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
+		//statistiche
 		emit(emergencyRequests, emergencyRequestCounter);
 		}
 	}

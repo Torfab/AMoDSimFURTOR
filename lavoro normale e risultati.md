@@ -6,16 +6,12 @@
 	gli autobus raccolgono le persone e le scaricano al punto di raccolta
 	riprendono il circuito e si fermano quando non trovano più nessuno
 
-todo:	
-
-risolvere problema emergenze che non partono (vedi commit)
 
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
 
 EMITTERS
-grafico tempi di risposta con tempi assoluti e non differenza
 tempo di attesa da richiesta a pickup
  
 dijkstra pesato su :
@@ -159,6 +155,7 @@ emit e segnali
 	civili in quanto scappano
 	feromone
 	traffico
+	grafico tempi di risposta con tempi assoluti e non differenza
 
 11. civili che scappano in maniera realistica: burst subito e poi sempre meno
 
@@ -188,6 +185,8 @@ burst ridotto entro 10 min      (uniform 120 600)
 burst/2 nella restante mezzora	(uniform 600 1800)
 
 burst1 50% +burst2 33% +burst3 17% = numero fisso di chiamate emergenziali per nodo
+
+
 
 # Limiti del simulatore:
 

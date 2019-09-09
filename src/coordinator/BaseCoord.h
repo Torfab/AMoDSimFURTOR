@@ -70,6 +70,8 @@ private:
         simsignal_t droppedoffRequestsPerTime;
         simsignal_t freeVehiclesPerTime;
 
+        simsignal_t differenceFromRequestToPickup;
+
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
         std::map<int, double> rAssignedPerVehicle; //Number of requests assigned per vehicle
@@ -115,6 +117,7 @@ private:
 	void updateTopology();
 
     public:
+		void emitDifferenceFromRequestToPickup(double diff);
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
         void registerVehicle (Vehicle *v, int address);

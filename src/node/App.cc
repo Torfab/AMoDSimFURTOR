@@ -104,7 +104,7 @@ void App::generateCivilTraffic(simtime_t interval) {
 
 		destAddress = netmanager->pickClosestCollectionPointFromNode(myAddress); // look for a collection point
 		if (netmanager->getHopDistance(myAddress,destAddress)<=3){
-		    civile=new Vehicle(-1, 1, 0); //il civile appiedato 1m/s 0 traffico
+		    civile=new Vehicle(-1, (float) uniform(1,2.5), 0); //il civile appiedato 1m/s 0 traffico
 //		    EV<<"civile appiedato"<<endl;
 		}else{
 		    civile=new Vehicle(-1, 9.7, 1);
@@ -253,6 +253,7 @@ void App::handleMessage(cMessage *msg) {
 			EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
 
 		}
+
 		break;
 	case 2:
 		emit(signal_truckDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
@@ -298,7 +299,14 @@ void App::handleMessage(cMessage *msg) {
 		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
 
 	}
+	if (vehicle->getSpecialVehicle() == 1 && currentStopPoint->getIsPickup()){
+		//take simtime di currentstoppoint
+		//take simtime simulazione
+		double difference = abs(simTime().dbl() - currentStopPoint->getTime());
+		//emit differenza
+		tcoord->emitDifferenceFromRequestToPickup(difference);
 
+	}
 	//Ask to coordinator for next stop point
 	StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
 	if (nextStopPoint != NULL) {
@@ -395,8 +403,8 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
 				("sendDelayed", veic, sendDelayTime, "out");
 				sendDelayed(veic, sendDelayTime, "out");
 
-				if (ev.isGUI())
-					getParentModule()->getDisplayString().setTagArg("i", 1, "gold");
+//				if (ev.isGUI())
+//					getParentModule()->getDisplayString().setTagArg("i", 1, "gold");
 				//if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
 				//  simulation.getSystemModule()->unsubscribe("tripRequestCoord",this);
 			}
