@@ -434,9 +434,13 @@ bool ManhattanNetworkManager::checkBorderNode(int addr) {
 }
 bool ManhattanNetworkManager::checkRedZoneNode(int addr) {
     for (auto elem : setOfNodesInRedZone) {
-        if (elem == addr)
+    	ev << " " << elem ;
+        if (elem == addr){
+        	ev << endl;
             return true;
+        }
     }
+    ev << endl;
     return false;
 }
 
@@ -572,10 +576,18 @@ void ManhattanNetworkManager::insertRedZoneNode(int addr) {
 void ManhattanNetworkManager::insertDestroyedNode(int addr) {
 	setOfDestroyedNodes.insert(addr);
 	setOfAvailableNodes.erase(addr);
+//	setOfNodesInRedZone.erase(addr);
 }
 
 void ManhattanNetworkManager::removeRedZoneNode(int addr) {
+	ev << "prima" << endl;
+	for (auto e : setOfNodesInRedZone)
+		ev << e << "   ";
 	setOfNodesInRedZone.erase(addr);
+	ev << endl<< "dopo" << endl;
+	for (auto e : setOfNodesInRedZone)
+		ev << e << "   ";
+	ev << endl;
 }
 
 void ManhattanNetworkManager::buildSetOfNodesInRedZone() {

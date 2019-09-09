@@ -204,7 +204,16 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 			}
 		}
 	}
-	if (node->getNumOutLinks() == 0) {
+
+	int disconnected = 0;
+	for (int k = 0; k < node->getNumOutLinks(); k++) {
+
+		cGate *gate = node->getLinkOut(k)->getLocalGate();
+		if (!gate->isConnected()) {
+			disconnected++;
+		}
+	}
+	if (disconnected == node->getNumOutLinks()) {
 		netmanager->insertDestroyedNode(myAddress);
 		netmanager->removeRedZoneNode(myAddress);
 		redZoneNode = false;
@@ -247,7 +256,7 @@ void TripRequestSubmitter::initialize()
 	bool redZoneNode = disconnectChannelsAndCheckRedzone();
 //	for (auto n : v)
 //		ev << n << endl;
-
+ev << " return redzone" << redZoneNode << endl;
 	if (redZoneNode) {
 
 		totalEmergenciesPerNode = par("numberOfEmergencies");
