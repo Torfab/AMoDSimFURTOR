@@ -49,6 +49,7 @@ void BaseCoord::initialize()
     freeVehiclesPerTime = registerSignal("freeVehiclesPerTime");
 
     differenceFromRequestToPickup = registerSignal("differenceFromRequestToPickup");
+    emergencyRequest = registerSignal("emergencyRequest");
 
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
@@ -74,6 +75,7 @@ void BaseCoord::initialize()
     topo = NULL;
     updateTopology();
 
+    emergencyRequestCounter = 0;
 }
 
 /**
@@ -893,4 +895,8 @@ void BaseCoord::emitDifferenceFromRequestToPickup(double diff) {
 
 void BaseCoord::evacuateCivil(int address) {
 	emit(signal_civilEvacuated, ++civilCounter);
+}
+
+void BaseCoord::emitEmergencyRequest() {
+	emit(emergencyRequest, ++emergencyRequestCounter);
 }

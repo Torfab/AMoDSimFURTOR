@@ -41,6 +41,9 @@ private:
 
         int boardingTime;
         int alightingTime;
+
+        int emergencyRequestCounter;
+
         AbstractNetworkManager* netmanager;
 
         cTopology* topo;
@@ -71,6 +74,8 @@ private:
         simsignal_t freeVehiclesPerTime;
 
         simsignal_t differenceFromRequestToPickup;
+        simsignal_t emergencyRequest;
+
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
@@ -117,6 +122,9 @@ private:
 	void updateTopology();
 
     public:
+
+		void emitEmergencyRequest();
+
 		void emitDifferenceFromRequestToPickup(double diff);
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);

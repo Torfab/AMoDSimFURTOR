@@ -15,6 +15,7 @@
 
 #include <omnetpp.h>
 #include "TripRequest.h"
+#include "BaseCoord.h"
 #include "AbstractNetworkManager.h"
 #include <algorithm>
 #include <vector>
@@ -36,6 +37,7 @@ class TripRequestSubmitter : public cSimpleModule
         cPar *sendIATime;
         cPar *maxDelay;
         AbstractNetworkManager *netmanager;
+    	BaseCoord *tcoord;
 
         cMessage *generatePacket;
         cMessage *emergencyPacket;
@@ -234,6 +236,7 @@ void TripRequestSubmitter::initialize()
     x_coord = getParentModule()->par("x");
     y_coord = getParentModule()->par("y");
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+	tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
 
     generatePacket = new cMessage("nextPacket");
     emergencyPacket = new cMessage("nextPacket");
@@ -256,7 +259,7 @@ void TripRequestSubmitter::initialize()
 	bool redZoneNode = disconnectChannelsAndCheckRedzone();
 //	for (auto n : v)
 //		ev << n << endl;
-ev << " return redzone" << redZoneNode << endl;
+	ev << " return redzone" << redZoneNode << endl;
 	if (redZoneNode) {
 
 		totalEmergenciesPerNode = par("numberOfEmergencies");
@@ -265,8 +268,8 @@ ev << " return redzone" << redZoneNode << endl;
 		buildEmergencySchedule(totalEmergenciesPerNode);
 
 		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
-		emit(emergencyRequests, emergencyRequestCounter);
 
+		tcoord->emitEmergencyRequest();
 
 	}
 
@@ -329,7 +332,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 		EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
 		//statistiche
-		emit(emergencyRequests, emergencyRequestCounter);
+		tcoord->emitEmergencyRequest();
 		}
 	}
 	//EMIT an Truck REQUEST

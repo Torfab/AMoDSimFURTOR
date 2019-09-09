@@ -262,34 +262,7 @@ void App::handleMessage(cMessage *msg) {
 	default:
 		break;
 	}
-//
-//    // Civil vehicle
-//    if (vehicle->getSpecialVehicle() == -1){
-//    	if (vehicle->getDestAddr() == myAddress) {
-//    		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr()<< " partito da "<< vehicle->getSrcAddr() <<endl;
-////    		generateCivilTraffic();
-//
-//    		emit(signal_civilDelayTravelTime,(vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime())/numHops);
-//
-//    		delete vehicle;
-//    		return;
-//    	}
-//    }
 
-//        int destAddress = intuniform(0, CivilDestinations, 3);
-//                   while (destAddress == myAddress)
-//                       destAddress = intuniform(0, CivilDestinations - 1, 3);
-//		vehicle->setDestAddr(destAddress);
-//
-//		double delays = simTime().dbl()	- (netmanager->getTimeDistance(myAddress,vehicle->getDestAddr()));
-//		if (delays < 0)
-//			delays = 0;
-//
-//		if (vehicle->getDestAddr() == myAddress)
-//			sendDelayed(vehicle, delays, "out");
-//		else
-//			sendDelayed(vehicle, sendDelayTime + delays, "out");
-//		return;
 
 	StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 

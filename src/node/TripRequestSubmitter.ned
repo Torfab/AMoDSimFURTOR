@@ -17,9 +17,6 @@ simple TripRequestSubmitter
         int numberOfEmergencies;
         
         @display("i=block/user");
-        
-        @signal[emergencyRequests](type="int");       
-        @statistic[emergencyRequests](title="Emergency requests in time";source="emergencyRequests";record=vector,stats;interpolation=none);
-       
+
 
 }

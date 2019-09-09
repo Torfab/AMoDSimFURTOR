@@ -62,6 +62,8 @@ simple BaseCoord like ICoord
 		@signal[differenceFromRequestToPickup](type="int");       
         @statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
 
-
+        @signal[emergencyRequest](type="int");       
+        @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,stats;interpolation=none);
+       
 
 }
