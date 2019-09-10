@@ -111,20 +111,20 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 		traffic->decay(pkChosenGate,trafficWeight);
 
 
-		cTopology::Node *node = topo->getNode(myAddress);
-		cTopology::LinkOut *path = node->getPath(0);
-		ev << "sw 3" << endl;
-		path->setWeight(traffic->getTraffic(pkChosenGate)+1);
+//		cTopology::Node *node = topo->getNode(myAddress);
+//		cTopology::LinkOut *path = node->getPath(0);
+//		ev << "3) finally, leaving and updating weights" << traffic->getTraffic(pkChosenGate) +1 << endl;
+//		path->setWeight(traffic->getTraffic(pkChosenGate)+1);
+//		path->setWeight(9);
 
 	} else {
 
+		//Pheromon Decay
 		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
-
 		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
 
 		if (n != 0) {
-			EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-"
-						<< lastUpdateTime << "/" << pheromoneDecayTime << endl;
+			EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" << lastUpdateTime << "/" << pheromoneDecayTime << endl;
 			for (int i = 0; i < n; i++) {
 				pheromone->decayPheromone();
 			}
@@ -135,19 +135,17 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 			lastUpdateTime = simTime().dbl();
 		}
 
-//		topo = tcoord->getTopology();
-
+		//Weighted Dijkstra
 		int destination = pk->getDestAddr();
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
 		// Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
-		for (int i = 0 ; i<node->getNumOutLinks(); i++){
-			ev << "sw 1" << endl;
-			node->getLinkOut(i)->setWeight(traffic->getTraffic(i)+1);
+		for (int i = 0; i < node->getNumOutLinks(); i++) {
+			ev << "1) " << traffic->getTraffic(i) + 1<< endl;
+			node->getLinkOut(i)->setWeight(traffic->getTraffic(i) + 1);
 		}
-
-		//dijkstra to target
+		//weighted dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
 
 		if (node->getNumPaths() == 0) {
@@ -156,29 +154,26 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 			return;
 
 		} else {
+
 			cTopology::LinkOut *path = node->getPath(0);
-			ev << "We are in " << node->getModule()->getFullPath() << endl;
-			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " <<path->getWeight()<< " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+			ev << "I FOUND A PATH" << endl << "We are in " << node->getModule()->getFullPath() << endl;
+			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
-			traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
+//			ev << "+++++Increasing traffic" << endl;
+			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
 
 			int pkChosenGate = pk->getChosenGate();
-			ev << "sw 2" << endl;
-			path->setWeight(traffic->getTraffic(pkChosenGate)+1);
+//			ev << "2) updating weights" << traffic->getTraffic(pkChosenGate) +1 << endl;
+			path->setWeight(traffic->getTraffic(pkChosenGate) + 1);
 
-			  while (node != topo->getTargetNode())
-			  {
-
-			    ev << node->getDistanceToTarget() << " hops to go\n";
-			    cTopology::LinkOut *path = node->getPath(0);
-			    ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight()
-			       << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath()
-			       << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-			    node = path->getRemoteNode();
-			    ev << "We are in " << node->getModule()->getFullPath() << endl;
-			  }
-
+			while (node != topo->getTargetNode()) {
+				ev << node->getDistanceToTarget() << " hops to go\n";
+				cTopology::LinkOut *path = node->getPath(0);
+				node = path->getRemoteNode();
+				ev << "We are in " << node->getModule()->getFullPath() << endl;
+				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+			}
 		}
 
 //		delete topo;
@@ -191,24 +186,20 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 			// Even gates are vertical
 			distanceToTravel = yChannelLength;
 
-
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
-		if (trafficDelay < simTime() )
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
+		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 
 		pk->setCurrentTraveledTime(pk->getCurrentTraveledTime() + channelTravelTime.dbl() + trafficDelay.dbl() - simTime().dbl());
 
-		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
 		EV << "++Travel Time: " << channelTravelTime << endl;
 		scheduleAt(channelTravelTime + trafficDelay, msg);
 
-
-
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
-
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
@@ -228,9 +219,8 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 		}
 		EV << endl;
 
-    pk->setHopCount(pk->getHopCount()+1);
-//    pk->setTraveledDistance(pk->getTraveledDistance() + distance);
-//
+		pk->setHopCount(pk->getHopCount() + 1);
+
 //    //send the vehicle to the next node
 //    send(pk, "out", outGateIndex);
 

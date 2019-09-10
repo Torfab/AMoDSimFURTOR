@@ -222,16 +222,16 @@ double ManhattanNetworkManager::getManhattanDistanceY(int srcAddr, int dstAddr) 
  */
 double ManhattanNetworkManager::getHopDistance(int srcAddr, int dstAddr) {
 
-    cTopology* topo = new cTopology("topo");
-    std::vector<std::string> nedTypes;
-    nedTypes.push_back("src.node.Node");
-    topo->extractByNedTypeName(nedTypes);
+//    cTopology* topo = new cTopology("topo");
+//    std::vector<std::string> nedTypes;
+//    nedTypes.push_back("src.node.Node");
+//    topo->extractByNedTypeName(nedTypes);
 
     cTopology::Node *node = topo->getNode(srcAddr);
     cTopology::Node *targetnode = topo->getNode(dstAddr);
     topo->calculateUnweightedSingleShortestPathsTo(targetnode);
 
-    delete topo;
+//    delete topo;
 
     return node->getDistanceToTarget();
 }
