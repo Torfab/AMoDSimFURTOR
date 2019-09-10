@@ -21,6 +21,7 @@ mandare la mail
 
 (Altri emitter da aggiungere riferiti ai dijkstra per confronto)
 
+
 codici di emergenza differenti
 
 
@@ -69,7 +70,8 @@ scenari
 
 # TODO mildly important:
 
-
+I routing devono supportare il segnale di decadenza del feromone di basecoord
+(manca in manhattanrouting e dijkstraTraffic)
 
 
 
