@@ -110,13 +110,6 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 		traffic->decay(pkChosenGate,trafficWeight);
 
-
-//		cTopology::Node *node = topo->getNode(myAddress);
-//		cTopology::LinkOut *path = node->getPath(0);
-//		ev << "3) finally, leaving and updating weights" << traffic->getTraffic(pkChosenGate) +1 << endl;
-//		path->setWeight(traffic->getTraffic(pkChosenGate)+1);
-//		path->setWeight(9);
-
 	} else {
 
 		//Pheromon Decay
@@ -140,7 +133,7 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
-		// Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
+//		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
 			ev << "1) " << traffic->getTraffic(i) + 1<< endl;
 			node->getLinkOut(i)->setWeight(traffic->getTraffic(i) + 1);
@@ -156,24 +149,27 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 		} else {
 
 			cTopology::LinkOut *path = node->getPath(0);
-			ev << "I FOUND A PATH" << endl << "We are in " << node->getModule()->getFullPath() << endl;
-			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+//			ev << "I FOUND A PATH" << endl << "We are in " << node->getModule()->getFullPath() << endl;
+//			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
 //			ev << "+++++Increasing traffic" << endl;
 			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
 
 			int pkChosenGate = pk->getChosenGate();
-//			ev << "2) updating weights" << traffic->getTraffic(pkChosenGate) +1 << endl;
+			ev << "2) updating weights " << path->getWeight();
 			path->setWeight(traffic->getTraffic(pkChosenGate) + 1);
+			ev << "----> " << path->getWeight() << endl;
 
+			ev << "-------pacchetto " << pk->getID() << " diretto a " << pk->getDestAddr() << endl;
 			while (node != topo->getTargetNode()) {
-				ev << node->getDistanceToTarget() << " hops to go\n";
-				cTopology::LinkOut *path = node->getPath(0);
-				node = path->getRemoteNode();
 				ev << "We are in " << node->getModule()->getFullPath() << endl;
-				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-			}
+				cTopology::LinkOut *path = node->getPath(0);
+				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " <<
+						path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+				ev << node->getDistanceToTarget() << " traffic considered to go\n";
+				node = path->getRemoteNode();
+				}
 		}
 
 //		delete topo;

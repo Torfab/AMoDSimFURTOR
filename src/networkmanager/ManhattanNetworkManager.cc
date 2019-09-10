@@ -97,7 +97,7 @@ void ManhattanNetworkManager::initialize() {
 
     // DON'T CHANGE THE ORDER
     buildsetOfAvailableNodes();
-    buildSetOfNodesInRedZone();  // Creation of red zones nodes set
+//    buildSetOfNodesInRedZone();  // Creation of red zones nodes set
     buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
     buildStoragePointNodes();
@@ -125,6 +125,7 @@ void ManhattanNetworkManager::initialize() {
 	std::vector<std::string> nedTypes;
 	nedTypes.push_back("src.node.Node");
 	topo->extractByNedTypeName(nedTypes);
+
 }
 
 /**
@@ -501,15 +502,25 @@ void ManhattanNetworkManager::removeRedZoneNode(int addr) {
 	ev << endl;
 }
 
-void ManhattanNetworkManager::buildSetOfNodesInRedZone() {
-//	setOfNodesInRedZone.insert(-1);
-}
+//void ManhattanNetworkManager::buildSetOfNodesInRedZone() {
+////	setOfNodesInRedZone.insert(-1);
+//}
 
 void ManhattanNetworkManager::updateTopology() {
 	topo->clear();
 	std::vector<std::string> nedTypes;
 	nedTypes.push_back("src.node.Node");
 	topo->extractByNedTypeName(nedTypes);
+
+
+	/*for (int i = 0; i < topo->getNumNodes(); i++) {
+		cTopology::Node *node = topo->getNode(i);
+		for (int j = 0; j < node->getNumOutLinks(); j++) {
+			node->getLinkOut(j)->setWeight(intuniform(1,10000));
+
+		}
+	}*/
+
 }
 
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {

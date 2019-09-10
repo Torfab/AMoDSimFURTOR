@@ -47,7 +47,7 @@ protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 //    virtual void propagateEarthquakeBetweenNodes(int epicenterAddress);
-	void buildSetOfNodesInRedZone();
+//	void buildSetOfNodesInRedZone();
 	void buildsetOfBorderNodes();
     void buildsetOfAvailableNodes();
 	void buildSetOfDestroyedNodes();

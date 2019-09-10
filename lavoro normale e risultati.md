@@ -12,13 +12,14 @@ pulizia initialize app (e netmanager)
 
  
 dijkstra pesato su :
-	 traffico
-	feromone e 
-	non pesato per le ambulanze
-	aaa per i civili a confronto con dijkstra
+	* traffico
+	* feromone
+	* non pesato per le ambulanze
+	* aaa per i civili a confronto con dijkstra
+
+mandare la mail
 
 (Altri emitter da aggiungere riferiti ai dijkstra per confronto)
-
 
 codici di emergenza differenti
 
