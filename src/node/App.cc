@@ -153,7 +153,7 @@ void App::initialize() {
 	int numberOfCivils;
 
 	newTripAssigned = registerSignal("newTripAssigned");
-	decayPheromoneValue = registerSignal("decayPheromoneValue");
+
 
 
 	CivilDestinations = netmanager->getNumberOfNodes();
@@ -223,11 +223,7 @@ void App::initialize() {
 	}
 
 
-	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
-	if (!simulation.getSystemModule()->isSubscribed("decayPheromoneValue", this))
-		ev << "non sottoscritto" << endl;
-	else
-		ev << "sottoscritto" << endl;
+
 
 	}
 
@@ -350,10 +346,10 @@ void App::handleMessage(cMessage *msg) {
  * @param obj
  */
 void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID) {
-	if (signalID == decayPheromoneValue) {
-//		pheromone->decayPheromone();
-		ev << "Segnale di decay ricevuto" << endl;
-	}
+//	if (signalID == decayPheromoneValue) {
+////		pheromone->decayPheromone();
+//		ev << "Segnale di decay ricevuto" << endl;
+//	}
 	/**
 	 * The coordinator has accepted a trip proposal
 	 */

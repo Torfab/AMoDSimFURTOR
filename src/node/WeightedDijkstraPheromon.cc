@@ -56,6 +56,8 @@ void WeightedDijkstraPheromon::initialize() {
 	//Pheromone
 	pheromoneDecayTime = getParentModule()->getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->getParentModule()->par("pheromoneDecayFactor");
+	decayPheromoneValue = registerSignal("decayPheromoneValue");
+
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
@@ -64,7 +66,11 @@ void WeightedDijkstraPheromon::initialize() {
 	// Traffic
 	traffic = new Traffic();
 
-
+	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
+	if (!simulation.getSystemModule()->isSubscribed("decayPheromoneValue", this))
+		ev << "non sottoscritto" << endl;
+	else
+		ev << "sottoscritto" << endl;
 
 //	if (!simulation.getSystemModule()->isSubscribed("decayPheromone", this))
 //    simulation.getSystemModule()->subscribe("decayPheromone",this);

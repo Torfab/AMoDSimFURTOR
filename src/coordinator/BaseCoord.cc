@@ -72,7 +72,6 @@ void BaseCoord::initialize()
 	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->par("pheromoneDecayFactor");
     decayPacket = new cMessage("decayPacket");
-    emit(decayPheromoneValue, (double) 1.0);
     scheduleAt(simTime() + pheromoneDecayTime,decayPacket);
 
 
@@ -84,15 +83,9 @@ BaseCoord::~BaseCoord()
 void BaseCoord::handleMessage(cMessage *msg) {
 
 	if (msg->isSelfMessage()) {
-
-		emit(decayPheromoneValue, (double) 1.0);
-		ev << "segnale di decay " << endl;
-		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);}
-			if (!hasListeners(decayPheromoneValue))
-			ev << " but no one listening decay" << endl;
-
-
-
+		emit(decayPheromoneValue, true);
+		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);
+	}
 }
 
 /**

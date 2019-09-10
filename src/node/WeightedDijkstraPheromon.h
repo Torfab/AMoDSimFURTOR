@@ -23,7 +23,8 @@
 #include "BaseCoord.h"
 
 
-class WeightedDijkstraPheromon : public cSimpleModule
+
+class WeightedDijkstraPheromon : public cSimpleModule,cListener
 {
 private:
     int myAddress;
