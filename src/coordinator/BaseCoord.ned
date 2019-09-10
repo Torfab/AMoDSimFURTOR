@@ -65,5 +65,5 @@ simple BaseCoord like ICoord
         @signal[emergencyRequest](type="int");       
         @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,stats;interpolation=none);
        
-
+		@signal[decayPheromoneValue](type="double");
 }

@@ -34,7 +34,7 @@ simple App like IApp
    		@signal[signal_ambulanceTravelTime](type="double");       
         @statistic[signal_ambulanceTravelTime](title="Ambulance travel time to serve a request";source="signal_ambulanceTravelTime";record=vector,stats;interpolation=none);
 
-        
+
     gates:
         input in;
         output out;

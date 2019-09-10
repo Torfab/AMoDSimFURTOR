@@ -23,6 +23,8 @@ void BaseCoord::initialize()
     tripRequest = registerSignal("tripRequest");
     newTripAssigned = registerSignal("newTripAssigned");
 
+    decayPheromoneValue = registerSignal("decayPheromoneValue");
+
     traveledDistance = registerSignal("traveledDistance");
     waitingTime = registerSignal("waitingTime");
     actualTripTime = registerSignal("actualTripTime");
@@ -42,7 +44,7 @@ void BaseCoord::initialize()
     differenceFromRequestToPickup = registerSignal("differenceFromRequestToPickup");
     emergencyRequest = registerSignal("emergencyRequest");
 
-    decayPheromoneValue = registerSignal("decayPheromone");
+
 
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
@@ -70,6 +72,7 @@ void BaseCoord::initialize()
 	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->par("pheromoneDecayFactor");
     decayPacket = new cMessage("decayPacket");
+    emit(decayPheromoneValue, (double) 1.0);
     scheduleAt(simTime() + pheromoneDecayTime,decayPacket);
 
 
@@ -81,11 +84,14 @@ BaseCoord::~BaseCoord()
 void BaseCoord::handleMessage(cMessage *msg) {
 
 	if (msg->isSelfMessage()) {
+
 		emit(decayPheromoneValue, (double) 1.0);
 		ev << "segnale di decay " << endl;
-		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);
+		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);}
+			if (!hasListeners(decayPheromoneValue))
+			ev << " but no one listening decay" << endl;
 
-	}
+
 
 }
 

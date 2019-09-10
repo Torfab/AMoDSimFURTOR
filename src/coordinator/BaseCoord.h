@@ -54,6 +54,7 @@ private:
         //Trip related signals
         simsignal_t tripRequest;
         simsignal_t newTripAssigned;
+
         simsignal_t decayPheromoneValue;
 
         //Statistical signals

@@ -47,6 +47,7 @@ private:
 //	bool enableCivilTraffic;
 	int numberOfCivils;
     int rows;
+
 	simtime_t civilEscapeInterval;
 
 	BaseCoord *tcoord;
@@ -54,6 +55,7 @@ private:
 
 	// signals
 	simsignal_t newTripAssigned;
+
 	simsignal_t decayPheromoneValue;
 	// Travel time related signals
 	simsignal_t signal_ambulanceDelayTravelTime;
@@ -151,6 +153,8 @@ void App::initialize() {
 	int numberOfCivils;
 
 	newTripAssigned = registerSignal("newTripAssigned");
+	decayPheromoneValue = registerSignal("decayPheromoneValue");
+
 
 	CivilDestinations = netmanager->getNumberOfNodes();
 	// Subscription to civil traffic
@@ -198,10 +202,10 @@ void App::initialize() {
 //				getParentModule()->getDisplayString().setTagArg("i", 1, "green");
 
 		//When the coordinator assign a new request to a vehicle, local node will be notified
+
 		simulation.getSystemModule()->subscribe("newTripAssigned", this);
 
-		decayPheromoneValue = registerSignal("decayPheromoneValue");
-		simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
+
 
 	}
 
@@ -217,7 +221,17 @@ void App::initialize() {
 			generateCivilTraffic(exponential(civilEscapeInterval));
 		}
 	}
-}
+
+
+	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
+	if (!simulation.getSystemModule()->isSubscribed("decayPheromoneValue", this))
+		ev << "non sottoscritto" << endl;
+	else
+		ev << "sottoscritto" << endl;
+
+	}
+
+
 
 void App::handleMessage(cMessage *msg) {
 	Vehicle *vehicle = NULL;
