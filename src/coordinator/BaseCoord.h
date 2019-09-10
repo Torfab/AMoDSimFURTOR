@@ -46,11 +46,15 @@ private:
 
         AbstractNetworkManager* netmanager;
 
-
+        // Feromone
+        cMessage* decayPacket;
+    	double pheromoneDecayTime;
+    	double pheromoneDecayFactor;
 
         //Trip related signals
         simsignal_t tripRequest;
         simsignal_t newTripAssigned;
+        simsignal_t decayPheromoneValue;
 
         //Statistical signals
         simsignal_t traveledDistance;
@@ -97,6 +101,7 @@ private:
         void initialize();
         void finish();
 
+
         virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) = 0;
         virtual void handleTripRequest(TripRequest *tr) = 0;
         bool eval_feasibility(int vehicleID, StopPoint *sp); //Evaluate if the new stop-point is feasible by a vehicle
@@ -119,10 +124,10 @@ private:
         virtual void updateStateElapsedTime(int vehicleID, int stateID);
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
-	void updateTopology();
-
+         void updateTopology();
+        virtual void handleMessage(cMessage *msg);
     public:
-
+        virtual ~BaseCoord();
 		void emitEmergencyRequest();
 
 		void emitDifferenceFromRequestToPickup(double diff);

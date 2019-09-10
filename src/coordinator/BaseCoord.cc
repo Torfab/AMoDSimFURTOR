@@ -42,6 +42,8 @@ void BaseCoord::initialize()
     differenceFromRequestToPickup = registerSignal("differenceFromRequestToPickup");
     emergencyRequest = registerSignal("emergencyRequest");
 
+    decayPheromoneValue = registerSignal("decayPheromone");
+
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
     totalPickedupRequests = 0.0;
@@ -64,6 +66,27 @@ void BaseCoord::initialize()
 
 
     emergencyRequestCounter = 0;
+	//Pheromone
+	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
+	pheromoneDecayFactor = getParentModule()->par("pheromoneDecayFactor");
+    decayPacket = new cMessage("decayPacket");
+    scheduleAt(simTime() + pheromoneDecayTime,decayPacket);
+
+
+}
+BaseCoord::~BaseCoord()
+{
+    cancelAndDelete(decayPacket);
+}
+void BaseCoord::handleMessage(cMessage *msg) {
+
+	if (msg->isSelfMessage()) {
+		emit(decayPheromoneValue, true);
+		ev << "segnale di decay " << endl;
+		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);
+
+	}
+
 }
 
 /**
@@ -77,9 +100,9 @@ void BaseCoord::initialize()
 int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest *tr)
 {
     double pickupDeadline = tr->getPickupSP()->getTime() + tr->getPickupSP()->getMaxDelay();
-    double dropoffDeadline = tr->getDropoffSP()->getTime() + tr->getDropoffSP()->getMaxDelay();
+//    double dropoffDeadline = tr->getDropoffSP()->getTime() + tr->getDropoffSP()->getMaxDelay();
     double pickupActualTime = -1.0;
-    double dropoffActualTime = -1.0;
+//    double dropoffActualTime = -1.0;
     int vehicleID = -1;
 
     //The request has been evaluated
