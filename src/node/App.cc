@@ -54,6 +54,7 @@ private:
 
 	// signals
 	simsignal_t newTripAssigned;
+	simsignal_t decayPheromoneValue;
 	// Travel time related signals
 	simsignal_t signal_ambulanceDelayTravelTime;
 	simsignal_t signal_truckDelayTravelTime;
@@ -198,6 +199,10 @@ void App::initialize() {
 
 		//When the coordinator assign a new request to a vehicle, local node will be notified
 		simulation.getSystemModule()->subscribe("newTripAssigned", this);
+
+		decayPheromoneValue = registerSignal("decayPheromoneValue");
+		simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
+
 	}
 
 //	enableCivilTraffic = par("enableCivilTraffic");
@@ -331,7 +336,10 @@ void App::handleMessage(cMessage *msg) {
  * @param obj
  */
 void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID) {
-
+	if (signalID == decayPheromoneValue) {
+//		pheromone->decayPheromone();
+		ev << "Segnale di decay ricevuto" << endl;
+	}
 	/**
 	 * The coordinator has accepted a trip proposal
 	 */

@@ -81,7 +81,7 @@ BaseCoord::~BaseCoord()
 void BaseCoord::handleMessage(cMessage *msg) {
 
 	if (msg->isSelfMessage()) {
-		emit(decayPheromoneValue, true);
+		emit(decayPheromoneValue, (double) 1.0);
 		ev << "segnale di decay " << endl;
 		scheduleAt(simTime() + pheromoneDecayTime, decayPacket);
 

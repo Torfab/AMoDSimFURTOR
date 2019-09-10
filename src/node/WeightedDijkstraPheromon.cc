@@ -64,11 +64,11 @@ void WeightedDijkstraPheromon::initialize() {
 	// Traffic
 	traffic = new Traffic();
 
-    decayPheromoneValue = registerSignal("decayPheromoneValue");
+
 
 //	if (!simulation.getSystemModule()->isSubscribed("decayPheromone", this))
 //    simulation.getSystemModule()->subscribe("decayPheromone",this);
-	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
+
 
 //	simulation.getSystemModule()->subscribe(decayPheromone,this);
 }
