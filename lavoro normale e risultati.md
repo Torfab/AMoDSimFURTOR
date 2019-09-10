@@ -12,8 +12,9 @@ pulizia initialize app (e netmanager)
 
  
 dijkstra pesato su :
-	* traffico
-	* feromone
+	* ManhattanRouting Dijkstra non pesato [x]
+	* traffico [x]
+	* feromone [x]
 	* non pesato per le ambulanze
 	* aaa per i civili a confronto con dijkstra
 
@@ -58,11 +59,7 @@ algoritmi
 	* Custom nostro: manhattan + circumnaviga
 	* ACO (network manager)
 	* AAA (network manager)
-	
-
-scenari
-	* emergenziali non ospedalieri
-
+Usare due topo per implementare dijkstra pesato traffico per ambulanze e pesato feromone per i civili
 
 
 * calcolo corretto setAdditionalTravelTime

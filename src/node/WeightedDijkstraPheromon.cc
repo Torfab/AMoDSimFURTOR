@@ -66,17 +66,10 @@ void WeightedDijkstraPheromon::initialize() {
 	// Traffic
 	traffic = new Traffic();
 
+	//Subscription per pheromon decay
 	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
-	if (!simulation.getSystemModule()->isSubscribed("decayPheromoneValue", this))
-		ev << "non sottoscritto" << endl;
-	else
-		ev << "sottoscritto" << endl;
-
-//	if (!simulation.getSystemModule()->isSubscribed("decayPheromone", this))
-//    simulation.getSystemModule()->subscribe("decayPheromone",this);
 
 
-//	simulation.getSystemModule()->subscribe(decayPheromone,this);
 }
 
 WeightedDijkstraPheromon::~WeightedDijkstraPheromon() {
