@@ -34,7 +34,7 @@ class StopPoint : public cObject{
         double actualTime;
         double maxDelay;
         
-        bool redCode;
+        bool redCode; //is stop point of a red code emergency request
         
     public:
         StopPoint();

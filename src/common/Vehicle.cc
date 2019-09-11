@@ -17,20 +17,13 @@
 
 int Vehicle::nextID = 0;
 
+
 Vehicle::Vehicle() {
     id = ++nextID;
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-//    busyState = false; //IDLE
     trafficWeight = 1;
-
-    /*  veicolo di emergenza
-     * -1 veicolo civile
-     *  0 taxi
-     *  1 veicolo di emergenza
-     *  2 truck
-     */
     specialVehicle=0;
     currentTraveledTime = 0.0;
     /**
@@ -40,19 +33,18 @@ Vehicle::Vehicle() {
     speed = 9.7;
 }
 
-/*  veicolo di emergenza
- * -1 veicolo civile
- *  0 taxi
- *  1 veicolo di emergenza
+/*  special vehicle
+ * -1 civil
+ *  0 taxi (unused)
+ *  1 ambulance
+ *  2 truck
  */
 Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
     id = ++nextID;
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-//    busyState = false; //IDLE
     this->trafficWeight = trafficWeight;
-
     this->specialVehicle=specialVehicle;
 
     currentTraveledTime = 0.0;
@@ -71,10 +63,6 @@ int Vehicle::getSpecialVehicle() const
 {
     return specialVehicle;
 }
-//void Vehicle::setSpecialVehicle(int specialVehicle)
-//{
-//    this->specialVehicle = specialVehicle;
-//}
 
 int Vehicle::getID() const
 {
