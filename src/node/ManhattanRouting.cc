@@ -18,7 +18,6 @@
 #include "Pheromone.h"
 #include "Traffic.h"
 
-
 Define_Module(ManhattanRouting);
 
 void ManhattanRouting::initialize() {
@@ -49,58 +48,46 @@ void ManhattanRouting::initialize() {
 	xChannelLength = getParentModule()->getParentModule()->par("xNodeDistance");
 	yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
 
+	EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY << endl;
 
-	EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY
-				<< endl;
-
-	//lastUpdateTime = simTime().dbl();
-
-	//Pheromone
+	//Pheromon related parameters
 	pheromoneDecayTime = getParentModule()->getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->getParentModule()->par("pheromoneDecayFactor");
+	decayPheromoneValue = registerSignal("decayPheromoneValue");
 
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
-
-	pheromoneEmergency = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
+	pheromoneEmergency = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
 	// Traffic
 	traffic = new Traffic();
 
-
+	//Subscription per pheromon decay
+	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
 }
 
 ManhattanRouting::~ManhattanRouting() {
 	delete pheromone;
 	delete pheromoneEmergency;
-
+	delete traffic;
 }
 
 void ManhattanRouting::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-	int trafficWeight = pk->getTrafficWeight();
+	int trafficWeight = pk->getTrafficWeight(); //get vehicle weight
 
-	// Topology
+	// Topology from netmanager
 	cTopology* topo = netmanager->getTopo();
 
-	// Topology
-/*
-	topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
-
-*/
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
-		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
+		EV << "Vehicle arrived in the stop point " << myAddress << ". Traveled distance: " << pk->getTraveledDistance() << endl;
 		send(pk, "localOut");
 		return;
 	}
-
-
-	if (msg->isSelfMessage()) { //The vehicle has waited a delay to simulate the traffic in chosen channel
+	//The vehicle has waited a delay to simulate the traffic in chosen channel
+	if (msg->isSelfMessage()) {
 		int pkChosenGate = pk->getChosenGate();
 		pk->setHopCount(pk->getHopCount() + 1);
 
@@ -108,47 +95,27 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		if (pkChosenGate % 2 == 1)  	// Odd gates are horizontal
 			distance = xChannelLength;
 		else
-			// Even gates are vertical
+										// Even gates are vertical
 			distance = yChannelLength;
 
-		pk->setTraveledDistance(pk->getTraveledDistance() + distance);
-		//send the vehicle to the next node
-		send(pk, "out", pkChosenGate);
+		pk->setTraveledDistance(pk->getTraveledDistance() + distance); // updates traveled distance
 
-		traffic->decay(pkChosenGate,trafficWeight);
+		send(pk, "out", pkChosenGate);	//Send the vehicle to the next node
+
+		traffic->decay(pkChosenGate, trafficWeight); // decay traffic
 
 	} else {
-//		int destX = pk->getDestAddr() % rows;
-//		int destY = pk->getDestAddr() / rows;
-
-		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
-
-		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
-
-		if (n != 0) {
-			EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-"
-						<< lastUpdateTime << "/" << pheromoneDecayTime << endl;
-			for (int i = 0; i < n; i++) {
-				pheromone->decayPheromone();
-			}
-			for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
-				emit(signalFeromone[i], pheromone->getPheromone(i));
-			}
-
-			lastUpdateTime = simTime().dbl();
-		}
-
 
 		int destination = pk->getDestAddr();
-		EV<<"I'm going to"<<pk->getDestAddr();
+		EV << "I'm going to" << pk->getDestAddr();
+
 		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *targetnode = topo->getNode(destination);
 
-		topo->calculateUnweightedSingleShortestPathsTo(targetnode); //dijkstra to target
+		topo->calculateUnweightedSingleShortestPathsTo(targetnode); // Unweighted Dijkstra to target
 
 		if (node->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
-			//node->disable();
 			return;
 		} else {
 
@@ -164,52 +131,49 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		if (pk->getChosenGate() % 2 == 1)  	// Odd gates are horizontal
 			distanceToTravel = xChannelLength;
 		else
-			// Even gates are vertical
+											// Even gates are vertical
 			distanceToTravel = yChannelLength;
 
+		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed(); // Calculates the time to travel the channel
 
-		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
-
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())) ; //TODO: (check) FIX:
-		if (trafficDelay < simTime() )
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate()));
+		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 
 		pk->setCurrentTraveledTime(pk->getCurrentTraveledTime() + channelTravelTime.dbl() + trafficDelay.dbl() - simTime().dbl());
 
-		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime  << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
-		EV << "++Travel Time: " << channelTravelTime << endl;
+		EV << "Message delayed to " << trafficDelay + channelTravelTime << " of " << trafficDelay - simTime().dbl() << " s" << "  Traffic influence:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
+		EV << "- Channel Travel Time: " << channelTravelTime << endl;
 		scheduleAt(channelTravelTime + trafficDelay, msg);
-
-
 
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
-		traffic->increaseTraffic(pk->getChosenGate(),pk->getTrafficWeight());
+		traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
-
 		// Emit traffic signal
 		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 
-		EV << "Nodo " << myAddress << " Pheromone N E S W: ";
+
+		EV << "Node " << myAddress << " Pheromon N E S W: ";
 		for (int i = 0; i < 4; i++) {
 			EV << pheromone->getPheromone(i) << " || ";
 		}
 		EV << endl;
 
-		EV << "Nodo " << myAddress << " Traffico N E S W: ";
+		EV << "Node " << myAddress << " Traffic N E S W: ";
 		for (int i = 0; i < 4; i++) {
 			EV << traffic->getTraffic(i) << " || ";
 		}
 		EV << endl;
-
-    pk->setHopCount(pk->getHopCount()+1);
-//    pk->setTraveledDistance(pk->getTraveledDistance() + distance);
-//
-//    //send the vehicle to the next node
-//    send(pk, "out", outGateIndex);
-
-
+		// updates hop
+		pk->setHopCount(pk->getHopCount() + 1);
 	}
+}
+void ManhattanRouting::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
+	if (signalID == decayPheromoneValue) {
+		pheromone->decayPheromone();
+	}
+
 }
