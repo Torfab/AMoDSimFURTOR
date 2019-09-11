@@ -45,7 +45,6 @@ private:
 	int numberOfTrucks;
 	int currentVehiclesInNode;
 	int numberOfCivils;
-    int rows;
 
 	simtime_t civilEscapeInterval;
 
@@ -55,7 +54,6 @@ private:
 	// signals
 	simsignal_t newTripAssigned;
 
-	simsignal_t decayPheromoneValue;
 	// Travel time related signals
 	simsignal_t signal_truckDelayTravelTime;
 	simsignal_t signal_civilDelayTravelTime;
@@ -200,7 +198,7 @@ void App::initialize() {
 
     }
 
-    int numberOfCivils = par("numberOfCivils");
+    numberOfCivils = par("numberOfCivils");
 
     //Only the node in red zone will generate civil traffic of people escaping, all the traffic is generated in initialize and will be sent delayed in the simulation
     if (netmanager->checkRedZoneNode(myAddress)) {
