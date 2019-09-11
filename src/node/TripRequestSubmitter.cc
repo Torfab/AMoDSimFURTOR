@@ -276,11 +276,11 @@ void TripRequestSubmitter::initialize()
 		emergencyRequestCounter = 0;
 
 		buildEmergencySchedule(totalEmergenciesPerNode);
-		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+		scheduleAt(v[emergencyRequestCounter++], redEmergencyPacket);
 
 		tcoord->emitEmergencyRequest();
 
-		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
+//		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
 	}
 
 	netmanager->updateTopology();
@@ -357,7 +357,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 
 		//schedulazione nuova
 		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
-			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+			scheduleAt(v[emergencyRequestCounter++], redEmergencyPacket);
 			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
 			//stats

@@ -40,6 +40,7 @@ StopPoint::StopPoint(int requestID, int location, bool isPickup, double time, do
     this->y_coord = -1; //TODO
     this->isPickup = isPickup;
     this->maxDelay = maxDelay;
+    this->redCode = false;
 }
 
 StopPoint::StopPoint(const StopPoint& other)
@@ -59,6 +60,7 @@ void StopPoint::copy(const StopPoint& other)
     this->y_coord = other.y_coord;
     this->isPickup = other.isPickup;
     this->maxDelay = other.maxDelay;
+    this->redCode = other.redCode;
 }
 
 

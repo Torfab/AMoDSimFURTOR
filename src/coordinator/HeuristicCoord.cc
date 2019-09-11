@@ -168,7 +168,6 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 	//The vehicle has more stop points
 	else {
 		EV << " The vehicle " << vehicleID << " has more stop points..." << endl;
-		StopPoint *last = new StopPoint(*old.back());
 
 		bool isDestinationHospital = netmanager->checkHospitalNode((*old.begin())->getLocation());
 
@@ -178,17 +177,16 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 			///redo +2
 			additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation());
 
-
+			bool checkIt2InHospital = true;
 			std::list<StopPoint*>::iterator it1, it2;
 			for (it1 = old.begin(), it2 = ++old.begin(); it2 != old.end();	++it1, ++it2) {
 				if (!(*it2)->isRedCode() && !netmanager->checkHospitalNode((*it2)->getLocation())) {
-					ev << "non codice rosso non hospital" << endl;
+					checkIt2InHospital = false;
 					break;
 				}
 
 				// tratta
 				additionalCost += netmanager->getHopDistance((*it1)->getLocation(), (*it2)->getLocation());	// netmanager->pickClosestHospitalFromNode(elem->getLocation()));
-				ev << "codice rosso o hospital" << endl;
 
 			}
 			// it1 non è un redcode quindi la nuova fermata va messa sopra
@@ -202,16 +200,28 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 			 * poi il nostr
 			 *
 			 */
-			for (auto iter = old.begin(); iter != it1; ++iter) {
-				auto & value = *iter;
-				newList.push_back(new StopPoint(*value)); //primo
-			}
-			newList.push_back(newTRpickup); //due
-			newList.push_back(newTRdropoff); // tre (hospital)
+			if (checkIt2InHospital){
+			for (auto iter = old.begin(); iter != it2; ++iter) {
+					auto & value = *iter;
+					newList.push_back(new StopPoint(*value)); //primo
+				}
+				newList.push_back(newTRpickup); //due
+				newList.push_back(newTRdropoff); // tre (hospital)
 
-			for (auto iter = it2; iter != old.end(); iter++) { //da it2 a end gli altri TODO Check segmentation fault ++iter o iter++
-				auto & value = *iter;
-				newList.push_back(new StopPoint(*value));
+				if (it1 != old.end()) { //else segmentation fault
+					for (auto iter = it2; iter != old.end(); ++iter) { //da it2 a end gli altri TODO Check segmentation fault ++iter o iter++
+						auto & value = *iter;
+						newList.push_back(new StopPoint(*value));
+					}
+				}
+
+			} else {
+				for (auto iter = old.begin(); iter != it1; ++iter) {
+					auto & value = *iter;
+					newList.push_back(new StopPoint(*value)); //primo
+				}
+				newList.push_back(newTRpickup); //due
+				newList.push_back(newTRdropoff); // tre (hospital)
 			}
 
 		}
