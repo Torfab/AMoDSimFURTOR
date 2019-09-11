@@ -280,7 +280,7 @@ void TripRequestSubmitter::initialize()
 
 		tcoord->emitEmergencyRequest();
 
-//		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
+		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
 	}
 
 	netmanager->updateTopology();
