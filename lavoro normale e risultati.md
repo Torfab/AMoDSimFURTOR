@@ -24,7 +24,7 @@ codici di emergenza differenti
 	* se tutte le ambulanze stanno gestendo un codice rosso lo mettono in coda (secondo terzo etc)
 
 
-check 10. TruckStartNodes -> sono gli storagepoint  soluzione:vettore
+Python comparazione curve diverse simulazioni
 
 
 
@@ -167,6 +167,7 @@ algoritmi
 	* AAA (network manager)
 
 * cambiare colore ospedali - > bianco
+TruckStartNodes -> sono gli storagepoint  soluzione:vettore
 
 
 # Limiti del simulatore:

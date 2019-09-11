@@ -285,7 +285,9 @@ void TripRequestSubmitter::initialize()
 
 void TripRequestSubmitter::handleMessage(cMessage *msg)
 {
-    //EMIT a TRIP REQUEST
+
+	/*
+    //EMIT a TRIP REQUEST (unused)
     if (msg == generatePacket)
     {
         TripRequest *tr = nullptr;
@@ -312,33 +314,27 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
             }
         }
     }
+	*/
+	//EMIT an EMERGENCY REQUEST
+	if (msg == emergencyPacket) {
+		TripRequest *tr = nullptr;
 
+		if (ev.isGUI())
+			getParentModule()->bubble("EMERGENCY REQUEST");
+		tr = buildEmergencyRequest(); // Builds emergency request
 
+		EV << "Requiring a EMERGENCY REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+		EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
-
-
-
-    //EMIT an EMERGENCY REQUEST
-       if (msg == emergencyPacket)
-       {
-           TripRequest *tr = nullptr;
-
-           if (ev.isGUI()) getParentModule()->bubble("EMERGENCY REQUEST");
-           tr = buildEmergencyRequest();
-
-           EV << "Requiring a EMERGENCY REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
-           EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
-
-		emit(tripRequest, tr); //emissione vera e propria tr
-
+		emit(tripRequest, tr); // Emit request
 
 		//schedulazione nuova
-		if (emergencyRequestCounter < v.size()){
-		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
-		EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
+		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
+			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
-		//statistiche
-		tcoord->emitEmergencyRequest();
+			//stats
+			tcoord->emitEmergencyRequest();
 		}
 	}
 	//EMIT an Truck REQUEST
@@ -367,7 +363,8 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 
 /**
  * Build a new Truck Request
- * From truck start node to a collection point
+ * From a random storage point to random a collection point
+ * isSpecial = 2
  */
 TripRequest* TripRequestSubmitter::buildTruckRequest()
 {
@@ -398,6 +395,10 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
 
 /**
  * Build a new Emergency Request
+ * with parameters:
+ * destAddress = netmanager->pickClosestHospitalFromNode(myAddress)
+ * isSpecial = 1
+ * at current simTime
  */
 TripRequest* TripRequestSubmitter::buildEmergencyRequest()
 {
@@ -423,6 +424,7 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
     return request;
 }
 
+//(unused)
 TripRequest* TripRequestSubmitter::buildTripRequest()
 {
     TripRequest *request = new TripRequest();
