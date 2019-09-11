@@ -161,6 +161,14 @@ void StopPoint::setYcoord(int y_coord)
     this->y_coord = y_coord;
 }
 
+bool StopPoint::isRedCode() const {
+	return redCode;
+}
+
+void StopPoint::setRedCode(bool redCode) {
+	this->redCode = redCode;
+}
+
 int StopPoint::getYcoord() const
 {
     return y_coord;

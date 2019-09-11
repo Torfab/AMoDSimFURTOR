@@ -33,7 +33,9 @@ class StopPoint : public cObject{
         double time;
         double actualTime;
         double maxDelay;
-
+        
+        bool redCode;
+        
     public:
         StopPoint();
         StopPoint(int requestID, int location, bool isPickup, double time, double maxDelay);
@@ -69,7 +71,8 @@ class StopPoint : public cObject{
 
         virtual void setYcoord(int y_coord);
         virtual int getYcoord() const;
-        
+        virtual bool isRedCode() const;
+        virtual void setRedCode(bool redCode);
 };
 
 #endif /* STOPPOINT_H_ */

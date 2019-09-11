@@ -41,6 +41,7 @@ class TripRequestSubmitter : public cSimpleModule
 
         cMessage *generatePacket;
         cMessage *emergencyPacket;
+        cMessage *redEmergencyPacket;
         cMessage *truckPacket;
         long pkCounter;
 
@@ -61,6 +62,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual TripRequest* buildEmergencyRequest();
         virtual TripRequest* buildTripRequest();
         virtual TripRequest* buildTruckRequest();
+        virtual TripRequest* buildRedCodeRequest();
 	void buildEmergencySchedule(int totalEmergencies);
 	bool disconnectChannelsAndCheckRedzone();
 	bool propagateDistance(int distance);
@@ -79,6 +81,7 @@ TripRequestSubmitter::~TripRequestSubmitter()
     cancelAndDelete(generatePacket);
     cancelAndDelete(emergencyPacket);
     cancelAndDelete(truckPacket);
+    cancelAndDelete(redEmergencyPacket);
 }
 
 void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
@@ -247,6 +250,7 @@ void TripRequestSubmitter::initialize()
     generatePacket = new cMessage("nextPacket");
     emergencyPacket = new cMessage("nextPacket");
     truckPacket = new cMessage("nextPacket");
+    redEmergencyPacket = new cMessage("nextPacket");
 
     emergencyRequests = registerSignal("emergencyRequests");
     tripRequest = registerSignal("tripRequest");
@@ -272,11 +276,11 @@ void TripRequestSubmitter::initialize()
 		emergencyRequestCounter = 0;
 
 		buildEmergencySchedule(totalEmergenciesPerNode);
-
 		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
 
 		tcoord->emitEmergencyRequest();
 
+		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
 	}
 
 	netmanager->updateTopology();
@@ -315,6 +319,29 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
         }
     }
 	*/
+	if (msg == redEmergencyPacket) {
+		TripRequest *tr = nullptr;
+
+		if (ev.isGUI())
+			getParentModule()->bubble("RED CODE");
+		tr = buildRedCodeRequest(); // Builds red code request
+
+		EV << "Requiring a RED CODE REQUEST from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+		EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
+
+		emit(tripRequest, tr); // Emit request
+
+		//schedulazione nuova
+//		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
+//			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
+//			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
+//
+//			//stats
+//			tcoord->emitEmergencyRequest();
+//		}
+	}
+
+
 	//EMIT an EMERGENCY REQUEST
 	if (msg == emergencyPacket) {
 		TripRequest *tr = nullptr;
@@ -421,6 +448,37 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
     request->setIsSpecial(1); //hospital request
 
     EV << "emergency from " << myAddress << " to the hospital in node: " << destAddress << endl;
+    return request;
+}
+
+/**
+ * Build a new red code Request
+ * with parameters:
+ * destAddress = netmanager->pickClosestHospitalFromNode(myAddress)
+ * isSpecial = 1
+ * at current simTime
+ */
+TripRequest* TripRequestSubmitter::buildRedCodeRequest()
+{
+    TripRequest *request = new TripRequest();
+    double simtime = simTime().dbl();
+
+    // Generate emergency request to the closest hospital
+    int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
+
+    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+    pickupSP->setXcoord(x_coord);
+    pickupSP->setYcoord(y_coord);
+    pickupSP->setNumberOfPassengers(par("passengersPerRequest"));
+
+    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+
+    request->setPickupSP(pickupSP);
+    request->setDropoffSP(dropoffSP);
+
+    request->setIsSpecial(3); // 3 is red code hospital request
+
+    EV << "red code emergency from " << myAddress << " to the hospital in node: " << destAddress << endl;
     return request;
 }
 

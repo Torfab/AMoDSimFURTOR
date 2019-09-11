@@ -107,7 +107,7 @@ private:
         virtual void handleTripRequest(TripRequest *tr) = 0;
         bool eval_feasibility(int vehicleID, StopPoint *sp); //Evaluate if the new stop-point is feasible by a vehicle
         virtual StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) = 0; //Sort the stop-points related to the specified vehicle including the new request's pickup and dropoff point, if feasible.
-        virtual StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) = 0;
+        virtual StopPointOrderingProposal* eval_RedCodeEmergencyRequestAssignment(int vehicleID, TripRequest* newTR) = 0;
         virtual StopPointOrderingProposal* eval_Assignment(int vehicleID, TripRequest* newTR)  = 0;
 
         void updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate);

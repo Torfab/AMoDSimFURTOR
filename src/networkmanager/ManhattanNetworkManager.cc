@@ -57,6 +57,7 @@ int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s) {
 ManhattanNetworkManager::~ManhattanNetworkManager() {
     delete hospitalAddresses;
     delete collectionPointsAddresses;
+    delete topo;
 }
 
 void ManhattanNetworkManager::initialize() {
@@ -232,7 +233,7 @@ double ManhattanNetworkManager::getHopDistance(int srcAddr, int dstAddr) {
     cTopology::Node *targetnode = topo->getNode(dstAddr);
     topo->calculateUnweightedSingleShortestPathsTo(targetnode);
 
-//    delete topo;
+//
 
     return node->getDistanceToTarget();
 }

@@ -51,7 +51,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 			}
 
 		}
-		if (tr->getIsSpecial() == 2) { // coordination point - truck request
+		else if (tr->getIsSpecial() == 2) { // coordination point - truck request
 			if (x.first->getSpecialVehicle() == 2 ) { //it'a truck
 			//assign trip to truck
 
@@ -61,7 +61,17 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 				}
 
 			}
-		} else {
+		}
+		else if (tr->getIsSpecial() == 3) { // red code emergency request
+			if (x.first->getSpecialVehicle() == 1) {
+				// eval ambulances availables
+				StopPointOrderingProposal *tmp = eval_RedCodeEmergencyRequestAssignment(x.first->getID(), tr);
+				if (tmp && !tmp->getSpList().empty()) {
+					vehicleProposals[x.first->getID()] = tmp;
+				}
+			}
+		}
+		else {
 			//non e' una emergency request
 			if (x.first->getSpecialVehicle() == 0) {
 
@@ -76,7 +86,7 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 		}
 	}
 	// //Assign the request to the emergency vehicle
-	if (tr->getIsSpecial() == 1) {
+	if (tr->getIsSpecial() == 1 || tr->getIsSpecial() == 3 ) {
 		EV << "+++" << vehicleProposals.size() << " Emergency vehicles are available for proposal" << endl;
 		emergencyAssignment(vehicleProposals, tr);
 
@@ -94,25 +104,30 @@ void HeuristicCoord::handleTripRequest(TripRequest *tr) {
 		minWaitingTimeAssignment(vehicleProposals, tr);
 }
 
-StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int vehicleID, TripRequest* tr) {
+
+StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignment(int vehicleID, TripRequest* tr) {
 
 	std::list<StopPoint*> old = rPerVehicle[vehicleID];
 	std::list<StopPoint*> newList;
 	StopPoint* newTRpickup = new StopPoint(*tr->getPickupSP());
 	StopPoint* newTRdropoff = new StopPoint(*tr->getDropoffSP());
+
+	newTRpickup->setRedCode(true);
+
 	StopPointOrderingProposal* toReturn = NULL;
 	newTRdropoff->setNumberOfPassengers(-newTRpickup->getNumberOfPassengers());
 	double additionalCost = -1;
+	double timeToPickup = 0;
 
 	//The vehicle is empty
 	if (rPerVehicle.find(vehicleID) == rPerVehicle.end() || old.empty()) {
-		//      EV << "The vehicle " << vehicleID << " has not other stop points!" << endl;
-		// la richiesta è il numero di hop che serve a prendere il paziente dall'ospedale
+
+		// request is from getLastVehicleLocation to the trip request location
 		additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation());
+		additionalCost += netmanager->getHopDistance( newTRpickup->getLocation(), newTRdropoff->getLocation());
 
+		EV << "Vehicle[" << vehicleID << "]: Cost to operate :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
 		EV << "COST :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
-
-		double timeToPickup = simTime().dbl() + additionalCost;
 
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
 		newTRdropoff->setActualNumberOfPassengers(0);
@@ -121,26 +136,22 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 
 		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
 
-//            EV << "New Pickup can be reached at " << newTRpickup->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRpickup->getTime() + newTRpickup->getMaxDelay()) << endl;
-//            EV << "New Dropoff can be reached at " << newTRdropoff->getActualTime() << " by the vehicle " << vehicleID << ". Max allowed time is: " << (newTRdropoff->getTime() + newTRdropoff->getMaxDelay()) << endl;
-
 	}
 
 	//The vehicle has 1 stop point
 	else if (old.size() == 1) {
-		EV << " The vehicle " << vehicleID << " has only 1 SP. This means ambulance is going to an hospital." << endl;
+		EV << " The vehicle " << vehicleID << " has only 1 SP. This means the truck is going to an endpoint." << endl;
 
 		StopPoint *last = new StopPoint(*old.back());
-		// costo che ci vuole per la prima richiesta
 
-		// tratta presa - ospedale
-		additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), netmanager->pickClosestHospitalFromNode(last->getLocation()));
-		EV << "R->H Cost :" << additionalCost << " FROM " << (last)->getLocation() << " to " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << endl;
+		// tratta tra due stop point senza altre richieste
+		additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), getVehicleByID(vehicleID)->getDestAddr());
+		EV << "R->Endpoint Cost :" << additionalCost << " FROM " << getVehicleByID(vehicleID)->getSrcAddr() << " =?= "<< (last)->getLocation() << " to " <<  getVehicleByID(vehicleID)->getDestAddr() << " =?= " << netmanager->pickClosestHospitalFromNode(last->getLocation()) << endl;
 
-		additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(last->getLocation()), newTRpickup->getLocation());
-		EV << "+COST H->R :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << " to " << (newTRpickup)->getLocation() << endl;
+		additionalCost += netmanager->getHopDistance(getVehicleByID(vehicleID)->getDestAddr(), newTRpickup->getLocation());
+		EV << "+COST Endpoint->newR :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode((last)->getLocation()) << " to  " << (newTRpickup)->getLocation() << endl;
 
-		double timeToPickup = additionalCost + last->getActualTime() + (alightingTime * abs(last->getNumberOfPassengers())); // useless
+//		double timeToPickup = additionalCost + last->getActualTime() + (alightingTime * abs(last->getNumberOfPassengers())); // useless
 		newTRdropoff->setActualTime(newTRpickup->getActualTime() + netmanager->getTimeDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()) + (boardingTime * newTRpickup->getNumberOfPassengers()));
 
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
@@ -157,39 +168,77 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 	//The vehicle has more stop points
 	else {
 		EV << " The vehicle " << vehicleID << " has more stop points..." << endl;
-
-		additionalCost = 0;
 		StopPoint *last = new StopPoint(*old.back());
 
-		for (auto const elem : old) {
-			// tratta  presa -- ospedale
-			additionalCost += netmanager->getHopDistance(elem->getLocation(), netmanager->pickClosestHospitalFromNode(elem->getLocation()));
-			EV << "COST R->H :" << additionalCost << " FROM " << elem->getLocation() << " to " << netmanager->pickClosestHospitalFromNode(elem->getLocation()) << endl;
+		bool isDestinationHospital = netmanager->checkHospitalNode((*old.begin())->getLocation());
 
-			if (!(elem)->getIsPickup()) {
-				// tratta ospedale - presa
-				EV << "+COST H->R :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode(elem->getLocation()) << " to " << getVehicleByID(vehicleID)->getDestAddr() << endl;
-				additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(elem->getLocation()), getVehicleByID(vehicleID)->getDestAddr());
+		if ((*old.begin())->isRedCode()){
+			//additional cost deve sommare le due distanze ppickup - hospital -
+			//check della terza se è rossa
+			///redo +2
+			additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation());
+			std::list<StopPoint*>::iterator it1, it2;
+
+			for (it1 = old.begin(), it2 = ++old.begin(); it2 != old.end();	++it1, ++it2) {
+				if (!(*it2)->isRedCode() && !netmanager->checkHospitalNode((*it2)->getLocation())) {
+					ev << "non codice rosso non hospital" << endl;
+					break;
+				}
+
+				// tratta
+				additionalCost += netmanager->getHopDistance((*it1)->getLocation(), (*it2)->getLocation());	// netmanager->pickClosestHospitalFromNode(elem->getLocation()));
+				ev << "codice rosso o hospital" << endl;
+
 			}
+			// it1 non è un redcode quindi la nuova fermata va messa sopra
 
+
+			additionalCost += netmanager->getHopDistance((*(it1))->getLocation(),newTRpickup->getLocation()); //from last registered location to the pickup
+			additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
+
+
+
+		} else {
+
+			if (isDestinationHospital) {
+				//it's an hospital
+				additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation()); //from start to the hospital
+				additionalCost += netmanager->getHopDistance(last->getLocation(), newTRpickup->getLocation()); //hospital to request
+			} else {
+				additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation()); //from last registered location to the pickup
+			}
+			additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()); //request to hospital
 		}
-		EV << "last COST R->H :" << additionalCost << " FROM " << netmanager->pickClosestHospitalFromNode(last->getLocation()) << " to " << newTRpickup->getLocation() << endl;
-
-		additionalCost += netmanager->getHopDistance(netmanager->pickClosestHospitalFromNode(last->getLocation()), newTRpickup->getLocation());
-
-		additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
 
 		EV << " Total cost " << additionalCost << " for Request " << tr->getID() << endl;
+
+
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
 		newTRdropoff->setActualNumberOfPassengers(0);
 
-		for (auto const &x : old)
-			newList.push_back(new StopPoint(*x));
 
-		newList.push_back(newTRpickup);
-		newList.push_back(newTRdropoff);
+		if (isDestinationHospital) {
+			auto & old_begin = *old.begin();
 
-		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, simTime().dbl(), newList);
+			newList.push_back(new StopPoint(*old_begin)); //primo
+
+			newList.push_back(newTRpickup); //due
+			newList.push_back(newTRdropoff); // tre (hospital)
+
+			for (auto it1 = ++old.begin(); it1 != old.end(); ++it1) { //altri escluso il primo
+				auto & value = *it1;
+				newList.push_back(new StopPoint(*value));
+			}
+
+		} else {
+			newList.push_back(newTRpickup);
+			newList.push_back(newTRdropoff);
+			for (auto const &x : old) //all stop points
+				newList.push_back(new StopPoint(*x));
+		}
+
+
+		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
 
 	}
 
@@ -199,7 +248,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int v
 
 
 /**
- * Evaluates a truck request
+ * Evaluates a truck or emergency request
  */
 StopPointOrderingProposal* HeuristicCoord::eval_Assignment(int vehicleID, TripRequest* tr) {
 
