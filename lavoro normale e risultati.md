@@ -11,16 +11,6 @@ pulizia initialize app (e netmanager)
 	codice obsoleto
 
 
-emit specifico per i rossi (quanto e quando vengono salvati)
-
- 
-Algoritmi:
-	* ManhattanRouting Dijkstra non pesato [x]
-	* Dijkstra pesato su traffico [x]  (aaa per tutti)
-	* Dijkstra pesato su feromone [x]  (aaa per tutti)
-	* Dijkstra pesato su feromone per civili e non pesato per le ambulanze [x]
-
-
 
 
 Python comparazione curve diverse simulazioni
@@ -174,6 +164,18 @@ codici di emergenza differenti
 	* l'ambulanza piu vicina mette il codice rosso in cima alla lista stop points
 	* se l'ambulanza ha un codice rosso si controllano le altre ambulanze
 	* se tutte le ambulanze stanno gestendo un codice rosso lo mettono in coda (secondo terzo etc)
+
+emit specifico per i rossi (quanto e quando vengono salvati)
+
+ 
+Algoritmi:
+	* ManhattanRouting Dijkstra non pesato [x]
+	* Dijkstra pesato su traffico [x]  (aaa per tutti)
+	* Dijkstra pesato su feromone [x]  (aaa per tutti)
+	* Dijkstra pesato su feromone per civili e non pesato per le ambulanze [x]
+
+
+
 
 # Limiti del simulatore:
 
