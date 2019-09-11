@@ -20,7 +20,7 @@
 #include "Pheromone.h"
 #include "Traffic.h"
 #include "AbstractNetworkManager.h"
-class ManhattanRouting : public cSimpleModule
+class ManhattanRouting : public cSimpleModule,cListener
 {
 private:
     int myAddress;
@@ -37,6 +37,7 @@ private:
 
 	Pheromone *pheromoneEmergency;
 
+	simsignal_t decayPheromoneValue; //signal for decay pheromon
 	// Traffico
 	Traffic *traffic;
 
@@ -53,6 +54,7 @@ private:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual ~ManhattanRouting();
+	virtual void receiveSignal(cComponent *source, simsignal_t signalID, bool value);
 };
 
 #endif

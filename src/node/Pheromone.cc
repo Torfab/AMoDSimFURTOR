@@ -36,7 +36,9 @@ double Pheromone::getPheromoneDecayFactor() const {
 double Pheromone::getPheromoneDecayTime() const {
 	return pheromoneDecayTime;
 }
-
+/**
+ * Increase pheromone value by one.
+ */
 void Pheromone::increasePheromone(int i) {
 	pheromone[i] = pheromone[i] + 1;
 
@@ -50,6 +52,9 @@ int Pheromone::getNumberOfGates() const {
 	return numberOfGates;
 }
 
+/**
+ * Decay the pheromon of the current value * pheromoneDecayFactor
+ */
 void Pheromone::decayPheromone() {
 	for (int i = 0; i < numberOfGates; i++) {
 		pheromone[i] -= pheromone[i] * pheromoneDecayFactor;

@@ -17,20 +17,17 @@
 #define PHEROMONE_H_
 
 class Pheromone {
-
-	private:
-		int numberOfGates ;
-		double *pheromone; // N E S W
-		double pheromoneDecayTime;
-		double pheromoneDecayFactor;
+private:
+	int numberOfGates; //It's the number of ports, 4 is default:  N E S W
+	double *pheromone; //Array of pheromone
+	double pheromoneDecayTime;
+	double pheromoneDecayFactor;
 public:
 	Pheromone(double DecayTime, double DecayFactor);
 	virtual ~Pheromone();
 
 	double getPheromoneDecayFactor() const;
 	double getPheromoneDecayTime() const;
-
-
 	void increasePheromone(int i);
 	const double getPheromone(int i) const;
 	int getNumberOfGates() const;

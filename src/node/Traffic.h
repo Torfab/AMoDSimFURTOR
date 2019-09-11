@@ -20,7 +20,7 @@ class Traffic {
 
 protected:
 	int numberOfGates;
-	double *traffic; // N E S W
+	double *traffic; // Array of 4 ports: N E S W
 
 public:
 	Traffic();
