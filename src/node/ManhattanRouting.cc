@@ -94,8 +94,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		int distance = 0;
 		if (pkChosenGate % 2 == 1)  	// Odd gates are horizontal
 			distance = xChannelLength;
-		else
-										// Even gates are vertical
+		else							// Even gates are vertical
 			distance = yChannelLength;
 
 		pk->setTraveledDistance(pk->getTraveledDistance() + distance); // updates traveled distance
