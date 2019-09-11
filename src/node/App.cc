@@ -285,7 +285,7 @@ void App::handleMessage(cMessage *msg) {
 		//This is a PICK-UP stop-point
 		double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
 		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
-
+		sendDelayTime += 180;
 	}
 	if (vehicle->getSpecialVehicle() == 1 && currentStopPoint->getIsPickup()){
 		//take simtime di currentstoppoint

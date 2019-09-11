@@ -10,6 +10,9 @@
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
+
+emit specifico per i rossi (quanto e quando vengono salvati)
+
  
 Algoritmi:
 	* ManhattanRouting Dijkstra non pesato [x]
@@ -17,11 +20,7 @@ Algoritmi:
 	* Dijkstra pesato su feromone [x]  (aaa per tutti)
 	* Dijkstra pesato su feromone per civili e non pesato per le ambulanze [x]
 
-codici di emergenza differenti
-	* crea richiesta codice rosso
-	* l'ambulanza piu vicina mette il codice rosso in cima alla lista stop points
-	* se l'ambulanza ha un codice rosso si controllano le altre ambulanze
-	* se tutte le ambulanze stanno gestendo un codice rosso lo mettono in coda (secondo terzo etc)
+
 
 
 Python comparazione curve diverse simulazioni
@@ -169,6 +168,12 @@ algoritmi
 * cambiare colore ospedali - > bianco
 TruckStartNodes -> sono gli storagepoint  soluzione:vettore
 
+
+codici di emergenza differenti
+	* crea richiesta codice rosso
+	* l'ambulanza piu vicina mette il codice rosso in cima alla lista stop points
+	* se l'ambulanza ha un codice rosso si controllano le altre ambulanze
+	* se tutte le ambulanze stanno gestendo un codice rosso lo mettono in coda (secondo terzo etc)
 
 # Limiti del simulatore:
 

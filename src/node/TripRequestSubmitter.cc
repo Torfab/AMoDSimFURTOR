@@ -276,7 +276,7 @@ void TripRequestSubmitter::initialize()
 		emergencyRequestCounter = 0;
 
 		buildEmergencySchedule(totalEmergenciesPerNode);
-		scheduleAt(v[emergencyRequestCounter++], redEmergencyPacket);
+		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
 
 		tcoord->emitEmergencyRequest();
 
@@ -357,7 +357,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 
 		//schedulazione nuova
 		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
-			scheduleAt(v[emergencyRequestCounter++], redEmergencyPacket);
+			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
 			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
 
 			//stats
