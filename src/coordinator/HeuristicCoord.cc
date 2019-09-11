@@ -172,13 +172,14 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 
 		bool isDestinationHospital = netmanager->checkHospitalNode((*old.begin())->getLocation());
 
-		if ((*old.begin())->isRedCode()){
+		if ((*old.begin())->isRedCode()|| isDestinationHospital){
 			//additional cost deve sommare le due distanze ppickup - hospital -
 			//check della terza se è rossa
 			///redo +2
 			additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation());
-			std::list<StopPoint*>::iterator it1, it2;
 
+
+			std::list<StopPoint*>::iterator it1, it2;
 			for (it1 = old.begin(), it2 = ++old.begin(); it2 != old.end();	++it1, ++it2) {
 				if (!(*it2)->isRedCode() && !netmanager->checkHospitalNode((*it2)->getLocation())) {
 					ev << "non codice rosso non hospital" << endl;
@@ -192,50 +193,47 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 			}
 			// it1 non è un redcode quindi la nuova fermata va messa sopra
 
-
-			additionalCost += netmanager->getHopDistance((*(it1))->getLocation(),newTRpickup->getLocation()); //from last registered location to the pickup
+			//from last registered location to the pickup
+			additionalCost += netmanager->getHopDistance((*(it1))->getLocation(),newTRpickup->getLocation());
 			additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
 
-
-
-		} else {
-
-			if (isDestinationHospital) {
-				//it's an hospital
-				additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation()); //from start to the hospital
-				additionalCost += netmanager->getHopDistance(last->getLocation(), newTRpickup->getLocation()); //hospital to request
-			} else {
-				additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation()); //from last registered location to the pickup
+			/**
+			 * da begin a it 1 restano
+			 * poi il nostr
+			 *
+			 */
+			for (auto iter = old.begin(); iter != it1; ++iter) {
+				auto & value = *iter;
+				newList.push_back(new StopPoint(*value)); //primo
 			}
-			additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()); //request to hospital
+			newList.push_back(newTRpickup); //due
+			newList.push_back(newTRdropoff); // tre (hospital)
+
+			for (auto iter = it2; iter != old.end(); iter++) { //da it2 a end gli altri TODO Check segmentation fault ++iter o iter++
+				auto & value = *iter;
+				newList.push_back(new StopPoint(*value));
+			}
+
 		}
+		else {
+			additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation()); //from last registered location to the pickup
+
+			/**
+			 * Put the red code in front with priority
+			 */
+			newList.push_back(newTRpickup);
+			newList.push_back(newTRdropoff);
+			for (auto const &x : old) //all stop points
+				newList.push_back(new StopPoint(*x));
+
+		}
+		additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation()); //request to hospital
 
 		EV << " Total cost " << additionalCost << " for Request " << tr->getID() << endl;
 
 
 		newTRpickup->setActualNumberOfPassengers(newTRpickup->getNumberOfPassengers());
 		newTRdropoff->setActualNumberOfPassengers(0);
-
-
-		if (isDestinationHospital) {
-			auto & old_begin = *old.begin();
-
-			newList.push_back(new StopPoint(*old_begin)); //primo
-
-			newList.push_back(newTRpickup); //due
-			newList.push_back(newTRdropoff); // tre (hospital)
-
-			for (auto it1 = ++old.begin(); it1 != old.end(); ++it1) { //altri escluso il primo
-				auto & value = *it1;
-				newList.push_back(new StopPoint(*value));
-			}
-
-		} else {
-			newList.push_back(newTRpickup);
-			newList.push_back(newTRdropoff);
-			for (auto const &x : old) //all stop points
-				newList.push_back(new StopPoint(*x));
-		}
 
 
 		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
