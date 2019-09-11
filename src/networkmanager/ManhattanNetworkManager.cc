@@ -105,12 +105,12 @@ void ManhattanNetworkManager::initialize() {
     buildCollectionPointNodes();
 
 
-    // Vehicles creation
-    for (int i = 0; i < numberOfVehicles; i++) {
-        int rand = intuniform(0, numberOfNodes - 1, 4);
-        if (!checkHospitalNode(rand)) //Nessun veicolo civile puo' partire dall'ospedale
-            vehiclesPerNode[rand] += 1;
-    }
+//    // Vehicles creation
+//    for (int i = 0; i < numberOfVehicles; i++) {
+//        int rand = intuniform(0, numberOfNodes - 1, 4);
+//        if (!checkHospitalNode(rand)) //Nessun veicolo civile puo' partire dall'ospedale
+//            vehiclesPerNode[rand] += 1;
+//    }
 
     // Ambulances creation
     for (int i = 0; i < numberOfHospitals; i++)

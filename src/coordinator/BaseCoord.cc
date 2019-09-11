@@ -42,7 +42,9 @@ void BaseCoord::initialize()
     freeVehiclesPerTime = registerSignal("freeVehiclesPerTime");
 
     differenceFromRequestToPickup = registerSignal("differenceFromRequestToPickup");
+    differenceFromRedCodeRequestToPickup = registerSignal("differenceFromRedCodeRequestToPickup");
     emergencyRequest = registerSignal("emergencyRequest");
+    redCodeRequest= registerSignal("redCodeRequest");
 
 
 
@@ -66,7 +68,7 @@ void BaseCoord::initialize()
 
     simulation.getSystemModule()->subscribe("tripRequest",this);
 
-
+    redCodeRequestCounter = 0;
     emergencyRequestCounter = 0;
 	//Pheromone
 	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
@@ -899,8 +901,12 @@ void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
 	*/
 }
 
-void BaseCoord::emitDifferenceFromRequestToPickup(double diff) {
-	emit(differenceFromRequestToPickup, diff);
+void BaseCoord::emitDifferenceFromRequestToPickup(double diff, bool redCode) {
+	if (redCode)
+		emit(differenceFromRedCodeRequestToPickup, diff);
+
+	else
+		emit(differenceFromRequestToPickup, diff);
 }
 
 void BaseCoord::evacuateCivil(int address) {
@@ -910,3 +916,7 @@ void BaseCoord::evacuateCivil(int address) {
 void BaseCoord::emitEmergencyRequest() {
 	emit(emergencyRequest, ++emergencyRequestCounter);
 }
+void BaseCoord::emitRedCodeEmergencyRequest() {
+	emit(redCodeRequest, ++redCodeRequestCounter);
+}
+

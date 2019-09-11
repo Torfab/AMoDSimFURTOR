@@ -58,11 +58,14 @@ private:
 
 	simsignal_t decayPheromoneValue;
 	// Travel time related signals
-	simsignal_t signal_ambulanceDelayTravelTime;
 	simsignal_t signal_truckDelayTravelTime;
 	simsignal_t signal_civilDelayTravelTime;
 	simsignal_t signal_civilTravelTime;
+
 	simsignal_t signal_ambulanceTravelTime;
+	simsignal_t signal_ambulanceDelayTravelTime;
+
+
 	// Idle signal
 	simsignal_t signal_ambulancesIdle;
 
@@ -175,16 +178,16 @@ void App::initialize() {
 			if (hospital) {
 				v = new Vehicle(1, ambulanceSpeed, 1);
 				v->setSeats(1);
-			} else if (storagePoint && numberOfTrucks > 0) {
+			} else {
 				v = new Vehicle(2, truckSpeed, 20);
 				v->setSeats(0);
-				numberOfTrucks--;
+//				numberOfTrucks--;
 			}
 
-			else {
-				v = new Vehicle(-1, 9.7, 1);
-				v->setSeats(seatsPerVehicle);
-			}
+//			else {
+//				v = new Vehicle(-1, 9.7, 1);
+//				v->setSeats(seatsPerVehicle);
+//			}
 
 			EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << " of type " << v->getSpecialVehicle() << ". It has " << v->getSeats() << " seats." << endl;
 			tcoord->registerVehicle(v, myAddress);
@@ -247,6 +250,8 @@ void App::handleMessage(cMessage *msg) {
 
 	int numHops = netmanager->getHopDistance(vehicle->getSrcAddr(), vehicle->getDestAddr());
 
+
+
 	switch (vehicle->getSpecialVehicle()) {
 	case -1: //civil
 		EV << "Veicolo civile a destinazione " << vehicle->getDestAddr() << " partito da " << vehicle->getSrcAddr() << endl;
@@ -262,7 +267,6 @@ void App::handleMessage(cMessage *msg) {
 	case 1:	//ambulance
 		if (netmanager->checkHospitalNode(myAddress)) {
 			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
-
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
 
 			EV << "Ambulanza Tempo reale: " << vehicle->getCurrentTraveledTime() << " stimato: " << vehicle->getOptimalEstimatedTravelTime() << " hops " << numHops << endl;
@@ -278,7 +282,6 @@ void App::handleMessage(cMessage *msg) {
 		break;
 	}
 
-
 	StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
 	if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup()) {
@@ -286,13 +289,17 @@ void App::handleMessage(cMessage *msg) {
 		double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
 		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
 		sendDelayTime += 180;
+		vehicle->setCurrentTraveledTime(vehicle->getCurrentTraveledTime() + sendDelayTime);
 	}
+
+
+
 	if (vehicle->getSpecialVehicle() == 1 && currentStopPoint->getIsPickup()){
 		//take simtime di currentstoppoint
 		//take simtime simulazione
 		double difference = abs(simTime().dbl() - currentStopPoint->getTime());
 		//emit differenza
-		tcoord->emitDifferenceFromRequestToPickup(difference);
+		tcoord->emitDifferenceFromRequestToPickup(difference, currentStopPoint->isRedCode());
 
 	}
 	//Ask to coordinator for next stop point

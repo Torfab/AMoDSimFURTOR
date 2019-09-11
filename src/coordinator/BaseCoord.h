@@ -43,6 +43,7 @@ private:
         int alightingTime;
 
         int emergencyRequestCounter;
+        int redCodeRequestCounter;
 
         AbstractNetworkManager* netmanager;
 
@@ -78,9 +79,10 @@ private:
         simsignal_t droppedoffRequestsPerTime;
         simsignal_t freeVehiclesPerTime;
 
-        simsignal_t differenceFromRequestToPickup;
+        simsignal_t differenceFromRequestToPickup; //emergency requests
+        simsignal_t differenceFromRedCodeRequestToPickup; //red code requests
         simsignal_t emergencyRequest;
-
+        simsignal_t redCodeRequest;
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
@@ -130,8 +132,9 @@ private:
     public:
         virtual ~BaseCoord();
 		void emitEmergencyRequest();
+		void emitRedCodeEmergencyRequest();
+		void emitDifferenceFromRequestToPickup(double diff, bool redCode);
 
-		void emitDifferenceFromRequestToPickup(double diff);
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
         void registerVehicle (Vehicle *v, int address);

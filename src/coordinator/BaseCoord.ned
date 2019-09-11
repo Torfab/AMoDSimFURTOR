@@ -18,7 +18,7 @@ simple BaseCoord like ICoord
         @statistic[waitingTime](title="Waiting time (minute)";source="waitingTime";unit=minute;record=vector,stats;interpolationmode=none);
 
         @signal[actualTripTime](type="double");				//Actual time scored on vehicle (per request)
-        @statistic[actualTripTime](title="Actual Trip Time (minute)";source="actualTripTime";unit=minute;record=vector,stats;interpolationmode=none);
+       @statistic[actualTripTime](title="Actual Trip Time (minute)";source="actualTripTime";unit=minute;record=vector,stats;interpolationmode=none);
 
         @signal[stretch](type="double");
         @statistic[stretch](title="Stretch";source="stretch";record=vector,stats;interpolationmode=none);
@@ -60,10 +60,18 @@ simple BaseCoord like ICoord
         @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,stats;interpolation=none);
 		
 		@signal[differenceFromRequestToPickup](type="int");       
-        @statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
+       @statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
 
         @signal[emergencyRequest](type="int");       
         @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,stats;interpolation=none);
        
 		@signal[decayPheromoneValue](type="double");
+		
+		@signal[differenceFromRedCodeRequestToPickup](type="int");       
+        @statistic[differenceFromRedCodeRequestToPickup](title="Difference From Red code Emergency request creation To Pickup";source="differenceFromRedCodeRequestToPickup";record=vector,stats;interpolation=none);
+		
+		@signal[redCodeRequest](type="int");       
+        @statistic[redCodeRequest](title="Red codeEmergency requests in time";source="redCodeRequest";record=vector,stats;interpolation=none);
+       
+		
 }

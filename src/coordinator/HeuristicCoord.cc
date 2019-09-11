@@ -113,6 +113,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 	StopPoint* newTRdropoff = new StopPoint(*tr->getDropoffSP());
 
 	newTRpickup->setRedCode(true);
+	newTRdropoff->setRedCode(true);
 
 	StopPointOrderingProposal* toReturn = NULL;
 	newTRdropoff->setNumberOfPassengers(-newTRpickup->getNumberOfPassengers());
@@ -171,7 +172,7 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 
 		bool isDestinationHospital = netmanager->checkHospitalNode((*old.begin())->getLocation());
 
-		if ((*old.begin())->isRedCode()|| isDestinationHospital){
+		if ((*old.begin())->isRedCode() || isDestinationHospital){
 			//additional cost deve sommare le due distanze ppickup - hospital -
 			//check della terza se è rossa
 			///redo +2
