@@ -4,7 +4,7 @@ package src.networkmanager;
 simple ManhattanNetworkManager like INetworkManager
 {
     parameters:
-        int numberOfVehicles = default(1);
+        int numberOfVehicles = default(0);
         int numberOfNodes;      
 
         int numberOfEpicenters = default(0); 

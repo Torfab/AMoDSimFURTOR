@@ -11,31 +11,20 @@ pulizia initialize app (e netmanager)
 	codice obsoleto
 
  
-dijkstra pesato su :
+Algoritmi:
 	* ManhattanRouting Dijkstra non pesato [x]
-	* traffico [x]
-	* feromone [x]
-	* non pesato per le ambulanze
-	* aaa per i civili a confronto con dijkstra
-
-mandare la mail
-
-(Altri emitter da aggiungere riferiti ai dijkstra per confronto)
-
+	* Dijkstra pesato su traffico [x]  (aaa per tutti)
+	* Dijkstra pesato su feromone [x]  (aaa per tutti)
+	* Dijkstra pesato su feromone per civili e non pesato per le ambulanze [x]
 
 codici di emergenza differenti
+	* crea richiesta codice rosso
+	* l'ambulanza piu vicina mette il codice rosso in cima alla lista stop points
+	* se l'ambulanza ha un codice rosso si controllano le altre ambulanze
+	* se tutte le ambulanze stanno gestendo un codice rosso lo mettono in coda (secondo terzo etc)
 
 
-check 10. TruckStartNodes  soluzione:vettore
-
-
-creazione dei veicoli in app. Ci sono e stanno fermi?
-
-Vehicles creation // TODO:DO WE NEED THIS?! (manhattannetmanager.cc 202 )
-
-
-
-
+check 10. TruckStartNodes -> sono gli storagepoint  soluzione:vettore
 
 
 
@@ -50,20 +39,14 @@ strategie per la simulazione delle condizioni a contorno di un evento catastrofi
 * simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
 
+
+
 # TODO Importanti:
 
-risultati
-	* Differenza tempo minimo di esecuzione (in assenza di traffico) con tempo reale di esecuzione
-	 
-algoritmi
-	* Custom nostro: manhattan + circumnaviga
-	* ACO (network manager)
-	* AAA (network manager)
+
 Usare due topo per implementare dijkstra pesato traffico per ambulanze e pesato feromone per i civili
 
 
-* calcolo corretto setAdditionalTravelTime
-* gestire coda richieste pendenti
 
 # TODO mildly important:
 
@@ -71,25 +54,15 @@ I routing devono supportare il segnale di decadenza del feromone di basecoord
 (manca in manhattanrouting e dijkstraTraffic)
 
 
-
--- Le richieste vengono generate dal TripRequestSubmitter con una frequenza del 50% tra normali e di emergenza. (confrontare le idee e valutare la strategia scelta)
-
-
 --Check che tutto sia in inglese (E' già in inglese a meno dei log)
-
--- ManhattanNetworkManager::getTimeDistance(
-refactor e rimozione metodo (parte di rimozione additionalTravelTime)
 
 
 
 # TODO Non importanti:
-* evitare che scorra tutti i veicoli per cercare un'ambulanza  - in HeuristicCord.cc
-* scorrere meno nodi in manhattanrouting topo disconnessione
-* cambiare colore ospedali
-
- controllo se esistono nodi non raggiungibili (djistra)
 
 evitare di chiedere sono un ospedale o un bordernode o sono morto -> unica funzione per gestire tutto
+
+
 
 # DONE:
 
@@ -185,6 +158,16 @@ burst/2 nella restante mezzora	(uniform 600 1800)
 burst1 50% +burst2 33% +burst3 17% = numero fisso di chiamate emergenziali per nodo
 
 
+risultati
+	* Differenza tempo minimo di esecuzione (in assenza di traffico) con tempo reale di esecuzione
+	 
+algoritmi
+	* Custom nostro: manhattan + circumnaviga
+	* ACO (network manager)
+	* AAA (network manager)
+
+* cambiare colore ospedali - > bianco
+
 
 # Limiti del simulatore:
 
@@ -192,11 +175,14 @@ burst1 50% +burst2 33% +burst3 17% = numero fisso di chiamate emergenziali per n
 	* Risolto costruendo la classe feromone bypassando il ned.
 
 2. Non conviene far decadere il feromone in maniera continua
-	* Il workaround consiste nell'aggiornare correttamente (in termini temporali) il valore solo quando un veicolo attraversa il nodo. Alcuni nodi possono non essere aggiornati se non ci sono veicoli che li attraversano.
+	~~* Il workaround consiste nell'aggiornare correttamente (in termini temporali) il valore solo quando un veicolo attraversa il nodo. Alcuni nodi possono non essere aggiornati se non ci sono veicoli che li attraversano.~~
+	* Il workaround consiste nell'aggiornare correttamente in termini temporali il valore da basecoord, emettendo un segnale decayFeromone che tutti i nodi sono in grado di leggere (modulo routing)
 
 3. Delay di canale nel nodo ricevitore
 	~ L'idea è mettere tempo di canale = 0 e trasferire la logica temporale nel concetto del selfmessage nel routing.
 
+4. Dobbiamo usare il suo dijkstra, possiamo considerare un solo peso alla volta
+	* Il workaround è che possiamo istanziare diverse topologie che si riferiscono alla stessa ma che considerano pesi diversi
 
 
 
