@@ -45,8 +45,8 @@ void BaseCoord::initialize()
     differenceFromRedCodeRequestToPickup = registerSignal("differenceFromRedCodeRequestToPickup");
     emergencyRequest = registerSignal("emergencyRequest");
     redCodeRequest= registerSignal("redCodeRequest");
-
-
+    signal_noVehicle= registerSignal("signal_noVehicle");
+    indexTrPickup= registerSignal("indexTrPickup");
 
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
@@ -213,9 +213,10 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
     pendingRequests.erase(tr->getID());
     delete preq;
     if (!vehicleProposal.empty()) {
-		int min = netmanager->getNumberOfNodes();
+		int min = -1;
 		for (auto const &x : vehicleProposal) { /// Ricerca del minimo numero di hop
 			// hospital closest to last vehicle location
+			if (min == -1) min = x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) + 1;
 			if (x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) < min) {
 				vehicleID = x.first;
 				min = x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),tr->getPickupSP()->getLocation());
@@ -233,6 +234,8 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
         	EV << elem->getLocation() << " code: " << elem->isRedCode() <<  endl;
     } else {
         EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
+        emit(signal_noVehicle, 1);
+
         uRequests[tr->getID()] = new TripRequest(*tr);
         delete tr;
         return -1;
@@ -909,12 +912,16 @@ void BaseCoord::emitDifferenceFromRequestToPickup(double diff, bool redCode) {
 		emit(differenceFromRequestToPickup, diff);
 }
 
+void BaseCoord::emitIndexPickup(int trId) {
+	emit(indexTrPickup, trId);
+}
+
 void BaseCoord::evacuateCivil(int address) {
 	emit(signal_civilEvacuated, ++civilCounter);
 }
 
 void BaseCoord::emitEmergencyRequest() {
-	emit(emergencyRequest, ++emergencyRequestCounter);
+	emit(emergencyRequest,++emergencyRequestCounter);
 }
 void BaseCoord::emitRedCodeEmergencyRequest() {
 	emit(redCodeRequest, ++redCodeRequestCounter);

@@ -26,6 +26,7 @@ StopPoint::StopPoint() {
     this->y_coord = -1;
     this->isPickup = false;
     this->maxDelay = 0;
+    this->redCode = false;
 }
 
 StopPoint::StopPoint(int requestID, int location, bool isPickup, double time, double maxDelay)

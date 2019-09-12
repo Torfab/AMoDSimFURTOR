@@ -57,6 +57,7 @@ private:
         simsignal_t newTripAssigned;
 
         simsignal_t decayPheromoneValue;
+        simsignal_t signal_noVehicle;
 
         //Statistical signals
         simsignal_t traveledDistance;
@@ -83,6 +84,7 @@ private:
         simsignal_t differenceFromRedCodeRequestToPickup; //red code requests
         simsignal_t emergencyRequest;
         simsignal_t redCodeRequest;
+        simsignal_t indexTrPickup;
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
@@ -134,7 +136,7 @@ private:
 		void emitEmergencyRequest();
 		void emitRedCodeEmergencyRequest();
 		void emitDifferenceFromRequestToPickup(double diff, bool redCode);
-
+		void emitIndexPickup(int trId);
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
         void registerVehicle (Vehicle *v, int address);

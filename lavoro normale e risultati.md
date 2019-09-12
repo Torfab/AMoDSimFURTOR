@@ -11,8 +11,6 @@ pulizia initialize app (e netmanager)
 	codice obsoleto
 
 
-
-
 Python comparazione curve diverse simulazioni
 
 
@@ -167,6 +165,14 @@ codici di emergenza differenti
 
 emit specifico per i rossi (quanto e quando vengono salvati)
 
+
+Polish:
+1. App.cc
+2. ManhattanRouting
+3. StopPoint
+4. Pheromone
+5. Traffic
+
  
 Algoritmi:
 	* ManhattanRouting Dijkstra non pesato [x]
@@ -193,7 +199,7 @@ Algoritmi:
 	* Il workaround è che possiamo istanziare diverse topologie che si riferiscono alla stessa ma che considerano pesi diversi
 
 
-
+nella sua shell
 simulazioni da riga di comando
 per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
@@ -207,7 +213,8 @@ AMoD_Network nome rete
 Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 -r 0..1727 num di simulazioni
 
-
+filter basic
+name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*)
 
 
 
@@ -216,3 +223,7 @@ Scenario
 Simulatore
 Algoritmi applicati
 Risultati
+
+
+
+git diff --stat 227313141dd2ccc972ff61eab72ee9e3a2829a09 8c54719c6ae89e4ef570c

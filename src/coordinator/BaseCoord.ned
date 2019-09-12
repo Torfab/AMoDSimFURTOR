@@ -73,5 +73,10 @@ simple BaseCoord like ICoord
 		@signal[redCodeRequest](type="int");       
         @statistic[redCodeRequest](title="Red codeEmergency requests in time";source="redCodeRequest";record=vector,stats;interpolation=none);
        
-		
+		@signal[signal_noVehicle](type="int");       
+        @statistic[signal_noVehicle](title="Requests lost in time";source="signal_noVehicle";record=vector,stats;interpolation=none);
+        
+      	@signal[indexTrPickup](type="int");       
+        @statistic[indexTrPickup](title="index TrPickup";source="indexTrPickup";record=vector,stats;interpolation=none); 
+       
 }
