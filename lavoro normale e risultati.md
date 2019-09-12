@@ -34,7 +34,7 @@ pulizia initialize app (e netmanager)
 truckdelaytraveltime è rotto
 
 
-
+scrivere la tesi
 
 
 # TITOLI:
@@ -52,7 +52,7 @@ strategie per la simulazione delle condizioni a contorno di un evento catastrofi
 
 # TODO Importanti:
 
-
+CAVALLO DI BATTAGLIA
 Usare due topo per implementare dijkstra pesato traffico per ambulanze e pesato feromone per i civili
 
 
@@ -60,7 +60,7 @@ Usare due topo per implementare dijkstra pesato traffico per ambulanze e pesato 
 # TODO mildly important:
 
 I routing devono supportare il segnale di decadenza del feromone di basecoord
-(manca in manhattanrouting e dijkstraTraffic)
+(manca dijkstraTraffic)
 
 
 --Check che tutto sia in inglese (E' già in inglese a meno dei log)
@@ -68,9 +68,6 @@ I routing devono supportare il segnale di decadenza del feromone di basecoord
 
 
 # TODO Non importanti:
-
-evitare di chiedere sono un ospedale o un bordernode o sono morto -> unica funzione per gestire tutto
-
 
 
 # DONE:
@@ -238,7 +235,7 @@ Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 -r 0..1727 num di simulazioni
 
 filter basic
-name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*)
+name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*) || name(signal_ambulanceTravelTime*)
 
 name(differenceFromRedCodeRequestToPickup:stats:max)
 
