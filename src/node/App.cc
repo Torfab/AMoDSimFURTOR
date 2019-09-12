@@ -260,23 +260,18 @@ void App::handleMessage(cMessage *msg) {
 	}
 
 	StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
-
 	if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup()) {
 		//This is a PICK-UP stop-point
 		double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
 		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
 		sendDelayTime += 180;  //180s forfeited for boarding up an emergency
 		vehicle->setCurrentTraveledTime(vehicle->getCurrentTraveledTime() + sendDelayTime);
-	}
+		if (vehicle->getSpecialVehicle() == 1) {
+			double difference = abs(simTime().dbl() - currentStopPoint->getTime());
+			//emit actual time from request to pickup
+			tcoord->emitDifferenceFromRequestToPickup(difference, currentStopPoint->isRedCode()); //emit in two different signals if the request was a red code or not
 
-
-
-	if (vehicle->getSpecialVehicle() == 1 && currentStopPoint->getIsPickup()){
-
-		double difference = abs(simTime().dbl() - currentStopPoint->getTime());
-		//emit actual time from request to pickup
-		tcoord->emitDifferenceFromRequestToPickup(difference, currentStopPoint->isRedCode()); //emit in two different signals if the request was a red code or not
-
+		}
 	}
 	//Ask to coordinator for next stop point
 	StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
