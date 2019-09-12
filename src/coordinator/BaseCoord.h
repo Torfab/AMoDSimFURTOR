@@ -41,13 +41,14 @@ private:
 
         int boardingTime;
         int alightingTime;
-
+        //Counters
         int emergencyRequestCounter;
         int redCodeRequestCounter;
+        int truckRequestCounter;
 
         AbstractNetworkManager* netmanager;
 
-        // Feromone
+        // Pheromone
         cMessage* decayPacket;
     	double pheromoneDecayTime;
     	double pheromoneDecayFactor;
@@ -85,6 +86,7 @@ private:
         simsignal_t emergencyRequest;
         simsignal_t redCodeRequest;
         simsignal_t indexTrPickup;
+        simsignal_t truckRequest;
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
@@ -136,7 +138,7 @@ private:
 		void emitEmergencyRequest();
 		void emitRedCodeEmergencyRequest();
 		void emitDifferenceFromRequestToPickup(double diff, bool redCode);
-		void emitIndexPickup(int trId);
+		void emitTruckRequest();
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
         void registerVehicle (Vehicle *v, int address);

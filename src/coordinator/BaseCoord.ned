@@ -76,7 +76,7 @@ simple BaseCoord like ICoord
 		@signal[signal_noVehicle](type="int");       
         @statistic[signal_noVehicle](title="Requests lost in time";source="signal_noVehicle";record=vector,stats;interpolation=none);
         
-      	@signal[indexTrPickup](type="int");       
-        @statistic[indexTrPickup](title="index TrPickup";source="indexTrPickup";record=vector,stats;interpolation=none); 
+      	@signal[truckRequest](type="int");       
+        @statistic[truckRequest](title="Number of truck request in time";source="truckRequest";record=vector,stats;interpolation=none); 
        
 }

@@ -45,8 +45,9 @@ void BaseCoord::initialize()
     differenceFromRedCodeRequestToPickup = registerSignal("differenceFromRedCodeRequestToPickup");
     emergencyRequest = registerSignal("emergencyRequest");
     redCodeRequest= registerSignal("redCodeRequest");
+    truckRequest= registerSignal("truckRequest");
+
     signal_noVehicle= registerSignal("signal_noVehicle");
-    indexTrPickup= registerSignal("indexTrPickup");
 
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
@@ -70,6 +71,7 @@ void BaseCoord::initialize()
 
     redCodeRequestCounter = 0;
     emergencyRequestCounter = 0;
+    truckRequestCounter= 0;
 	//Pheromone
 	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->par("pheromoneDecayFactor");
@@ -914,9 +916,6 @@ void BaseCoord::emitDifferenceFromRequestToPickup(double diff, bool redCode) {
 		emit(differenceFromRequestToPickup, diff);
 }
 
-void BaseCoord::emitIndexPickup(int trId) {
-	emit(indexTrPickup, trId);
-}
 
 void BaseCoord::evacuateCivil(int address) {
 	emit(signal_civilEvacuated, ++civilCounter);
@@ -925,6 +924,11 @@ void BaseCoord::evacuateCivil(int address) {
 void BaseCoord::emitEmergencyRequest() {
 	emit(emergencyRequest,++emergencyRequestCounter);
 }
+void BaseCoord::emitTruckRequest() {
+	emit(truckRequest,++truckRequestCounter);
+}
+
+
 void BaseCoord::emitRedCodeEmergencyRequest() {
 	emit(redCodeRequest, ++redCodeRequestCounter);
 }

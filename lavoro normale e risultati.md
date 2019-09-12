@@ -193,6 +193,7 @@ Polish:
 3. StopPoint
 4. Pheromone
 5. Traffic
+6. TripRequestSubmitter
 
  
 Algoritmi:
