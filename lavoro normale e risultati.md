@@ -1,3 +1,24 @@
+/*
+ ########################################################
+ ##           __  __       _____   _____ _             ##
+ ##     /\   |  \/  |     |  __ \ / ____(_)            ##
+ ##    /  \  | \  / | ___ | |  | | (___  _ _ __ ___    ##
+ ##   / /\ \ | |\/| |/ _ \| |  | |\___ \| | '_ ` _ \   ##
+ ##  / ____ \| |  | | (_) | |__| |____) | | | | | | |  ##
+ ## /_/    \_\_|  |_|\___/|_____/|_____/|_|_| |_| |_|  ##
+ ##                                                    ##
+ ## Author:                                            ##
+ ##    Andrea Di Maria                                 ##
+ ##    <andrea.dimaria90@gmail.com>                    ##
+ ## Extended by:                                       ##
+ ##    Francesco Furnari                               ##
+ ##    <franz.furnari@gmail.com>                       ##
+ ##    Fabrizio Tornatore                              ##
+ ##    <torfab94@gmail.com>                            ##
+ ##                                                    ##                    
+ ########################################################
+ */
+
 # TODONEXTTIME:
 
 10. autobus: punti di raccolta taxi ride sharing
@@ -11,7 +32,7 @@ pulizia initialize app (e netmanager)
 	codice obsoleto
 
 
-Python comparazione curve diverse simulazioni
+
 
 
 
@@ -180,7 +201,7 @@ Algoritmi:
 	* Dijkstra pesato su feromone [x]  (aaa per tutti)
 	* Dijkstra pesato su feromone per civili e non pesato per le ambulanze [x]
 
-
+Python comparazione curve diverse simulazioni NO MORE NEEDED
 
 
 # Limiti del simulatore:
