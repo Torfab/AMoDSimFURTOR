@@ -33,8 +33,6 @@ private:
 	int x_coord;
 	int y_coord;
 
-
-
 	double maxSubmissionTime;
 	double minTripLength;
 	int destAddresses;
@@ -52,13 +50,9 @@ private:
 	//Emergency schedule vector
 	std::vector<double> scheduledEmergencies;
 
-
-
-
 	// signals
 	simsignal_t tripRequest;
 	simsignal_t emergencyRequests;
-
 
 	int emergencyIndex; //used to browse the vector
 	int totalEmergenciesPerNode;
@@ -77,15 +71,13 @@ protected:
 	void buildEmergencySchedule(int totalEmergencies); // Build the emergency schedule vector
 	bool disconnectChannelsAndCheckRedzone();
 
-
 	bool propagateDistance(int distance);	//Destroy link propagation function
-	void scheduleEmergencyOrRedCode();	//Schedule the next emergency as normal or red code
+	void scheduleEmergencyOrRedCode();//Schedule the next emergency as normal or red code
 };
 
 Define_Module(TripRequestSubmitter);
 
-TripRequestSubmitter::TripRequestSubmitter()
-{
+TripRequestSubmitter::TripRequestSubmitter() {
 	generatePacket = NULL;
 	emergencyPacket = NULL;
 	truckPacket = NULL;
@@ -94,12 +86,11 @@ TripRequestSubmitter::TripRequestSubmitter()
 	tcoord = NULL;
 }
 
-TripRequestSubmitter::~TripRequestSubmitter()
-{
-    cancelAndDelete(generatePacket);
-    cancelAndDelete(emergencyPacket);
-    cancelAndDelete(truckPacket);
-    cancelAndDelete(redEmergencyPacket);
+TripRequestSubmitter::~TripRequestSubmitter() {
+	cancelAndDelete(generatePacket);
+	cancelAndDelete(emergencyPacket);
+	cancelAndDelete(truckPacket);
+	cancelAndDelete(redEmergencyPacket);
 }
 /**
  * Builds the schedule for emergencies:
@@ -114,7 +105,7 @@ void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
 		scheduledEmergencies.push_back(uniform(0, 120));
 	}
 
-	int thirtypercent = totalEmergencies * 0.3;//30% between 2 mins and 10 mins
+	int thirtypercent = totalEmergencies * 0.3; //30% between 2 mins and 10 mins
 	for (int i = 0; i < thirtypercent; i++) {
 
 		scheduledEmergencies.push_back(uniform(120, 600));
@@ -133,7 +124,6 @@ void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
 //		ev << elem << "   ";
 //	ev << endl;
 }
-
 
 /**
  * Return true if the value between 0 and (4 * distance) - 4 is == 0
@@ -169,15 +159,12 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 
 	std::set<int> setOfEpicenters = netmanager->getSetOfEpicenters();
 
-
-
 	// Each nodes has a chance of destroying the links, for each epicenter, based on the distance from him and the epicenter.
 	for (auto elem : setOfEpicenters) {
 		int epicX = elem % rows;
 		int epicY = elem / rows;
 
 		if (!hospital && !collectionPoint && !storagePoint) {
-
 
 			int distance;
 
@@ -193,7 +180,6 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 
 					if (propagateDistance(distance)) { //if the propagation function returns true, it disconnects the node
 
-
 						cGate *gate = node->getLinkOut(j)->getLocalGate();
 						gate->disconnect();
 						netmanager->insertRedZoneNode(myAddress);
@@ -204,7 +190,7 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 				case 2: 	// SOUTH
 					distance = netmanager->getManhattanDistance(myAddress, elem);
 
-					if (myY >= epicY)// if the node is >= the epicenter, since we're breaking south, it's like we do an hop more
+					if (myY >= epicY) // if the node is >= the epicenter, since we're breaking south, it's like we do an hop more
 						distance++;
 
 					if (propagateDistance(distance)) {
@@ -221,7 +207,6 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 				}
 			}
 
-
 		}
 
 		// Simmetric check to link in
@@ -234,13 +219,9 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 3 && node->getLinkIn(j)->getLocalGate()->isConnected()) {
 				guardiaW = 1; //channel exists, nothing happens
 
-
-
 			}
 			if (node->getLinkIn(j)->getLocalGate()->getIndex() == 0 && node->getLinkIn(j)->getLocalGate()->isConnected()) {
 				guardiaN = 1; //channel exists, nothing happens
-
-
 
 			}
 
@@ -272,7 +253,6 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 		}
 	}
 
-
 	int disconnected = 0; //the node starts connected
 	for (int k = 0; k < node->getNumOutLinks(); k++) { //check out every link out
 
@@ -283,16 +263,14 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 		}
 	}
 
-
 	if (disconnected == node->getNumOutLinks()) { //if the number of disconnected gates is equal to the number of the out links
-		netmanager->insertDestroyedNode(myAddress);	 	// put the node in the destroyed set
-		netmanager->removeRedZoneNode(myAddress);		// remove it from red zone
+		netmanager->insertDestroyedNode(myAddress);	// put the node in the destroyed set
+		netmanager->removeRedZoneNode(myAddress);	// remove it from red zone
 		redZoneNode = false;
 	}
 
 	return redZoneNode;
 }
-
 
 /**
  * Schedule the next emergency as:
@@ -311,38 +289,35 @@ void TripRequestSubmitter::scheduleEmergencyOrRedCode() {
 	}
 }
 
-void TripRequestSubmitter::initialize()
-{
-    myAddress = par("address");
-    destAddresses = par("destAddresses");
-    minTripLength = par("minTripLength");
-    sendIATime = &par("sendIaTime");  // volatile parameter
-    maxDelay = &par("maxDelay");
-    maxSubmissionTime = par("maxSubmissionTime");
+void TripRequestSubmitter::initialize() {
+	myAddress = par("address");
+	destAddresses = par("destAddresses");
+	minTripLength = par("minTripLength");
+	sendIATime = &par("sendIaTime");  // volatile parameter
+	maxDelay = &par("maxDelay");
+	maxSubmissionTime = par("maxSubmissionTime");
 
-    x_coord = getParentModule()->par("x");
-    y_coord = getParentModule()->par("y");
-    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+	x_coord = getParentModule()->par("x");
+	y_coord = getParentModule()->par("y");
+	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 	tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
 
-    generatePacket = new cMessage("nextPacket");
-    emergencyPacket = new cMessage("nextPacket");
-    truckPacket = new cMessage("nextPacket");
-    redEmergencyPacket = new cMessage("nextPacket");
+	generatePacket = new cMessage("nextPacket");
+	emergencyPacket = new cMessage("nextPacket");
+	truckPacket = new cMessage("nextPacket");
+	redEmergencyPacket = new cMessage("nextPacket");
 
-    emergencyRequests = registerSignal("emergencyRequests");
-    tripRequest = registerSignal("tripRequest");
+	emergencyRequests = registerSignal("emergencyRequests");
+	tripRequest = registerSignal("tripRequest");
 
+	bool disconnected = netmanager->checkDestroyedNode(myAddress);
+	if (disconnected) //AVOID Trip request creations
+		return;
 
-
-    bool disconnected = netmanager->checkDestroyedNode(myAddress);
-    if (disconnected) //AVOID Trip request creations
-    	return;
-
-    // Check if the node is a coordination point
-    if (netmanager->checkCollectionPointNode(myAddress)){
-    	scheduleAt(sendIATime->doubleValue(), truckPacket);
-    }
+	// Check if the node is a coordination point
+	if (netmanager->checkCollectionPointNode(myAddress)) {
+		scheduleAt(sendIATime->doubleValue(), truckPacket);
+	}
 
 	bool redZoneNode = disconnectChannelsAndCheckRedzone();
 //	for (auto n : v)
@@ -360,9 +335,7 @@ void TripRequestSubmitter::initialize()
 	netmanager->updateTopology(); //updates the topology in network manager
 }
 
-
-void TripRequestSubmitter::handleMessage(cMessage *msg)
-{
+void TripRequestSubmitter::handleMessage(cMessage *msg) {
 	//EMIT a RED CODE REQUEST
 	if (msg == redEmergencyPacket) {
 		TripRequest *tr = nullptr;
@@ -383,7 +356,6 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 			EV << "Next request from node " << myAddress << "scheduled at: " << scheduledEmergencies[emergencyIndex] << endl;
 		}
 	}
-
 
 	//EMIT an EMERGENCY REQUEST
 	if (msg == emergencyPacket) {
@@ -431,30 +403,29 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
  * From a random storage point to random a collection point
  * isSpecial = 2
  */
-TripRequest* TripRequestSubmitter::buildTruckRequest()
-{
-    TripRequest *request = new TripRequest();
-    double simtime = simTime().dbl();
+TripRequest* TripRequestSubmitter::buildTruckRequest() {
+	TripRequest *request = new TripRequest();
+	double simtime = simTime().dbl();
 
-    // Get truck address for the request
-    int destAddress = netmanager->pickRandomCollectionPointNode(); // Pick a random collection  point as destination
-    if (destAddress == myAddress)
-    	destAddress = netmanager->pickRandomStoragePointNode(); //if the random number is myAddress, pick a storage point instead (go back to a storage point)
+	// Get truck address for the request
+	int destAddress = netmanager->pickRandomCollectionPointNode(); // Pick a random collection  point as destination
+	if (destAddress == myAddress)
+		destAddress = netmanager->pickRandomStoragePointNode(); //if the random number is myAddress, pick a storage point instead (go back to a storage point)
 
-    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
-    pickupSP->setXcoord(x_coord);
-    pickupSP->setYcoord(y_coord);;
+	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+	pickupSP->setXcoord(x_coord);
+	pickupSP->setYcoord(y_coord);
+	;
 
-    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
 
-    request->setPickupSP(pickupSP);
-    request->setDropoffSP(dropoffSP);
+	request->setPickupSP(pickupSP);
+	request->setDropoffSP(dropoffSP);
 
-    request->setIsSpecial(2); //Truck request
+	request->setIsSpecial(2); //Truck request
 
-    return request;
+	return request;
 }
-
 
 /**
  * Build a new Emergency Request
@@ -463,26 +434,25 @@ TripRequest* TripRequestSubmitter::buildTruckRequest()
  * isSpecial = 1
  * at current simTime
  */
-TripRequest* TripRequestSubmitter::buildEmergencyRequest()
-{
-    TripRequest *request = new TripRequest();
-    double simtime = simTime().dbl();
+TripRequest* TripRequestSubmitter::buildEmergencyRequest() {
+	TripRequest *request = new TripRequest();
+	double simtime = simTime().dbl();
 
-    // Generate emergency request to the closest hospital
-    int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
+	// Generate emergency request to the closest hospital
+	int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
 
-    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
-    pickupSP->setXcoord(x_coord);
-    pickupSP->setYcoord(y_coord);
+	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+	pickupSP->setXcoord(x_coord);
+	pickupSP->setYcoord(y_coord);
 
-    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
 
-    request->setPickupSP(pickupSP);
-    request->setDropoffSP(dropoffSP);
+	request->setPickupSP(pickupSP);
+	request->setDropoffSP(dropoffSP);
 
-    request->setIsSpecial(1); //hospital request
+	request->setIsSpecial(1); //hospital request
 
-    return request;
+	return request;
 }
 
 /**
@@ -492,26 +462,24 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest()
  * isSpecial = 3
  * at current simTime
  */
-TripRequest* TripRequestSubmitter::buildRedCodeRequest()
-{
-    TripRequest *request = new TripRequest();
-    double simtime = simTime().dbl();
+TripRequest* TripRequestSubmitter::buildRedCodeRequest() {
+	TripRequest *request = new TripRequest();
+	double simtime = simTime().dbl();
 
-    // Generate emergency request to the closest hospital
-    int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
+	// Generate emergency request to the closest hospital
+	int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
 
-    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
-    pickupSP->setXcoord(x_coord);
-    pickupSP->setYcoord(y_coord);
+	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+	pickupSP->setXcoord(x_coord);
+	pickupSP->setYcoord(y_coord);
 
-    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
 
-    request->setPickupSP(pickupSP);
-    request->setDropoffSP(dropoffSP);
+	request->setPickupSP(pickupSP);
+	request->setDropoffSP(dropoffSP);
 
-    request->setIsSpecial(3); // 3 is red code hospital request
+	request->setIsSpecial(3); // 3 is red code hospital request
 
-    return request;
+	return request;
 }
-
 
