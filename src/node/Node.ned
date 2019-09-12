@@ -12,7 +12,7 @@ module Node
         bool isRequestGenerator = default(false);
         string appType;
         string routingType = default("Routing");
-        @display("i=misc/node_vs,gold");
+        @display("i=misc/node_vs,green");
     gates:
         inout port[];
 

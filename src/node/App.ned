@@ -18,8 +18,8 @@ simple App like IApp
         @signal[signal_ambulanceDelayTravelTime](type="double");       	
         @statistic[signal_ambulanceDelayTravelTime](title="Ambulances Delay between ideal time to serve a request and actual time to serve that request";source="signal_ambulanceDelayTravelTime";record=vector,stats;interpolation=none);
 
-        @signal[signal_truckDelayTravelTime](type="double");       	
-        @statistic[signal_truckDelayTravelTime](title="Truck Delay between ideal time to serve a request and actual time to serve that request";source="signal_truckDelayTravelTime";record=vector,stats;interpolation=none);
+        @signal[signal_truckTravelTime](type="double");       	
+        @statistic[signal_truckTravelTime](title="Truck time to serve a request";source="signal_truckTravelTime";record=vector,stats;interpolation=none);
 
         @signal[signal_civilDelayTravelTime](type="double");       
         @statistic[signal_civilDelayTravelTime](title="Civil Delay between ideal time to serve a request and actual time to serve that request";source="signal_civilDelayTravelTime";record=vector,stats;interpolation=none);

@@ -331,6 +331,9 @@ void TripRequestSubmitter::initialize() {
 		buildEmergencySchedule(totalEmergenciesPerNode);
 
 		scheduleEmergencyOrRedCode();
+
+		if (ev.isGUI())
+			getParentModule()->getDisplayString().setTagArg("i", 1, "red");
 	}
 	netmanager->updateTopology(); //updates the topology in network manager
 }

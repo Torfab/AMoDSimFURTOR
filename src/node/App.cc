@@ -55,7 +55,7 @@ private:
 	simsignal_t newTripAssigned;
 
 	// Travel time related signals
-	simsignal_t signal_truckDelayTravelTime;
+	simsignal_t signal_truckTravelTime;
 	simsignal_t signal_civilDelayTravelTime;
 	simsignal_t signal_civilTravelTime;
 
@@ -136,7 +136,7 @@ void App::initialize() {
 	ambulanceSpeed = netmanager->getAmbulanceSpeed();
 	truckSpeed = netmanager->getTruckSpeed();
 
-	signal_truckDelayTravelTime = registerSignal("signal_truckDelayTravelTime");
+	signal_truckTravelTime = registerSignal("signal_truckTravelTime");
 	signal_ambulanceDelayTravelTime = registerSignal("signal_ambulanceDelayTravelTime");
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
 	signal_civilTravelTime =registerSignal("signal_civilTravelTime");
@@ -159,7 +159,6 @@ void App::initialize() {
 	bool hospital = netmanager->checkHospitalNode(myAddress);
 	bool storagePoint = netmanager->checkStoragePointNode(myAddress);
 	bool collectionPoint = netmanager->checkCollectionPointNode(myAddress);
-
 	//this portion of code let us initialize the vehicles in the interesting nodes of our grid
 	if (numberOfVehicles > 0) {
 		for (int i = 0; i < numberOfVehicles; i++) {
@@ -177,26 +176,23 @@ void App::initialize() {
             tcoord->registerVehicle(v, myAddress);
         }
 
-        if (hospital) {
-            emit(signal_ambulancesIdle, currentVehiclesInNode);
 
-            if (ev.isGUI())
-                getParentModule()->getDisplayString().setTagArg("i", 1,
-                        "white");
+		simulation.getSystemModule()->subscribe("newTripAssigned", this);
 
-        } else if (storagePoint) {
-            if (ev.isGUI())
-                getParentModule()->getDisplayString().setTagArg("i", 1,
-                        "orange");
-        } else if (collectionPoint) {
-            if (ev.isGUI())
-                getParentModule()->getDisplayString().setTagArg("i", 1,
-                        "green");
-        }
+	}
+	// fancy colors
+	if (hospital) {
+		emit(signal_ambulancesIdle, currentVehiclesInNode);
+		if (ev.isGUI())
+			getParentModule()->getDisplayString().setTagArg("i", 1, "white");
+	} else if (storagePoint) {
+		if (ev.isGUI())
+			getParentModule()->getDisplayString().setTagArg("i", 1, "orange");
+	} else if (collectionPoint) {
+		if (ev.isGUI())
+			getParentModule()->getDisplayString().setTagArg("i", 1, "blue");
+	}
 
-        simulation.getSystemModule()->subscribe("newTripAssigned", this);
-
-    }
 
     numberOfCivils = par("numberOfCivils");
 
@@ -243,7 +239,7 @@ void App::handleMessage(cMessage *msg) {
 
 	case 1:	//ambulance
 		if (netmanager->checkHospitalNode(myAddress)) {
-			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
+//			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
 
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
@@ -252,7 +248,7 @@ void App::handleMessage(cMessage *msg) {
 
 		break;
 	case 2: //truck
-		emit(signal_truckDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);    //number of average delay for each node compared to no traffic roads
+		emit(signal_truckTravelTime, vehicle->getCurrentTraveledTime());    //number of average delay for each node compared to no traffic roads
 		EV << "Truck actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " estimated: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
 		break;
 	default:
