@@ -31,6 +31,7 @@
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
+truckdelaytraveltime è rotto
 
 
 
@@ -194,6 +195,7 @@ Polish:
 4. Pheromone
 5. Traffic
 6. TripRequestSubmitter
+7. HeuristicCoord
 
  
 Algoritmi:
