@@ -201,8 +201,8 @@ StopPointOrderingProposal* HeuristicCoord::eval_RedCodeEmergencyRequestAssignmen
 			 * poi il nostr
 			 *
 			 */
-			if (checkIt2InHospital){
-			for (auto iter = old.begin(); iter != it2; ++iter) {
+			if (!checkIt2InHospital) {
+				for (auto iter = old.begin(); iter != it2; iter++) {
 					auto & value = *iter;
 					newList.push_back(new StopPoint(*value)); //primo
 				}

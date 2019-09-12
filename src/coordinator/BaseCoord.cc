@@ -231,7 +231,7 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
         updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
         EV << "stop points updated! " << endl;
         for (auto elem : vehicleProposal[vehicleID]->getSpList())
-        	EV << elem->getLocation() << " code: " << elem->isRedCode() <<  endl;
+        	EV << elem->getLocation() << " code: " << elem->isRedCode() << " request: " << elem->getRequestID() <<   endl;
     } else {
         EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
         emit(signal_noVehicle, 1);
@@ -564,6 +564,8 @@ StopPoint* BaseCoord::getNextStopPoint(int vehicleID)
             currState->setStartingTime(simTime().dbl());
 
             StopPoint *r = rPerVehicle[vehicleID].front();
+//            for (auto elem : rPerVehicle[vehicleID])
+//                   	EV << elem->getLocation() << " code: " << elem->isRedCode() << " request: " << elem->getRequestID() <<   endl;
             delete front;
             return r;
         }

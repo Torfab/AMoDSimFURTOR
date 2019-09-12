@@ -27,8 +27,7 @@ class TripRequestSubmitter : public cSimpleModule
         int myAddress;
         int x_coord;
         int y_coord;
-
-        int rows;
+        int rows; //of the grid
 
         double maxSubmissionTime;
         double minTripLength;
@@ -36,6 +35,7 @@ class TripRequestSubmitter : public cSimpleModule
 
         cPar *sendIATime;
         cPar *maxDelay;
+
         AbstractNetworkManager *netmanager;
     	BaseCoord *tcoord;
 
@@ -50,7 +50,7 @@ class TripRequestSubmitter : public cSimpleModule
         // signals
         simsignal_t tripRequest;
         simsignal_t emergencyRequests;
-        int emergencyRequestCounter;
+        int emergencyIndex;
         int totalEmergenciesPerNode;
       public:
         TripRequestSubmitter();
@@ -66,6 +66,7 @@ class TripRequestSubmitter : public cSimpleModule
 	void buildEmergencySchedule(int totalEmergencies);
 	bool disconnectChannelsAndCheckRedzone();
 	bool propagateDistance(int distance);
+	void scheduleEmergencyOrRedCode();
 };
 
 Define_Module(TripRequestSubmitter);
@@ -233,6 +234,18 @@ bool TripRequestSubmitter::disconnectChannelsAndCheckRedzone() {
 	return redZoneNode;
 }
 
+void TripRequestSubmitter::scheduleEmergencyOrRedCode() {
+	if (intuniform(0, 10) == 0) {
+		// con probabilita' 50% genera un generatepacket o un emergencypacket e lo schedula
+		//richiesta red code
+		scheduleAt(v[emergencyIndex++], redEmergencyPacket);
+	} else {
+		//richiesta emergenza normale
+		scheduleAt(v[emergencyIndex++], emergencyPacket);
+
+	}
+}
+
 void TripRequestSubmitter::initialize()
 {
     myAddress = par("address");
@@ -270,17 +283,14 @@ void TripRequestSubmitter::initialize()
 //	for (auto n : v)
 //		ev << n << endl;
 
-	if (redZoneNode) {
+	if (redZoneNode && !netmanager->checkHospitalNode(myAddress)) {
 
 		totalEmergenciesPerNode = par("numberOfEmergencies");
-		emergencyRequestCounter = 0;
+		emergencyIndex = 0;
 
 		buildEmergencySchedule(totalEmergenciesPerNode);
-		scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
 
-		tcoord->emitEmergencyRequest();
-
-		scheduleAt(sendIATime->doubleValue(), redEmergencyPacket);
+		scheduleEmergencyOrRedCode();
 	}
 
 	netmanager->updateTopology();
@@ -332,13 +342,12 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 		emit(tripRequest, tr); // Emit request
 		//stats
 		tcoord->emitRedCodeEmergencyRequest();
+
 		//schedulazione nuova
-//		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
-//			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
-//			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
-//
-//			
-//		}
+		if (emergencyIndex < v.size()) { //Check if the emergency counter fits
+			scheduleEmergencyOrRedCode();
+			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyIndex] << endl;
+		}
 	}
 
 
@@ -354,14 +363,12 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
 		EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
 		emit(tripRequest, tr); // Emit request
-
+		//stats
+		tcoord->emitEmergencyRequest();
 		//schedulazione nuova
-		if (emergencyRequestCounter < v.size()) { //Check if the emergency counter fits
-			scheduleAt(v[emergencyRequestCounter++], emergencyPacket);
-			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyRequestCounter] << endl;
-
-			//stats
-			tcoord->emitEmergencyRequest();
+		if (emergencyIndex < v.size()) { //Check if the emergency counter fits
+			scheduleEmergencyOrRedCode();
+			EV << "Next request from node " << myAddress << "scheduled at: " << v[emergencyIndex] << endl;
 		}
 	}
 	//EMIT an Truck REQUEST
