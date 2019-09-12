@@ -220,7 +220,7 @@ Python comparazione curve diverse simulazioni NO MORE NEEDED
 	* Il workaround è che possiamo istanziare diverse topologie che si riferiscono alla stessa ma che considerano pesi diversi
 
 
-nella sua shell
+nella sua shell 
 simulazioni da riga di comando
 per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
@@ -237,6 +237,7 @@ Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 filter basic
 name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*)
 
+name(differenceFromRedCodeRequestToPickup:stats:max)
 
 
 CAPITOLI TESI:
