@@ -58,7 +58,7 @@ void WeightedDijkstraTraffic::initialize() {
 			"pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->getParentModule()->par(
 			"pheromoneDecayFactor");
-
+	decayPheromoneValue = registerSignal("decayPheromoneValue");
 	pheromone = new Pheromone(pheromoneDecayTime, pheromoneDecayFactor);
 
 	pheromoneEmergency = new Pheromone(pheromoneDecayTime,pheromoneDecayFactor);
@@ -112,21 +112,7 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 	} else {
 
-		//Pheromon Decay
-		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
-		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
 
-		if (n != 0) {
-			EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" << lastUpdateTime << "/" << pheromoneDecayTime << endl;
-			for (int i = 0; i < n; i++) {
-				pheromone->decayPheromone();
-			}
-			for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
-				emit(signalFeromone[i], pheromone->getPheromone(i));
-			}
-
-			lastUpdateTime = simTime().dbl();
-		}
 
 		//Weighted Dijkstra
 		int destination = pk->getDestAddr();
@@ -172,7 +158,6 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 				}
 		}
 
-//		delete topo;
 		// Traffic delay logic
 
 		int distanceToTravel = 0;
@@ -221,5 +206,12 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 //    send(pk, "out", outGateIndex);
 
 
+	}
+}
+
+void WeightedDijkstraTraffic::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
+	// Pheromon Decay
+	if (signalID == decayPheromoneValue) {
+		pheromone->decayPheromone();
 	}
 }
