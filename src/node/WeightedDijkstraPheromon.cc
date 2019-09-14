@@ -231,12 +231,8 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 	}
 }
 
-
-
 void WeightedDijkstraPheromon::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
-		ev << "Segnale di decay ricevuto" << endl;
 	}
-
 }
