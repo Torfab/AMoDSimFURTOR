@@ -18,7 +18,9 @@ Quando un pacchetto attraversa un nodo:
 In pseudocodice:
 
 ```
-channelOut = pickChannelToNextNode(nextNode in shortestPath) // attraverso uno degli algoritmi di routing
+channelOut = pickChannelToNextNode(path) 
+//path è calcolato attraverso uno degli algoritmi di routing
+
 updateTraffic(channelOut)
 updatePheromone(channelOut)
 
@@ -44,7 +46,7 @@ every pheromoneDecayTime:
 ```
 
 
-* Se il pacchetto è nello stesso nodo di destinazione, il routing provvede a inviarlo al modulo dell'applicazione.
+* Se il pacchetto è arrivato al nodo di destinazione, il routing provvede a inviarlo al modulo dell'applicazione.
 
 # Algoritmi di Routing
 * Sia *calculateWeightedSingleShortestPathsTo*(destAddress) che *calculateUnweightedSingleShortestPathsTo*(destAddress) calcolano tutto il percorso dal nodo in cui vengono invocati alla destinazione usando il corrispettivo algoritmo di Dijkstra
@@ -57,8 +59,8 @@ every pheromoneDecayTime:
 for each hop: 
 
 	if (myAddess != destAddress){
-		calculateUnweightedSingleShortestPathsTo(destAddress)
-		channelOut = pickChannelToNextNode() 
+		path=calculateUnweightedSingleShortestPathsTo(destAddress)
+		channelOut = pickChannelToNextNode(path) 
 		..
 	}
 
@@ -72,20 +74,20 @@ for each hop:
 for each hop:
 
 	if (myAddess != destAddress){
-		for (each node in grid){
+		for (each channel of each node in grid){
 			setChannelWeight(actualTraffic)
 		}
-		calculateWeightedSingleShortestPathsTo(destAddress)
-		channelOut = pickChannelToNextNode() 
+		path=calculateWeightedSingleShortestPathsTo(destAddress)
+		channelOut = pickChannelToNextNode(path) 
 		..
 	}
 
 ```
 
-Il peso viene aggiornato ad ogni hop poichè esso potrebbe essere diverso.
+Il peso viene aggiornato ad ogni hop poichè esso potrebbe essere diverso.  
 Ad ogni hop viene ricalcolato tutto il percorso fino a destinazione con i pesi aggiornati.
 
-
+<br/><br/>
 ## WeightedDijkstraPheromone
 L'unica differenza con il routing precedente sono i valori dei pesi che, invece di essere aggiornati con i valori del traffico, vengono aggiornati con quelli del feromone.
 
@@ -93,11 +95,11 @@ L'unica differenza con il routing precedente sono i valori dei pesi che, invece 
 for each hop:
 
 	if (myAddess != destAddress){
-		for (each node in grid){
+		for (each channel of each node in grid){
 			setChannelWeight(actualPheromone)
 		}
-		calculateWeightedSingleShortestPathsTo(destAddress)
-		channelOut = pickChannelToNextNode() 
+		path=calculateWeightedSingleShortestPathsTo(destAddress)
+		channelOut = pickChannelToNextNode(path) 
 		..
 	}
 
@@ -105,9 +107,10 @@ for each hop:
 
 
 Dijkstra pesato sul feromone è simile ad un approccio AAA:
-in AAA il veicolo guarda il feromone a distanza di 1 hop e sceglie il percorso con il valore minore.
-Nel nostro algoritmo il veicolo valuta i percorsi fino a destinazione e sceglie quello con il minore valore di feromone complessivo. 
-Il peso viene aggiornato ad ogni hop poichè esso potrebbe essere diverso.
+* in AAA il veicolo guarda il feromone a distanza di 1 hop e sceglie il percorso con il valore minore.
+* Nel nostro algoritmo il veicolo valuta i percorsi fino a destinazione e sceglie quello con il minore valore di feromone complessivo. 
+
+Il peso viene aggiornato ad ogni hop poichè esso potrebbe essere diverso.  
 Ad ogni hop viene ricalcolato tutto il percorso fino a destinazione con i pesi aggiornati.
 
 ## WeightPheromonCivil_UnweightAmbulances
@@ -116,19 +119,19 @@ for each hop:
 
 	if (myAddess != destAddress){
 		if (vehicle == Ambulance){
-			calculateUnweightedSingleShortestPathsTo(destAddress)
+			path=calculateUnweightedSingleShortestPathsTo(destAddress)
 		}
 		else{
-			for (each node in grid){
+			for (each channel of each node in grid){
 				setChannelWeight(actualPheromone)
 			}
-			calculateWeightedSingleShortestPathsTo(destAddress)
+			path=calculateWeightedSingleShortestPathsTo(destAddress)
 		}
-		channelOut = pickChannelToNextNode() 
+		channelOut = pickChannelToNextNode(path) 
 		..
 	}
 
 ```
 
-La logica di routing cambia in base al veicolo che sta attraversando il nodo.
+La logica di routing cambia in base al veicolo che sta attraversando il nodo.  
 Le ambulanze utilizzano Dijkstra non pesato mentre tutti gli altri veicoli utilizzano il feromone.
