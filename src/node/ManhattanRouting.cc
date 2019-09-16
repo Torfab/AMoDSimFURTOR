@@ -124,6 +124,12 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
+//			if (pk->getSpecialVehicle() == 1) {
+//				if (ev.isGUI()) {
+//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 0, "red");
+//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 1, "4");
+//				}
+//			}
 		}
 
 		// Traffic delay logic
@@ -150,6 +156,10 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		// Update Pheromone and Traffic
 		pheromone->increasePheromone(pk->getChosenGate());
 		traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+
+
+
+
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));
