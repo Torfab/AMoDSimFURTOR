@@ -33,7 +33,7 @@ public:
 	int getNumberOfGates() const;
 
 	void decayPheromone();
-
+	void setPheromone(int gate, int pheromone);
 };
 
 #endif /* PHEROMONE_H_ */

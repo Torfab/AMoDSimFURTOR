@@ -60,3 +60,7 @@ void Pheromone::decayPheromone() {
 		pheromone[i] -= pheromone[i] * pheromoneDecayFactor;
 	}
 }
+
+void Pheromone::setPheromone(int gate, int pheromone) {
+	this->pheromone[gate] = pheromone;
+}
