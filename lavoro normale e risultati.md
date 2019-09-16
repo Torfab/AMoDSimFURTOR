@@ -36,6 +36,7 @@ pulizia initialize app (e netmanager)
 	togliere le sue statistiche che occupano spazio
 truckdelaytraveltime è rotto
 
+capire come scrivere la legenda pulita
 
 scrivere la tesi
 
