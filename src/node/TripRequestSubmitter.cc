@@ -50,7 +50,7 @@ private:
 	simsignal_t tripRequest;
 	simsignal_t emergencyRequests;
 
-	int emergencyIndex; //used to browse the vector
+	unsigned int emergencyIndex; //used to browse the vector
 	int totalEmergenciesPerNode;
 
 public:

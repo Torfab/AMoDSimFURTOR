@@ -176,9 +176,6 @@ double ManhattanNetworkManager::getManhattanDistanceX(int srcAddr, int dstAddr) 
     int xSource = srcAddr % rows;
     int xDest = dstAddr % rows;
 
-    int ySource = srcAddr / rows;
-    int yDest = dstAddr / rows;
-
     space_distance = abs(xSource - xDest);
 
     return space_distance;
@@ -193,9 +190,6 @@ double ManhattanNetworkManager::getManhattanDistanceX(int srcAddr, int dstAddr) 
  */
 double ManhattanNetworkManager::getManhattanDistanceY(int srcAddr, int dstAddr) {
     double space_distance = 0;
-
-    int xSource = srcAddr % rows;
-    int xDest = dstAddr % rows;
 
     int ySource = srcAddr / rows;
     int yDest = dstAddr / rows;

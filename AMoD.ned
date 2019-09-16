@@ -9,7 +9,6 @@ network AMoD
 	    //------Traffico-----
 	    double pheromoneDecayFactor = default(0.1);  			// 10% 	Feromone decay factor
 	    double pheromoneDecayTime @unit(s) = default(600s); // Feromone increase factor
-		double alpha = default (0.7);
 	    
 	    
 	    //------Network Parameters------
@@ -47,7 +46,7 @@ network AMoD
             parameters:
                 delay = xTravelTime; //time needed to travel the street (x axes). (propagation delay)
                 double length @unit(m) = xNodeDistance;
-                //@display("ls=#FF0000");
+
         }
         
         channel yRoad extends ned.DatarateChannel
@@ -55,6 +54,7 @@ network AMoD
             parameters:
                 delay = yTravelTime; //time needed to travel the street (y axes). (propagation delay)
                 double length @unit(m) = yNodeDistance;
+
         }
 
     submodules:
@@ -83,8 +83,8 @@ network AMoD
         
     connections allowunconnected:
         for i=0..height-1, for j=0..width-1 {
-            	n[i*width+j].port[2] <--> yRoad <--> n[(i+1)*width+j].port[0] if i!=height-1;// && uniform(0,1)<alpha;  //Vertical connections
-            	n[i*width+j].port[1] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1;// && uniform(0,1)<alpha;   //Horizontal connections
+            	n[i*width+j].port[2] <--> yRoad <--> n[(i+1)*width+j].port[0] if i!=height-1;  //Vertical connections
+            	n[i*width+j].port[1] <--> xRoad <--> n[(i*width+j)+1].port[3] if j!=width-1;   //Horizontal connections
             }
 
    
