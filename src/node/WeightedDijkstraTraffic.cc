@@ -65,6 +65,8 @@ void WeightedDijkstraTraffic::initialize() {
 
 	// Traffic
 	traffic = new Traffic();
+	//Subscription per pheromon decay
+	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
 
 
 }

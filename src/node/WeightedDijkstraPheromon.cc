@@ -125,7 +125,6 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
-			ev << "1) " << pheromone->getPheromone(i) + 1<< endl;
 			node->getLinkOut(i)->setWeight(pheromone->getPheromone(i) + 1);
 		}
 		//weighted dijkstra to target
@@ -133,21 +132,16 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 
 		if (node->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
-			//node->disable();
 			return;
 
-		} else {
+		} else { //there are paths available
 
 			cTopology::LinkOut *path = node->getPath(0);
-//			ev << "I FOUND A PATH" << endl << "We are in " << node->getModule()->getFullPath() << endl;
-//			EV << "Taking gate " << path->getLocalGate()->getFullName() << " with weight " << path->getWeight() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
-//			ev << "+++++Increasing traffic" << endl;
 			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
 
 			int pkChosenGate = pk->getChosenGate();
-			ev << "2) updating weights " << path->getWeight();
 
 			path->setWeight(pheromone->getPheromone(pkChosenGate) + 1);
 			ev << "----> " << path->getWeight() << endl;
@@ -162,8 +156,6 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 				node = path->getRemoteNode();
 				}
 		}
-
-//		delete topo;
 		// Traffic delay logic
 
 		int distanceToTravel = 0;
@@ -207,11 +199,6 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 //		EV << endl;
 
 		pk->setHopCount(pk->getHopCount() + 1);
-
-//    //send the vehicle to the next node
-//    send(pk, "out", outGateIndex);
-
-
 	}
 }
 
