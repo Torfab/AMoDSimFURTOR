@@ -13,13 +13,19 @@ module Node
         string appType;
         string routingType = default("Routing");
         @display("b=,,green");
-        
-       
+
+
     gates:
         inout port[];
 
     submodules:
-    	trsubmitter: TripRequestSubmitter if isRequestGenerator {
+        initializer: NodeInitializer {
+            parameters:
+                address = address;
+                @display("p=228,130");
+        }
+
+        trsubmitter: TripRequestSubmitter if isRequestGenerator {
             parameters:
                 address = address;
                 @display("p=228,70");
@@ -29,7 +35,7 @@ module Node
                 address = address;
                 @display("p=140,60");
         }
-	
+
         routing: <routingType> like IRouting {
             parameters:
                 @display("p=140,130");
@@ -41,7 +47,7 @@ module Node
             parameters:
                 @display("p=80,200,row");
         }
-        
+
 
     connections:
         routing.localOut --> app.in;
