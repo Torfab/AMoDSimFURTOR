@@ -39,3 +39,4 @@ Makefile
 .project
 .cproject
 simulations/.tkenvlog
+*.vec
