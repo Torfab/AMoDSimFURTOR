@@ -30,7 +30,10 @@
 
 pulizia initialize app (e netmanager)
 	codice obsoleto
-
+	
+	creare sottomodulo initialize
+	creare routing aco based di giovanni
+	togliere le sue statistiche che occupano spazio
 truckdelaytraveltime è rotto
 
 
@@ -203,6 +206,9 @@ Algoritmi:
 
 Python comparazione curve diverse simulazioni NO MORE NEEDED
 
+sistemare setadditionaltraveltime in netmanager (accelerazione e decelerazione)
+
+display look and feel figo TOP
 
 # Limiti del simulatore:
 

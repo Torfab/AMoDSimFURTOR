@@ -310,10 +310,6 @@ void TripRequestSubmitter::initialize() {
 	emergencyRequests = registerSignal("emergencyRequests");
 	tripRequest = registerSignal("tripRequest");
 
-	bool disconnected = netmanager->checkDestroyedNode(myAddress);
-	if (disconnected) //AVOID Trip request creations
-		return;
-
 	// Check if the node is a coordination point
 	if (netmanager->checkCollectionPointNode(myAddress)) {
 		scheduleAt(sendIATime->doubleValue(), truckPacket);
@@ -333,8 +329,15 @@ void TripRequestSubmitter::initialize() {
 		scheduleEmergencyOrRedCode();
 
 		if (ev.isGUI())
-			getParentModule()->getDisplayString().setTagArg("i", 1, "red");
+			getParentModule()->getDisplayString().setTagArg("b", 3, "red");
 	}
+	if (netmanager->checkDestroyedNode(myAddress)) { // Look and feel
+		if (ev.isGUI()) {
+			getParentModule()->getDisplayString().setTagArg("b", 0, "0");
+			getParentModule()->getDisplayString().setTagArg("b", 1, "0");
+		}
+	}
+
 	netmanager->updateTopology(); //updates the topology in network manager
 }
 

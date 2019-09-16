@@ -72,7 +72,9 @@ network AMoD
                 address = index;
                 x=index % width;
                 y=index / width;
-                @display("p=,,m,$width,$xNodeDistance,$yNodeDistance");
+                @display("p=,,m,$width,$xNodeDistance,$yNodeDistance;b=100,100,rect,green");
+
+                
             gates:
                 port[4];
         }

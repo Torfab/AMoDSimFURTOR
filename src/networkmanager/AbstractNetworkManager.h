@@ -88,13 +88,13 @@ public:
     {
         if(acceleration<=0) {additionalTravelTime=0; return 0;}
         else{
-//            double Ta=speed/acceleration;
-//            double D = 0.5*acceleration*pow(Ta, 2);
-//            double Ta_prime = D/speed;
-//
-//            additionalTravelTime = 2*(Ta - Ta_prime);
-//            return additionalTravelTime;
-        	return 10;
+            double Ta=speed/acceleration;
+            double D = 0.5*acceleration*pow(Ta, 2);
+            double Ta_prime = D/speed;
+
+            additionalTravelTime = 2*(Ta - Ta_prime);
+            return additionalTravelTime;
+//        	return 10;
         }
     }
 

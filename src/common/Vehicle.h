@@ -25,12 +25,13 @@ class Vehicle: public Packet {
         int seats;
         int traveledDistance;
 //        bool busyState;
-        int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza (TODO: enum)
+        int specialVehicle; //veicolo di emergenza -1 0 civile 1 ambulanza
         int trafficWeight;  // influence of single vehicle in traffic channel. It increases the travel times of other vehicles.
 
         int chosenGate; // Choose the gate for leaving the node
 
         double speed;  // Avg. speed of vehicle in channel
+        double acceleration; // Avg. acceleration of vehicle
         
         double currentTraveledTime;
         double optimalEstimatedTravelTime;
@@ -56,6 +57,8 @@ class Vehicle: public Packet {
         virtual void setCurrentTraveledTime(double currentTraveledTime);
         virtual double getOptimalEstimatedTravelTime() const;
         virtual void setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime);
+        virtual double getAcceleration() const;
+	void setSpecialVehicle(int specialVehicle);
 };
 
 #endif /* VEHICLE_H_ */

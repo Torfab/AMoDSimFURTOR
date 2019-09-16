@@ -31,6 +31,7 @@ Vehicle::Vehicle() {
      *  (35 km/h)
      */
     speed = 9.7;
+    this->acceleration = 1.676; //[mpss]
 }
 
 /*  special vehicle
@@ -49,10 +50,11 @@ Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
 
     currentTraveledTime = 0.0;
     /**
-     * default speed = 9.7 mps
+     * default speed = 9.7 [mps]
      *  (35 km/h)
      */
     this->speed = speed;
+    this->acceleration = 1.676; //[mpss]
 }
 
 Vehicle::~Vehicle() {
@@ -114,6 +116,14 @@ void Vehicle::setCurrentTraveledTime(double currentTraveledTime) {
 
 double Vehicle::getOptimalEstimatedTravelTime() const {
 	return optimalEstimatedTravelTime;
+}
+
+double Vehicle::getAcceleration() const {
+	return acceleration;
+}
+
+void Vehicle::setSpecialVehicle(int specialVehicle) {
+	this->specialVehicle = specialVehicle;
 }
 
 void Vehicle::setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime) {

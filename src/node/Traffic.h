@@ -19,7 +19,7 @@
 class Traffic {
 
 protected:
-	int numberOfGates;
+	int numberOfGates; //4 ports
 	double *traffic; // Array of 4 ports: N E S W
 
 public:
@@ -30,7 +30,7 @@ public:
 	const double getTraffic(int i) const;
 	int getNumberOfGates() const;
 
-	void decay(int i,int w);
+	void decay(int i, int w);
 
 	double trafficInfluence(int i);
 };

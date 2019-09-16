@@ -38,7 +38,6 @@ private:
 	int seatsPerVehicle;
 	int boardingTime;
 	int alightingTime;
-	double additionalTravelTime;
 	double ambulanceSpeed;
 	double truckSpeed;
 	int CivilDestinations;
@@ -75,6 +74,7 @@ protected:
 	virtual void handleMessage(cMessage *msg);
 	virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
 	void generateCivilTraffic(simtime_t interval);
+	virtual double computeAccelererationTime(double speed, double acceleration);
 };
 
 Define_Module(App);
@@ -131,7 +131,6 @@ void App::initialize() {
 	tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
 	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 	numberOfVehicles = netmanager->getVehiclesPerNode(myAddress);
-	additionalTravelTime = netmanager->getAdditionalTravelTime();
 	numberOfTrucks = netmanager->getNumberOfTrucks();
 	ambulanceSpeed = netmanager->getAmbulanceSpeed();
 	truckSpeed = netmanager->getTruckSpeed();
@@ -184,13 +183,13 @@ void App::initialize() {
 	if (hospital) {
 		emit(signal_ambulancesIdle, currentVehiclesInNode);
 		if (ev.isGUI())
-			getParentModule()->getDisplayString().setTagArg("i", 1, "white");
+			getParentModule()->getDisplayString().setTagArg("b", 3, "white");
 	} else if (storagePoint) {
 		if (ev.isGUI())
-			getParentModule()->getDisplayString().setTagArg("i", 1, "orange");
+			getParentModule()->getDisplayString().setTagArg("b", 3, "orange");
 	} else if (collectionPoint) {
 		if (ev.isGUI())
-			getParentModule()->getDisplayString().setTagArg("i", 1, "blue");
+			getParentModule()->getDisplayString().setTagArg("b", 3, "blue");
 	}
 
 
@@ -212,8 +211,6 @@ void App::initialize() {
 void App::handleMessage(cMessage *msg) {
 	Vehicle *vehicle = nullptr;
 
-	double sendDelayTime = additionalTravelTime;    // 10s forfeited considering acceleration and deceleration of the path
-
 	try {
 		//A vehicle is here
 		vehicle = check_and_cast<Vehicle *>(msg);
@@ -221,6 +218,8 @@ void App::handleMessage(cMessage *msg) {
 		EV << "Can not handle received message! Ignoring..." << endl;
 		return;
 	}
+	double sendDelayTime = computeAccelererationTime(vehicle->getSpeed(),vehicle->getAcceleration());    // time necessary for deceleration
+	vehicle->setCurrentTraveledTime(vehicle->getCurrentTraveledTime() + sendDelayTime);
 
 	EV << "Destination completed: VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops. The type of vehicle is " << vehicle->getSpecialVehicle() << endl;
 
@@ -260,7 +259,7 @@ void App::handleMessage(cMessage *msg) {
 		//This is a PICK-UP stop-point
 		double waitTimeMinutes = (simTime().dbl() - currentStopPoint->getTime()) / 60;
 		EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
-		sendDelayTime += 180;  //180s forfeited for boarding up an emergency
+		sendDelayTime = 180;  //180s lumped for boarding up an emergency
 		vehicle->setCurrentTraveledTime(vehicle->getCurrentTraveledTime() + sendDelayTime);
 		if (vehicle->getSpecialVehicle() == 1) {
 			double difference = abs(simTime().dbl() - currentStopPoint->getTime());
@@ -319,31 +318,45 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
 	if (signalID == newTripAssigned) {
 		if (tcoord->getLastVehicleLocation(vehicleID) == myAddress) {
 			//The vehicle that should serve the request is in this node
-			Vehicle *veic = tcoord->getVehicleByID(vehicleID);
+			Vehicle *vehicle = tcoord->getVehicleByID(vehicleID);
 
-			if (veic != nullptr) {
+			if (vehicle != nullptr) {
 
-				double sendDelayTime = additionalTravelTime;
+				double sendDelayTime = computeAccelererationTime(vehicle->getSpeed(),vehicle->getAcceleration());
 
-				StopPoint* sp = tcoord->getNewAssignedStopPoint(veic->getID());
-				EV << "The proposal of vehicle: " << veic->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
-				veic->setSrcAddr(myAddress);
-				veic->setDestAddr(sp->getLocation());
+				StopPoint* sp = tcoord->getNewAssignedStopPoint(vehicle->getID());
+				EV << "The proposal of vehicle: " << vehicle->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
+				vehicle->setSrcAddr(myAddress);
+				vehicle->setDestAddr(sp->getLocation());
 
 				// reset times
-				veic->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / veic->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
-				veic->setCurrentTraveledTime(0);
-				veic->setHopCount(0);
+				vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+				vehicle->setCurrentTraveledTime(0);
+				vehicle->setHopCount(0);
 
 				if (netmanager->checkHospitalNode(myAddress)){
 					emit(signal_ambulancesIdle,--currentVehiclesInNode);
 				}
 
-				EV << "Sending Vehicle from: " << veic->getSrcAddr() << " to " << veic->getDestAddr() << endl;
-				sendDelayed(veic, sendDelayTime, "out");
+				EV << "Sending Vehicle from: " << vehicle->getSrcAddr() << " to " << vehicle->getDestAddr() << endl;
+				sendDelayed(vehicle, sendDelayTime, "out");
 
 			}
 		}
 	}
 
 }
+
+double App::computeAccelererationTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
+    {
+	double additionalTravelTime;
+        if(acceleration<=0) {additionalTravelTime=0; return 0;}
+        else{
+            double Ta=speed/acceleration;
+            double D = 0.5*acceleration*pow(Ta, 2);
+            double Ta_prime = D/speed;
+
+            additionalTravelTime = 2*(Ta - Ta_prime);
+            return additionalTravelTime;
+        }
+    }

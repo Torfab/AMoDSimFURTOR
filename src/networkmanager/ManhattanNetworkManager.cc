@@ -32,9 +32,6 @@ void ManhattanNetworkManager::buildSetOfDestroyedNodes() {
 
 }
 
-//void ManhattanNetworkManager::propagateEarthquakeBetweenNodes(int epicenterAddress) {
-//
-//}
 
 void ManhattanNetworkManager::buildSetOfBorderNodes() {
     for (int i = 0; i < columns; i++) {
@@ -349,10 +346,12 @@ bool ManhattanNetworkManager::checkRedZoneNode(int addr) {
     	ev << " " << elem ;
         if (elem == addr){
         	ev << endl;
+        	ev << " Number of redzone nodes: ["<< setOfNodesInRedZone.size() << "]"<< endl;
             return true;
         }
     }
     ev << endl;
+    ev << " Number of redzone nodes: ["<< setOfNodesInRedZone.size() << "]"<< endl;
     return false;
 }
 
