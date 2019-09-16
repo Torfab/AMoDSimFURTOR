@@ -150,14 +150,20 @@ void ACO::handleMessage(cMessage *msg) {
 			ev << "----> " << path->getWeight() << endl;
 
 			ev << "-------pacchetto " << pk->getID() << " diretto a " << pk->getDestAddr() << endl;
-			while (node != topo->getTargetNode()) {
-				ev << "We are in " << node->getModule()->getFullPath() << endl;
-				cTopology::LinkOut *path = node->getPath(0);
-				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " <<
-						path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-				ev << node->getDistanceToTarget() << " traffic considered to go\n";
-				node = path->getRemoteNode();
-				}
+//			while (node != topo->getTargetNode()) {
+//				ev << "We are in " << node->getModule()->getFullPath() << endl;
+//				cTopology::LinkOut *path = node->getPath(0);
+//				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " <<
+//						path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
+//				ev << node->getDistanceToTarget() << " traffic considered to go\n";
+//				node = path->getRemoteNode();
+//				}
+//			if (pk->getSpecialVehicle() == 1) {
+//				if (ev.isGUI()) {
+//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 0, "red");
+//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 1, "4");
+//				}
+//			}
 		}
 		// Traffic delay logic
 
