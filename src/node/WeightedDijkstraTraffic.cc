@@ -109,7 +109,8 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 
 		traffic->decay(pkChosenGate,trafficWeight);
-
+		// Emit traffic signal
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 	} else {
 
 
@@ -129,7 +130,6 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 		if (node->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
-			//node->disable();
 			return;
 
 		} else {
@@ -202,9 +202,6 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 
 		pk->setHopCount(pk->getHopCount() + 1);
 
-//    //send the vehicle to the next node
-//    send(pk, "out", outGateIndex);
-
 
 	}
 }
@@ -213,5 +210,10 @@ void WeightedDijkstraTraffic::receiveSignal(cComponent* source, simsignal_t sign
 	// Pheromon Decay
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
+		// Emit pheromone signal
+		for (int i = 0; i<4;i++)
+		emit(signalFeromone[i], pheromone->getPheromone(i));
 	}
+
+
 }

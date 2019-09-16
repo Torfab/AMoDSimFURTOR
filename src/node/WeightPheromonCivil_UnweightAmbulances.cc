@@ -111,7 +111,8 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 
 
 		traffic->decay(pkChosenGate,trafficWeight);
-
+		// Emit traffic signal
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 	} else {
 
 		//Weighted Dijkstra
@@ -199,12 +200,6 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 		}
 		EV << endl;
 
-//		EV << "Nodo " << myAddress << " Traffico N E S W: ";
-//		for (int i = 0; i < 4; i++) {
-//			EV << traffic->getTraffic(i) << " || ";
-//		}
-//		EV << endl;
-
 		pk->setHopCount(pk->getHopCount() + 1);
 
 //    //send the vehicle to the next node
@@ -219,7 +214,8 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 void WeightPheromonCivil_UnweightAmbulances::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
-		ev << "Segnale di decay ricevuto" << endl;
+		// Emit pheromone signal
+		for (int i = 0; i<4;i++)
+		emit(signalFeromone[i], pheromone->getPheromone(i));
 	}
-
 }

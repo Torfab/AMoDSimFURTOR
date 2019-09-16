@@ -114,25 +114,9 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 
 
 		traffic->decay(pkChosenGate,trafficWeight);
-
+		// Emit traffic signal
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 	} else {
-
-		/*
-		//Pheromon Decay
-		//il feromone viene aggiornato solo quando un veicolo attraversa il nodo.
-		int n = (simTime().dbl() - lastUpdateTime) / pheromoneDecayTime;
-
-		if (n != 0) {
-			EV << "n: [ " << n << " ]" << "=" << simTime().dbl() << "-" << lastUpdateTime << "/" << pheromoneDecayTime << endl;
-			for (int i = 0; i < n; i++) {
-				pheromone->decayPheromone();
-			}
-			for (int i = 0; i < pheromone->getNumberOfGates(); i++) {
-				emit(signalFeromone[i], pheromone->getPheromone(i));
-			}
-
-			lastUpdateTime = simTime().dbl();
-		}*/
 
 		//Weighted Dijkstra
 		int destination = pk->getDestAddr();
@@ -234,5 +218,8 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 void WeightedDijkstraPheromon::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
+		// Emit pheromone signal
+		for (int i = 0; i<4;i++)
+		emit(signalFeromone[i], pheromone->getPheromone(i));
 	}
 }

@@ -102,6 +102,8 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		send(pk, "out", pkChosenGate);	//Send the vehicle to the next node
 
 		traffic->decay(pkChosenGate, trafficWeight); // decay traffic
+		// Emit traffic signal
+		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 
 	} else {
 
@@ -173,6 +175,9 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 void ManhattanRouting::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
+		// Emit pheromone signal
+		for (int i = 0; i<4;i++)
+		emit(signalFeromone[i], pheromone->getPheromone(i));
 	}
 
 }
