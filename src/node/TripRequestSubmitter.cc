@@ -33,10 +33,6 @@ private:
 	int x_coord;
 	int y_coord;
 
-	double maxSubmissionTime;
-	double minTripLength;
-	int destAddresses;
-
 	cPar *sendIATime;
 	cPar *maxDelay;
 
@@ -137,11 +133,9 @@ void TripRequestSubmitter::scheduleEmergencyOrRedCode() {
 
 void TripRequestSubmitter::initialize() {
 	myAddress = par("address");
-	destAddresses = par("destAddresses");
-	minTripLength = par("minTripLength");
+
 	sendIATime = &par("sendIaTime");  // volatile parameter
 	maxDelay = &par("maxDelay");
-	maxSubmissionTime = par("maxSubmissionTime");
 
 	x_coord = getParentModule()->par("x");
 	y_coord = getParentModule()->par("y");

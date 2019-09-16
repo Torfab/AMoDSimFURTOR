@@ -7,7 +7,7 @@ simple App like IApp
 {
     parameters:
         int address;  			//local node address
-        volatile int seatsPerVehicle = default(1);
+        int seatsPerVehicle = default(1);
         double civilEscapeInterval @unit(s) = default(600s); 
         int numberOfCivils = default(1);
         @display("i=block/browser");

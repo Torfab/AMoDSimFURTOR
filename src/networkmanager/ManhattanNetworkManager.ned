@@ -20,7 +20,6 @@ simple ManhattanNetworkManager like INetworkManager
 		double ambulanceSpeed @unit(mps);
 		double truckSpeed @unit(mps);
 		
-		int disasterRadius = default(1);
 		
         @display("i=block/network2_l");
         }

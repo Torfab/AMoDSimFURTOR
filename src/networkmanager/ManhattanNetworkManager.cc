@@ -23,11 +23,8 @@ void ManhattanNetworkManager::buildSetOfDestroyedNodes() {
 
     for (int i = 0; i < numberOfEpicenters; i++) {
         epicenterAddresses[i] = intuniform(0, numberOfNodes - 1);
-        EV << "epicenter Address [" << i << " ] " << epicenterAddresses[i]
-                  << endl;
-        if (disasterRadius > 0)	// Creation of destroyed nodes set
-            setOfEpicenters.insert(epicenterAddresses[i]);
-
+        EV << "epicenter Address [" << i << " ] " << epicenterAddresses[i] << endl;
+		setOfEpicenters.insert(epicenterAddresses[i]);
 	}
 
 }
@@ -79,8 +76,6 @@ void ManhattanNetworkManager::initialize() {
 
     ambulanceSpeed = par("ambulanceSpeed");
     truckSpeed = par("truckSpeed");
-
-    disasterRadius = par("disasterRadius");
     numberOfEpicenters = par("numberOfEpicenters");
 
     xChannelLength = parentModule->par("xNodeDistance");
