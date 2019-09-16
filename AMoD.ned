@@ -47,6 +47,7 @@ network AMoD
             parameters:
                 delay = xTravelTime; //time needed to travel the street (x axes). (propagation delay)
                 double length @unit(m) = xNodeDistance;
+                //@display("ls=#FF0000");
         }
         
         channel yRoad extends ned.DatarateChannel

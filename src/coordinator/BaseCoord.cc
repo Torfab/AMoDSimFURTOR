@@ -342,20 +342,22 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
  */
 void BaseCoord::finish()
 {
-    /*--- Total Requests Statistic ---*/
+	/*
+    //--- Total Requests Statistic ---
     char totalRequestSignal[32];
     sprintf(totalRequestSignal, "Total Requests");
     recordScalar(totalRequestSignal, totrequests);
 
-    /*--- Unserved Requests Statistic ---*/
+    //--- Unserved Requests Statistic ---
     char unservedRequestSignal[32];
     sprintf(unservedRequestSignal, "Unserved Requests");
     recordScalar(unservedRequestSignal, uRequests.size());
 
-    /*--- Pending Requests Statistic ---*/
+    //--- Pending Requests Statistic ---
     char pendingRequestSignal[32];
     sprintf(pendingRequestSignal, "Pending Requests");
     recordScalar(pendingRequestSignal, pendingRequests.size());
+    */
 
     /*Define vectors for additional statistics (Percentiles) */
     std::vector<double> traveledDistanceVector;
@@ -367,7 +369,7 @@ void BaseCoord::finish()
     double totalToPickup = 0.0;
 
     /* Register the Travel-Time related signals */
-    int maxSeats = getMaxVehiclesSeats();
+    /*  int maxSeats = getMaxVehiclesSeats();
     std::map<int, simsignal_t> travelStats;
     for(int i=-1; i<=maxSeats; i++)
     {
@@ -383,10 +385,10 @@ void BaseCoord::finish()
 
         ev.addResultRecorders(this, travsignal, statisticName, statisticTemplate);
     }
-
+   */
 
     /*--- Per Vehicle related Statistics ---*/
-    for(std::map<Vehicle*, int>::iterator itr = vehicles.begin(); itr != vehicles.end(); itr++)
+    /*for(std::map<Vehicle*, int>::iterator itr = vehicles.begin(); itr != vehicles.end(); itr++)
     {
         double tmp = (itr->first->getTraveledDistance())/1000;
         emit(traveledDistance, tmp);
@@ -426,18 +428,20 @@ void BaseCoord::finish()
         for(auto const& x : statePerVehicle[itr->first->getID()])
         {
             tmp= x.second->getElapsedTime() / 60;
-            emit(travelStats[x.first], tmp);
+            //emit(travelStats[x.first], tmp);
             statsPerVehiclesVectors[x.first].push_back(tmp);
         }
 
         vehicles.erase(itr);
     }
+    */
     /*--- Total To Pickup ---*/
-    char totalRequestsToPickup[32];
+    /* char totalRequestsToPickup[32];
     sprintf(totalRequestsToPickup, "Total Requests To Pickup");
     recordScalar(totalRequestsToPickup, totalToPickup);
-
+    */
     /* -- Collect Percentile Statistic -- */
+    /*
     collectPercentileStats("traveledDistance", traveledDistanceVector);
     collectPercentileStats("requestsPerVehicle", requestsAssignedPerVehicleVector);
     collectPercentileStats("passengersOnBoard", passengersOnBoardVector);
@@ -455,7 +459,7 @@ void BaseCoord::finish()
         if (!x.second.empty())
             collectPercentileStats(statisticName, x.second);
     }
-
+    */
 
     /*------------------------------- CLEAN ENVIRONMENT -------------------------------*/
 

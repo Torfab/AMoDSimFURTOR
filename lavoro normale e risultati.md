@@ -30,7 +30,7 @@
 
 pulizia initialize app (e netmanager)
 	codice obsoleto
-	togliere le sue statistiche che occupano spazio
+
 truckdelaytraveltime è rotto
 
 capire come scrivere la legenda pulita
@@ -210,7 +210,7 @@ display look and feel figo TOP
 
 creare sottomodulo initialize
 creare routing aco based di giovanni
-
+togliere le sue statistiche che occupano spazio
 
 # Limiti del simulatore:
 
