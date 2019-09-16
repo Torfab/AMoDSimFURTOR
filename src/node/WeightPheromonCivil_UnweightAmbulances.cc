@@ -123,7 +123,7 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
 			ev << "1) " << pheromone->getPheromone(i) + 1<< endl;
-			node->getLinkOut(i)->setWeight(pheromone->getPheromone(i) + 1);
+			node->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(i));
 		}
 
 		//Weighted or unweighted dijkstra to target

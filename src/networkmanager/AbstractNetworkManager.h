@@ -33,6 +33,8 @@ protected:
     int numberOfEpicenters;
     int disasterRadius;
 
+    int startingChannelWeight;
+
     int * hospitalAddresses;
     int * collectionPointsAddresses;
     int * storagePointsAddresses;
@@ -132,6 +134,10 @@ public:
 
 	cTopology* getTopo() {
 		return topo;
+	}
+
+	int getStartingChannelWeight() const {
+		return startingChannelWeight;
 	}
 };
 

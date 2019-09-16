@@ -86,9 +86,7 @@ void ManhattanNetworkManager::initialize() {
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 
-    additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"),
-            parentModule->par("acceleration"));
-
+    startingChannelWeight = 1000;
     // Creation of destroyed nodes set
     buildSetOfDestroyedNodes();
 
@@ -512,14 +510,13 @@ void ManhattanNetworkManager::updateTopology() {
 	nedTypes.push_back("src.node.Node");
 	topo->extractByNedTypeName(nedTypes);
 
-
-	/*for (int i = 0; i < topo->getNumNodes(); i++) {
+	for (int i = 0; i < topo->getNumNodes(); i++) {
 		cTopology::Node *node = topo->getNode(i);
 		for (int j = 0; j < node->getNumOutLinks(); j++) {
-			node->getLinkOut(j)->setWeight(intuniform(1,10000));
+			node->getLinkOut(j)->setWeight(startingChannelWeight);
 
 		}
-	}*/
+	}
 
 }
 

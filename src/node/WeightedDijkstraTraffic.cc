@@ -125,7 +125,7 @@ void WeightedDijkstraTraffic::handleMessage(cMessage *msg) {
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
 			ev << "1) " << traffic->getTraffic(i) + 1<< endl;
-			node->getLinkOut(i)->setWeight(traffic->getTraffic(i) + 1);
+			node->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + traffic->getTraffic(i));
 		}
 		//weighted dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);

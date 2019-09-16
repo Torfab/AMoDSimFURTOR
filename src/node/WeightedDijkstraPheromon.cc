@@ -125,7 +125,7 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
-			node->getLinkOut(i)->setWeight(pheromone->getPheromone(i) + 1);
+			node->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(i));
 		}
 		//weighted dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
@@ -192,11 +192,11 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 		}
 		EV << endl;
 
-//		EV << "Nodo " << myAddress << " Traffico N E S W: ";
-//		for (int i = 0; i < 4; i++) {
-//			EV << traffic->getTraffic(i) << " || ";
-//		}
-//		EV << endl;
+		EV << "Nodo " << myAddress << " Traffico N E S W: ";
+		for (int i = 0; i < 4; i++) {
+			EV << traffic->getTraffic(i) << " || ";
+		}
+		EV << endl;
 
 		pk->setHopCount(pk->getHopCount() + 1);
 	}
