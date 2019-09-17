@@ -133,19 +133,12 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 		//Weighted or unweighted dijkstra to target
 
-
-
-		topoEmergency->calculateWeightedSingleShortestPathsTo(targetnodeEmergency);
-		/*//If it's an ambulance
+		//If it's an ambulance
 		if (pk->getSpecialVehicle() == 1)
 			topoEmergency->calculateWeightedSingleShortestPathsTo(targetnodeEmergency);
 		//else it's a civil or truck
 		else
-			topo->calculateWeightedSingleShortestPathsTo(targetnode);*/
-
-
-
-
+			topo->calculateWeightedSingleShortestPathsTo(targetnode);
 
 
 		if (node->getNumPaths() == 0 && nodeEmergency->getNumPaths() == 0)  {
@@ -154,15 +147,15 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 		} else { //there are paths available
 
 
-			//if (pk->getSpecialVehicle() == 1){
+			if (pk->getSpecialVehicle() == 1){
 				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
 				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
-		/*//	}
+			}
 
 			else{
 				cTopology::LinkOut *path = node->getPath(0);
 				pk->setChosenGate(path->getLocalGate()->getIndex());
-			}*/
+			}
 
 			// Update Pheromone and Traffic
 			pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
