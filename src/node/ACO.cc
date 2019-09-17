@@ -125,14 +125,8 @@ void ACO::handleMessage(cMessage *msg) {
 			nodeEmergency->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(i));
 		}
 
-		//Weighted or unweighted dijkstra to target
-
-//		//If it's an ambulance
-//		if (pk->getSpecialVehicle() == 1)
-//			topo->calculateUnweightedSingleShortestPathsTo(targetnode);
-//		//else it's a civil or truck
-//		else
-			topoEmergency->calculateWeightedSingleShortestPathsTo(targetnode);
+		//Weighted dijkstra to target
+		topoEmergency->calculateWeightedSingleShortestPathsTo(targetnode);
 
 		if (nodeEmergency->getNumPaths() == 0) {
 			EV << "No path to destination.\n";
