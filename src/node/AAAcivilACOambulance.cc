@@ -146,15 +146,24 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			return;
 		} else { //there are paths available
 
+			int i;
 
 			if (pk->getSpecialVehicle() == 1){
 				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
 				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
+				for (i = 0; i < topoEmergency->getNode(myAddress)->getNumOutLinks();i++) {
+					if (topoEmergency->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
+						break;
+				}
 			}
 
 			else{
 				cTopology::LinkOut *path = node->getPath(0);
 				pk->setChosenGate(path->getLocalGate()->getIndex());
+				for (i = 0; i < topo->getNode(myAddress)->getNumOutLinks();	i++) {
+					if (topo->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
+						break;
+				}
 			}
 
 			// Update Pheromone and Traffic
@@ -163,34 +172,10 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 
-			int i;
-			for (i = 0; i < topo->getNode(myAddress)->getNumOutLinks();	i++) {
-				if (topo->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
-					break;
-			}
-
-			int j;
-						for (j = 0; j < topoEmergency->getNode(myAddress)->getNumOutLinks();j++) {
-							if (topoEmergency->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
-								break;
-						}
-			ev << "dovrebbero essere uguali per ogni path " << i << " =?= " << j ;
-			if (pk->getSpecialVehicle() == 1)
-				ev << " ho scelto i " <<endl;
-			else
-				ev << "ho scelto j "<< endl;
-
-
 			topo->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate));
 			topoEmergency->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
 
 
-//			if (pk->getSpecialVehicle() == 1) {
-//				if (ev.isGUI()) {
-//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 0, "red");
-//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 1, "4");
-//				}
-//			}
 		}
 		// Traffic delay logic
 
