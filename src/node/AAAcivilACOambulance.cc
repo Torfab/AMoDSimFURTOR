@@ -146,13 +146,13 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			return;
 		} else { //there are paths available
 
-			int i;
+			int id;
 
 			if (pk->getSpecialVehicle() == 1){
 				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
 				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
-				for (i = 0; i < topoEmergency->getNode(myAddress)->getNumOutLinks();i++) {
-					if (topoEmergency->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
+				for (id = 0; id < topoEmergency->getNode(myAddress)->getNumOutLinks();id++) {
+					if (topoEmergency->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
 						break;
 				}
 			}
@@ -160,8 +160,8 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			else{
 				cTopology::LinkOut *path = node->getPath(0);
 				pk->setChosenGate(path->getLocalGate()->getIndex());
-				for (i = 0; i < topo->getNode(myAddress)->getNumOutLinks();	i++) {
-					if (topo->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
+				for (id = 0; id < topo->getNode(myAddress)->getNumOutLinks();	id++) {
+					if (topo->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
 						break;
 				}
 			}
@@ -172,8 +172,8 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 
-			topo->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate));
-			topoEmergency->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
+			topo->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate));
+			topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
 
 
 		}
