@@ -82,7 +82,7 @@ WeightPheromonCivil_UnweightAmbulances::~WeightPheromonCivil_UnweightAmbulances(
 void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-	int trafficWeight = pk->getTrafficWeight();
+	int trafficWeight = pk->getWeight();
 
 	// Topology
 	cTopology* topo = netmanager->getTopo();
@@ -144,7 +144,7 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
 //			ev << "+++++Increasing traffic" << endl;
-			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+			traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
 
 			int pkChosenGate = pk->getChosenGate();
 			ev << "2) updating weights " << path->getWeight();
@@ -186,7 +186,7 @@ void WeightPheromonCivil_UnweightAmbulances::handleMessage(cMessage *msg) {
 		scheduleAt(channelTravelTime + trafficDelay, msg);
 
 		// Update Pheromone and Traffic
-		pheromone->increasePheromone(pk->getChosenGate());
+		pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));

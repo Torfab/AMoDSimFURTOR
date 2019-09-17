@@ -43,13 +43,13 @@ protected:
     std::set<int> setOfEpicenters;          //nodes without connections
 
     cTopology* topo;
+    cTopology* topoEmergency;
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
-//    virtual std::set<int> propagateEarthquakeBetweenNodes(int epicenterAddress, std::set<int> auxSet) = 0;
 
 public:
-	virtual void updateTopology()=0;
+	virtual void updateTopology(cTopology* topo)=0;
  	virtual void insertRedZoneNode(int addr) = 0;
 	virtual void insertDestroyedNode(int addr)=0;
 	virtual void removeRedZoneNode(int addr)=0;

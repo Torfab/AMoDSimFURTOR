@@ -85,7 +85,7 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-	int trafficWeight = pk->getTrafficWeight();
+	int trafficWeight = pk->getWeight();
 
 	// Topology
 	cTopology* topo = netmanager->getTopo();
@@ -139,7 +139,7 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 			cTopology::LinkOut *path = node->getPath(0);
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
-			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+			traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
 
 			int pkChosenGate = pk->getChosenGate();
 
@@ -185,7 +185,7 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 		scheduleAt(channelTravelTime + trafficDelay, msg);
 
 		// Update Pheromone and Traffic
-		pheromone->increasePheromone(pk->getChosenGate());
+		pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));

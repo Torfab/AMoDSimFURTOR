@@ -75,7 +75,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-	int trafficWeight = pk->getTrafficWeight(); //get vehicle weight
+	int trafficWeight = pk->getWeight(); //get vehicle weight
 
 	// Topology from netmanager
 	cTopology* topo = netmanager->getTopo();
@@ -154,8 +154,8 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		scheduleAt(channelTravelTime + trafficDelay, msg);
 
 		// Update Pheromone and Traffic
-		pheromone->increasePheromone(pk->getChosenGate());
-		traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+		pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
+		traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
 
 
 

@@ -52,6 +52,7 @@ ManhattanNetworkManager::~ManhattanNetworkManager() {
     delete hospitalAddresses;
     delete collectionPointsAddresses;
     delete topo;
+    delete topoEmergency;
 }
 
 void ManhattanNetworkManager::initialize() {
@@ -111,13 +112,25 @@ void ManhattanNetworkManager::initialize() {
     for (int i = 0; i < numberOfStoragePoints; i++)
         vehiclesPerNode[storagePointsAddresses[i]] = numberOfTrucks;
 
-	// Topology
-	topo = new cTopology("topo");
-	std::vector<std::string> nedTypes;
-	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
+    // Topology
+    topo = new cTopology("topo");
+    topoEmergency = new cTopology("topoEmergency");
+	initTopo(topo);
+	initTopo(topoEmergency);
+
 
 }
+
+
+/**
+ * Initializes topology with all nodes
+ */
+void ManhattanNetworkManager::initTopo(cTopology* topology) {
+	std::vector<std::string> nedTypes;
+	nedTypes.push_back("src.node.Node");
+	topology->extractByNedTypeName(nedTypes);
+}
+
 
 /**
  * Return the space distance from current node to target one.
@@ -489,23 +502,22 @@ void ManhattanNetworkManager::removeRedZoneNode(int addr) {
 	ev << endl;
 }
 
-//void ManhattanNetworkManager::buildSetOfNodesInRedZone() {
-////	setOfNodesInRedZone.insert(-1);
-//}
 
-void ManhattanNetworkManager::updateTopology() {
-	topo->clear();
+
+void ManhattanNetworkManager::updateTopology(cTopology* topology) {
+	topology->clear();
 	std::vector<std::string> nedTypes;
 	nedTypes.push_back("src.node.Node");
-	topo->extractByNedTypeName(nedTypes);
+	topology->extractByNedTypeName(nedTypes);
 
-	for (int i = 0; i < topo->getNumNodes(); i++) {
-		cTopology::Node *node = topo->getNode(i);
+	for (int i = 0; i < topology->getNumNodes(); i++) {
+		cTopology::Node *node = topology->getNode(i);
 		for (int j = 0; j < node->getNumOutLinks(); j++) {
 			node->getLinkOut(j)->setWeight(startingChannelWeight);
 
 		}
 	}
+
 
 }
 

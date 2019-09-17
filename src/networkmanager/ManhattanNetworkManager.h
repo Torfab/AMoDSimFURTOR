@@ -59,7 +59,7 @@ protected:
 	void buildCollectionPointNodes();
 	void buildStoragePointNodes();
 	int pickRandomStoragePointNode();
-
+	void initTopo(cTopology* topology); //initialize topology
 
 
 
@@ -67,7 +67,7 @@ protected:
   public:
 	virtual void insertDestroyedNode(int addr) override;
 	virtual void removeRedZoneNode(int addr) override;
-	virtual void updateTopology() override;
+	virtual void updateTopology(cTopology* topology) override;
 	 virtual void insertRedZoneNode(int addr) override;
 	 virtual double getManhattanDistanceX(int srcAddr, int dstAddr) override;  //Get the manhattan distance from srcAddr to dstAddr
 	 virtual double getManhattanDistanceY(int srcAddr, int dstAddr) override;  //Get the manhattan distance from srcAddr to dstAddr

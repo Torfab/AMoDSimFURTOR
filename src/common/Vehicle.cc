@@ -23,7 +23,7 @@ Vehicle::Vehicle() {
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-    trafficWeight = 1;
+    weight = 1;
     specialVehicle=0;
     currentTraveledTime = 0.0;
     /**
@@ -40,12 +40,12 @@ Vehicle::Vehicle() {
  *  1 ambulance
  *  2 truck
  */
-Vehicle::Vehicle(int specialVehicle, double speed, int trafficWeight) {
+Vehicle::Vehicle(int specialVehicle, double speed, int Weight) {
     id = ++nextID;
     setName((std::to_string(id)).c_str());
     traveledDistance = 0.0;
     seats = 1;
-    this->trafficWeight = trafficWeight;
+    this->weight = Weight;
     this->specialVehicle=specialVehicle;
 
     currentTraveledTime = 0.0;
@@ -130,8 +130,8 @@ void Vehicle::setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime) {
 	this->optimalEstimatedTravelTime = optimalEstimatedTravelTime;
 }
 
-int Vehicle::getTrafficWeight() const {
-	return trafficWeight;
+int Vehicle::getWeight() const {
+	return weight;
 }
 
 

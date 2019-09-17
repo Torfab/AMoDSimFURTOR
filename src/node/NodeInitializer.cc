@@ -221,6 +221,6 @@ void NodeInitializer::initialize() {
 		}
 	}
 
-	netmanager->updateTopology(); //updates the topology in network manager
+	netmanager->updateTopology(netmanager->getTopo()); //updates the topology in network manager
 }
 

@@ -81,7 +81,7 @@ ACO::~ACO() {
 void ACO::handleMessage(cMessage *msg) {
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
-	int trafficWeight = pk->getTrafficWeight();
+	int trafficWeight = pk->getWeight();
 
 	// Topology
 	cTopology* topo = netmanager->getTopo();
@@ -142,7 +142,9 @@ void ACO::handleMessage(cMessage *msg) {
 			cTopology::LinkOut *path = node->getPath(0);
 			pk->setChosenGate(path->getLocalGate()->getIndex());
 
-			traffic->increaseTraffic(pk->getChosenGate(), pk->getTrafficWeight());
+			// Update Pheromone and Traffic
+			pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
+			traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
 
 			int pkChosenGate = pk->getChosenGate();
 
@@ -185,10 +187,6 @@ void ACO::handleMessage(cMessage *msg) {
 		EV << "Messaggio ritardato a " << trafficDelay + channelTravelTime << " di " << trafficDelay - simTime().dbl() << " s" << "  Traffic infl:" << (traffic->trafficInfluence(pk->getChosenGate())) << endl;
 		EV << "++Travel Time: " << channelTravelTime << endl;
 		scheduleAt(channelTravelTime + trafficDelay, msg);
-
-		// Update Pheromone and Traffic
-		pheromone->increasePheromone(pk->getChosenGate());
-
 
 		// Emit pheromone signal
 		emit(signalFeromone[pk->getChosenGate()], pheromone->getPheromone(pk->getChosenGate()));

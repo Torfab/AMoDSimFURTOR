@@ -28,7 +28,7 @@ public:
 
 	double getPheromoneDecayFactor() const;
 	double getPheromoneDecayTime() const;
-	void increasePheromone(int i);
+	void increasePheromone(int i, int weight);
 	const double getPheromone(int i) const;
 	int getNumberOfGates() const;
 
