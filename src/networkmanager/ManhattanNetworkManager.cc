@@ -89,7 +89,6 @@ void ManhattanNetworkManager::initialize() {
 
     // DON'T CHANGE THE ORDER
     buildsetOfAvailableNodes();
-//    buildSetOfNodesInRedZone();  // Creation of red zones nodes set
     buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
     buildStoragePointNodes();
@@ -504,7 +503,7 @@ void ManhattanNetworkManager::removeRedZoneNode(int addr) {
 
 
 
-void ManhattanNetworkManager::updateTopology(cTopology* topology) {
+void ManhattanNetworkManager::updateTopology(cTopology* topology, int channelWeight) {
 	topology->clear();
 	std::vector<std::string> nedTypes;
 	nedTypes.push_back("src.node.Node");
@@ -513,7 +512,7 @@ void ManhattanNetworkManager::updateTopology(cTopology* topology) {
 	for (int i = 0; i < topology->getNumNodes(); i++) {
 		cTopology::Node *node = topology->getNode(i);
 		for (int j = 0; j < node->getNumOutLinks(); j++) {
-			node->getLinkOut(j)->setWeight(startingChannelWeight);
+			node->getLinkOut(j)->setWeight(channelWeight);
 
 		}
 	}

@@ -49,7 +49,7 @@ protected:
     virtual void handleMessage(cMessage *msg) = 0;
 
 public:
-	virtual void updateTopology(cTopology* topo)=0;
+	virtual void updateTopology(cTopology* topology, int channelWeight)=0;
  	virtual void insertRedZoneNode(int addr) = 0;
 	virtual void insertDestroyedNode(int addr)=0;
 	virtual void removeRedZoneNode(int addr)=0;
@@ -138,6 +138,10 @@ public:
 
 	int getStartingChannelWeight() const {
 		return startingChannelWeight;
+	}
+
+	cTopology* getTopoEmergency() {
+		return topoEmergency;
 	}
 };
 
