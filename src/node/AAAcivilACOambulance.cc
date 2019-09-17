@@ -151,6 +151,7 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			if (pk->getSpecialVehicle() == 1){
 				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
 				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
+				//Need to save the LinkOut id of the localgate to id
 				for (id = 0; id < topoEmergency->getNode(myAddress)->getNumOutLinks();id++) {
 					if (topoEmergency->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
 						break;
@@ -160,6 +161,7 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			else{
 				cTopology::LinkOut *path = node->getPath(0);
 				pk->setChosenGate(path->getLocalGate()->getIndex());
+				//Need to save the LinkOut id of the localgate to id
 				for (id = 0; id < topo->getNode(myAddress)->getNumOutLinks();	id++) {
 					if (topo->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
 						break;
@@ -171,9 +173,9 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 			traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
 
 			int pkChosenGate = pk->getChosenGate();
-
-			topo->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate));
-			topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
+			// Update weights
+			topo->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate)); // AAA
+			topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate)); // ACO
 
 
 		}
