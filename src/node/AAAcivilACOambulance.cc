@@ -13,14 +13,14 @@
  ########################################################
  */
 
-#include "ACO.h"
+#include "AAAcivilACOambulance.h"
 #include "Vehicle.h"
 #include "Pheromone.h"
 #include "Traffic.h"
 
-Define_Module(ACO);
+Define_Module(AAAcivilACOambulance);
 
-void ACO::initialize() {
+void AAAcivilACOambulance::initialize() {
 	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
 	signalFeromone = new simsignal_t[4];
@@ -71,20 +71,22 @@ void ACO::initialize() {
 
 }
 
-ACO::~ACO() {
+AAAcivilACOambulance::~AAAcivilACOambulance() {
 	delete pheromone;
 	delete pheromoneEmergency;
 	delete traffic;
 }
 
 
-void ACO::handleMessage(cMessage *msg) {
+void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
 	int trafficWeight = pk->getWeight();
 
-	// Topology
+	// Topologies
+	cTopology* topo = netmanager->getTopo();
 	cTopology* topoEmergency = netmanager->getTopoEmergency();
+
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
@@ -115,32 +117,52 @@ void ACO::handleMessage(cMessage *msg) {
 
 	} else {
 
-		//Weighted Dijkstra
+		//Weighted Dijkstra topo
 		int destination = pk->getDestAddr();
+		cTopology::Node *node = topo->getNode(myAddress);
 		cTopology::Node *nodeEmergency = topoEmergency->getNode(myAddress);
-		cTopology::Node *targetnode = topoEmergency->getNode(destination);
+
+		cTopology::Node *targetnode = topo->getNode(destination);
+		cTopology::Node *targetnodeEmergency = topoEmergency->getNode(destination);
 
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
-		for (int i = 0; i < nodeEmergency->getNumOutLinks(); i++) {
-			nodeEmergency->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(i));
+		for (int i = 0; i < node->getNumOutLinks(); i++) {
+			node->getLinkOut(i)->setWeight(1 + (pheromone->getPheromone(i) / 20));  // AAA Civil
+			nodeEmergency->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(i)); // ACO Ambulance
 		}
 
 		//Weighted or unweighted dijkstra to target
 
-//		//If it's an ambulance
-//		if (pk->getSpecialVehicle() == 1)
-//			topo->calculateUnweightedSingleShortestPathsTo(targetnode);
-//		//else it's a civil or truck
-//		else
-			topoEmergency->calculateWeightedSingleShortestPathsTo(targetnode);
 
-		if (nodeEmergency->getNumPaths() == 0) {
+
+		topoEmergency->calculateWeightedSingleShortestPathsTo(targetnodeEmergency);
+		/*//If it's an ambulance
+		if (pk->getSpecialVehicle() == 1)
+			topoEmergency->calculateWeightedSingleShortestPathsTo(targetnodeEmergency);
+		//else it's a civil or truck
+		else
+			topo->calculateWeightedSingleShortestPathsTo(targetnode);*/
+
+
+
+
+
+
+		if (node->getNumPaths() == 0 && nodeEmergency->getNumPaths() == 0)  {
 			EV << "No path to destination.\n";
 			return;
 		} else { //there are paths available
 
-			cTopology::LinkOut *path = nodeEmergency->getPath(0);
-			pk->setChosenGate(path->getLocalGate()->getIndex());
+
+			//if (pk->getSpecialVehicle() == 1){
+				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
+				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
+		/*//	}
+
+			else{
+				cTopology::LinkOut *path = node->getPath(0);
+				pk->setChosenGate(path->getLocalGate()->getIndex());
+			}*/
 
 			// Update Pheromone and Traffic
 			pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
@@ -148,18 +170,15 @@ void ACO::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 
-			path->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
-			ev << "----> " << path->getWeight() << endl;
+			int i;
+			for (i = 0; i < topo->getNode(myAddress)->getNumOutLinks();	i++) {
+				if (topo->getNode(myAddress)->getLinkOut(i)->getLocalGate()->getIndex() == pk->getChosenGate())
+					break;
+			}
+			topo->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate));
+			topoEmergency->getNode(myAddress)->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate));
 
-			ev << "-------pacchetto " << pk->getID() << " diretto a " << pk->getDestAddr() << endl;
-//			while (node != topo->getTargetNode()) {
-//				ev << "We are in " << node->getModule()->getFullPath() << endl;
-//				cTopology::LinkOut *path = node->getPath(0);
-//				ev << "Taking gate " << path->getLocalGate()->getFullName() << "with weight " << path->getWeight() << " we arrive in " <<
-//						path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
-//				ev << node->getDistanceToTarget() << " traffic considered to go\n";
-//				node = path->getRemoteNode();
-//				}
+
 //			if (pk->getSpecialVehicle() == 1) {
 //				if (ev.isGUI()) {
 //					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 0, "red");
@@ -178,7 +197,7 @@ void ACO::handleMessage(cMessage *msg) {
 
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate())); //TODO: (check) FIX:
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate()));
 		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 
@@ -200,11 +219,11 @@ void ACO::handleMessage(cMessage *msg) {
 		}
 		EV << endl;
 
-//		EV << "Nodo " << myAddress << " Traffico N E S W: ";
-//		for (int i = 0; i < 4; i++) {
-//			EV << traffic->getTraffic(i) << " || ";
-//		}
-//		EV << endl;
+		EV << "Nodo " << myAddress << " Traffico N E S W: ";
+		for (int i = 0; i < 4; i++) {
+			EV << traffic->getTraffic(i) << " || ";
+		}
+		EV << endl;
 
 		pk->setHopCount(pk->getHopCount() + 1);
 	}
@@ -212,7 +231,7 @@ void ACO::handleMessage(cMessage *msg) {
 
 
 
-void ACO::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
+void AAAcivilACOambulance::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
 		// Emit pheromone signal

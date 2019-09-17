@@ -221,8 +221,8 @@ void NodeInitializer::initialize() {
 		}
 	}
 
-	int initWeight=1;
-	netmanager->updateTopology(netmanager->getTopo(), initWeight); //updates the topology in network manager
-	netmanager->updateTopology(netmanager->getTopoEmergency(), initWeight);
+	//updates the topology in network manager
+	netmanager->updateTopology(netmanager->getTopo(), 1);
+	netmanager->updateTopology(netmanager->getTopoEmergency(), netmanager->getStartingChannelWeight()); //ACO
 }
 
