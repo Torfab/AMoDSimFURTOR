@@ -78,5 +78,8 @@ simple BaseCoord like ICoord
         
       	@signal[truckRequest](type="int");       
         @statistic[truckRequest](title="Number of truck request in time";source="truckRequest";record=vector,stats;interpolation=none); 
+          
+      	@signal[pickupEmergencies](type="int");       
+        @statistic[pickupEmergencies](title="Number of pickups emergencies";source="pickupEmergencies";record=vector,stats;interpolation=none); 
        
 }

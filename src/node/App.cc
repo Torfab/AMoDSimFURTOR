@@ -45,6 +45,7 @@ private:
 	int currentVehiclesInNode;
 	int numberOfCivils;
 
+
 	simtime_t civilEscapeInterval;
 
 	BaseCoord *tcoord;
@@ -64,6 +65,7 @@ private:
 
 	// Idle signal
 	simsignal_t signal_ambulancesIdle;
+
 
 public:
 	App();
@@ -265,7 +267,7 @@ void App::handleMessage(cMessage *msg) {
 			double difference = abs(simTime().dbl() - currentStopPoint->getTime());
 			//emit actual time from request to pickup
 			tcoord->emitDifferenceFromRequestToPickup(difference, currentStopPoint->isRedCode()); //emit in two different signals if the request was a red code or not
-
+			tcoord->emitPickupEmergencies();
 		}
 	}
 	//Ask to coordinator for next stop point

@@ -49,6 +49,9 @@ void BaseCoord::initialize()
 
     signal_noVehicle= registerSignal("signal_noVehicle");
 
+    pickupEmergencies = registerSignal("pickupEmergencies");
+    pickupEmergenciesCount = 0;
+
     totrequests = 0.0;
     totalAssignedRequests = 0.0;
     totalPickedupRequests = 0.0;
@@ -937,3 +940,7 @@ void BaseCoord::emitRedCodeEmergencyRequest() {
 	emit(redCodeRequest, ++redCodeRequestCounter);
 }
 
+void BaseCoord::emitPickupEmergencies() {
+	pickupEmergenciesCount++;
+	emit(pickupEmergencies, pickupEmergenciesCount);
+}

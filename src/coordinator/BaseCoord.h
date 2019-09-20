@@ -88,6 +88,9 @@ private:
         simsignal_t indexTrPickup;
         simsignal_t truckRequest;
 
+        simsignal_t pickupEmergencies;
+        int pickupEmergenciesCount;
+
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
         std::map<int, double> rAssignedPerVehicle; //Number of requests assigned per vehicle
@@ -150,6 +153,7 @@ private:
         inline double getMinTripLength(){return minTripLength;}
         int getClosestExitNode(int address);
         virtual void evacuateCivil(int address);
+        virtual void emitPickupEmergencies();
 
 
 };
