@@ -31,12 +31,16 @@
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
+chiedere come comportarsi con le fonti / bibliografia
+
 truckdelaytraveltime è rotto
 
 capire come scrivere la legenda pulita
 
 scrivere la tesi
 
+
+1/20 nel weight, deve essere aggiornato anche nella funzione di decay? (sia feromone che traffico)
 
 # TITOLI:
 algoritmi bioispirati coordinamento ambulanze
