@@ -100,8 +100,8 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		pk->setTraveledDistance(pk->getTraveledDistance() + distance); // updates traveled distance
 
 		send(pk, "out", pkChosenGate);	//Send the vehicle to the next node
-
-		traffic->decay(pkChosenGate, trafficWeight); // decay traffic
+		// Decay the traffic
+		traffic->decay(pkChosenGate, trafficWeight);
 		// Emit traffic signal
 		emit(signalTraffic[pk->getChosenGate()], traffic->getTraffic(pk->getChosenGate()));
 
@@ -123,17 +123,9 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 			cTopology::LinkOut *path = node->getPath(0);
 			EV << "Taking gate " << path->getLocalGate()->getFullName() << " we arrive in " << path->getRemoteNode()->getModule()->getFullPath() << " on its gate " << path->getRemoteGate()->getFullName() << endl;
 			pk->setChosenGate(path->getLocalGate()->getIndex());
-
-//			if (pk->getSpecialVehicle() == 1) {
-//				if (ev.isGUI()) {
-//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 0, "red");
-//					path->getLocalGate()->getChannel()->getDisplayString().setTagArg("ls", 1, "4");
-//				}
-//			}
 		}
 
 		// Traffic delay logic
-
 		int distanceToTravel = 0;
 		if (pk->getChosenGate() % 2 == 1)  	// Odd gates are horizontal
 			distanceToTravel = xChannelLength;
@@ -143,7 +135,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed(); // Calculates the time to travel the channel
 
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate()));
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) *(1 + (traffic->trafficInfluence(pk->getChosenGate())));
 		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 

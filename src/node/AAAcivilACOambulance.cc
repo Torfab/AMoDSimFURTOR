@@ -174,7 +174,7 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 			// Update weights
-			topo->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() + pheromone->getPheromone(pkChosenGate)); // AAA
+			topo->getNode(myAddress)->getLinkOut(id)->setWeight(1 + (pheromone->getPheromone(pkChosenGate) /20)); // AAA
 			topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate)); // ACO
 
 
@@ -190,7 +190,7 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (traffic->trafficInfluence(pk->getChosenGate()));
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) *(1 + (traffic->trafficInfluence(pk->getChosenGate())));
 		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 
