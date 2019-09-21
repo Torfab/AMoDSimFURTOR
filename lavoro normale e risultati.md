@@ -235,10 +235,13 @@ togliere le sue statistiche che occupano spazio
 nella sua shell 
 simulazioni da riga di comando
 per vedere le combinazioni
-./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini -g
+./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini  -g
 
 
-opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..143
+opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..10
+
+opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Tkenv -f simulations/omnetpp.ini -r 0
+
 
 -j7 simulazioni contemporanee
 ./AMoD_Simulator  fa riferimento al .exe
@@ -247,8 +250,7 @@ Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 -r 0..1727 num di simulazioni
 
 filter basic
-name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*) || name(signal_ambulanceTravelTime*)
-
+name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*) || name(signal_ambulanceTravelTime*)  
 name(differenceFromRedCodeRequestToPickup:stats:max)
 
 
@@ -261,3 +263,17 @@ Risultati
 
 
 git diff --stat 227313141dd2ccc972ff61eab72ee9e3a2829a09 8c54719c6ae89e4ef570c
+
+
+
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/AAAcivilACOambulance.ini -r 0..35
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/ACO.ini -r 0..35
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/WeightedDijkstraPheromon.ini -r 0..35
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/WeightedDijkstraTraffic.ini -r 0..35
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/manhattan.ini -r 0..35
+
+
+
+experiment-label = ""
+measurement-label = "${emergencyVehicles}${numberOfHospitals}${factor}${time}"
+replication-label = "seed-set=<seedset>"
