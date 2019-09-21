@@ -52,8 +52,9 @@ void Traffic::decay(int i,int w) {
 		traffic[i]-=w;
 }
 /*
- * La formula è stata inventata "a mente"
+ * return the traffic influence corresponding to the current value
+ * y = 0.05x
  */
 double Traffic::trafficInfluence(int i) {
-	return traffic[i] * 0.05; // y = 0.05x + 1
+	return traffic[i] * 0.05;
 }

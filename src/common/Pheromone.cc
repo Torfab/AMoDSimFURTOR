@@ -37,7 +37,7 @@ double Pheromone::getPheromoneDecayTime() const {
 	return pheromoneDecayTime;
 }
 /**
- * Increase pheromone value by one.
+ * Increase pheromone value by weight value.
  */
 void Pheromone::increasePheromone(int i, int weight) {
 	pheromone[i] = pheromone[i] + weight;
