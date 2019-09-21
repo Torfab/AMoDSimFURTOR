@@ -59,7 +59,7 @@ simple BaseCoord like ICoord
 		@signal[signal_civilEvacuated](type="int");       
         @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,stats;interpolation=none);
 		
-		@signal[differenceFromRequestToPickup](type="int");       
+		@signal[differenceFromRequestToPickup](type="double");       
       	@statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
 
         @signal[emergencyRequest](type="int");       
