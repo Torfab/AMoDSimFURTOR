@@ -26,7 +26,7 @@ public:
 	Traffic();
 	virtual ~Traffic();
 
-	void increaseTraffic(int i, int w);
+	void increaseTraffic(int index, int w);
 	const double getTraffic(int i) const;
 	int getNumberOfGates() const;
 

@@ -32,8 +32,8 @@ Traffic::Traffic() {
  * i index of vector
  * w traffic weight of the vehicle to increase
  */
-void Traffic::increaseTraffic(int i, int w) {
-	traffic[i]+=w;
+void Traffic::increaseTraffic(int index, int weight) {
+	traffic[index]+=weight;
 }
 const double Traffic::getTraffic(int i) const {
 	return traffic[i];
@@ -48,13 +48,13 @@ int Traffic::getNumberOfGates() const {
  * i index of vector
  * w traffic weight of the vehicle to increase
  */
-void Traffic::decay(int i,int w) {
-		traffic[i]-=w;
+void Traffic::decay(int index,int weight) {
+		traffic[index]-=weight;
 }
 /*
  * return the traffic influence corresponding to the current value
  * y = 0.05x
  */
-double Traffic::trafficInfluence(int i) {
-	return traffic[i] * 0.05;
+double Traffic::trafficInfluence(int index) {
+	return traffic[index] * 0.05;
 }
