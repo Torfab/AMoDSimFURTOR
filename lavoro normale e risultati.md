@@ -21,21 +21,14 @@
 
 # TODONEXTTIME:
 
-10. autobus: punti di raccolta taxi ride sharing
-	gli autobus girano per tutti i nodi della redzone
-	i nodi hanno un certo numero di persone raccolte da salvare
-	gli autobus raccolgono le persone e le scaricano al punto di raccolta
-	riprendono il circuito e si fermano quando non trovano più nessuno
-
 
 pulizia initialize app (e netmanager)
 	codice obsoleto
 
 chiedere come comportarsi con le fonti / bibliografia
+La tesi di andrea può andare in bibliografia?
 
-truckdelaytraveltime è rotto
 
-capire come scrivere la legenda pulita
 
 scrivere la tesi
 
@@ -238,7 +231,7 @@ per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini  -g
 
 
-opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..10
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..110
 
 opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Tkenv -f simulations/omnetpp.ini -r 0
 
@@ -250,7 +243,7 @@ Cmdenv omnet fornisce 2 environment - questo è da riga di comando
 -r 0..1727 num di simulazioni
 
 filter basic
-name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*) || name(signal_ambulanceTravelTime*)  
+name(differenceFrom*) || name(emergencyRequest*) || name(redCodeRequest*) || name(signal_ambulanceTravelTime*) 
 name(differenceFromRedCodeRequestToPickup:stats:max)
 
 
@@ -266,14 +259,11 @@ git diff --stat 227313141dd2ccc972ff61eab72ee9e3a2829a09 8c54719c6ae89e4ef570c
 
 
 
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/AAAcivilACOambulance.ini -r 0..35
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/ACO.ini -r 0..35
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/WeightedDijkstraPheromon.ini -r 0..35
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/WeightedDijkstraTraffic.ini -r 0..35
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/manhattan.ini -r 0..35
-
-
-
 experiment-label = ""
 measurement-label = "${emergencyVehicles}${numberOfHospitals}${factor}${time}"
 replication-label = "seed-set=<seedset>"
+
+
+
+
+
