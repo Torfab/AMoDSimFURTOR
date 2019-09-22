@@ -31,7 +31,6 @@ protected:
     int numberOfCollectionPoints;
     int numberOfStoragePoints;
     int numberOfEpicenters;
-    int disasterRadius;
 
     int startingChannelWeight;
 
@@ -100,9 +99,6 @@ public:
         }
     }
 
-	int getDisasterRadius() const {
-		return disasterRadius;
-	}
 
 	inline virtual const std::set<int>& getSetOfBorderNodes() const {
 		return setOfBorderNodes;
