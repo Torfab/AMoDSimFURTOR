@@ -5,7 +5,7 @@ simple BaseCoord like ICoord
 {
     parameters:
         double minTripLength @unit(m) = default(1000m);
-        int requestAssignmentStrategy = default(0); //Allowed are: 0(MinCost) - 1(MinWaitingTime)
+        int requestAssignmentStrategy = default(0);
         
         @display("i=block/cogwheel_s");
         
@@ -67,7 +67,7 @@ simple BaseCoord like ICoord
        
 		@signal[decayPheromoneValue](type="double");
 		
-		@signal[differenceFromRedCodeRequestToPickup](type="int");       
+		@signal[differenceFromRedCodeRequestToPickup](type="double");       
         @statistic[differenceFromRedCodeRequestToPickup](title="Difference From Red code Emergency request creation To Pickup";source="differenceFromRedCodeRequestToPickup";record=vector,stats;interpolation=none);
 		
 		@signal[redCodeRequest](type="int");       
