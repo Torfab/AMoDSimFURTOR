@@ -40,3 +40,4 @@ Makefile
 .cproject
 simulations/.tkenvlog
 *.vec
+*.7z

@@ -57,13 +57,13 @@ simple BaseCoord like ICoord
 		//@statistic[freeVehiclesPerTime](title="Free Vehicles Per Time";source="freeVehiclesPerTime";record=vector;interpolationmode=none);
 	
 		@signal[signal_civilEvacuated](type="int");       
-        @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,stats;interpolation=none);
+        @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,count;interpolation=none);
 		
-		@signal[differenceFromRequestToPickup](type="int");       
+		@signal[differenceFromRequestToPickup](type="double");       
       	@statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
 
         @signal[emergencyRequest](type="int");       
-        @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,stats;interpolation=none);
+        @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,count;interpolation=none);
        
 		@signal[decayPheromoneValue](type="double");
 		
@@ -71,15 +71,15 @@ simple BaseCoord like ICoord
         @statistic[differenceFromRedCodeRequestToPickup](title="Difference From Red code Emergency request creation To Pickup";source="differenceFromRedCodeRequestToPickup";record=vector,stats;interpolation=none);
 		
 		@signal[redCodeRequest](type="int");       
-        @statistic[redCodeRequest](title="Red codeEmergency requests in time";source="redCodeRequest";record=vector,stats;interpolation=none);
+        @statistic[redCodeRequest](title="Red codeEmergency requests in time";source="redCodeRequest";record=vector,count;interpolation=none);
        
 		@signal[signal_noVehicle](type="int");       
-        @statistic[signal_noVehicle](title="Requests lost in time";source="signal_noVehicle";record=vector,stats;interpolation=none);
+        @statistic[signal_noVehicle](title="Requests lost in time";source="signal_noVehicle";record=vector,count;interpolation=none);
         
       	@signal[truckRequest](type="int");       
-        @statistic[truckRequest](title="Number of truck request in time";source="truckRequest";record=vector,stats;interpolation=none); 
+        @statistic[truckRequest](title="Number of truck request in time";source="truckRequest";record=vector,count;interpolation=none); 
           
       	@signal[pickupEmergencies](type="int");       
-        @statistic[pickupEmergencies](title="Number of pickups emergencies";source="pickupEmergencies";record=vector,stats;interpolation=none); 
+        @statistic[pickupEmergencies](title="Number of pickups emergencies";source="pickupEmergencies";record=vector,count;interpolation=none); 
        
 }
