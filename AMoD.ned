@@ -6,8 +6,8 @@ import ned.DatarateChannel;
 network AMoD
 {
 	parameters:
-	    //------Traffico-----
-	    double pheromoneDecayFactor = default(0.1);  			// 10% 	Feromone decay factor
+	    //------Pheromone-----
+	    double pheromoneDecayFactor = default(0.1);  		// 10% 	Feromone decay factor
 	    double pheromoneDecayTime @unit(s) = default(600s); // Feromone increase factor
 	    
 	    
