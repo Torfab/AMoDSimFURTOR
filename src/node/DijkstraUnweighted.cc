@@ -18,9 +18,9 @@
 #include "Pheromone.h"
 #include "Traffic.h"
 
-Define_Module(ManhattanRouting);
+Define_Module(DijkstraUnweighted);
 
-void ManhattanRouting::initialize() {
+void DijkstraUnweighted::initialize() {
 
 	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
@@ -65,13 +65,13 @@ void ManhattanRouting::initialize() {
 	simulation.getSystemModule()->subscribe("decayPheromoneValue", this);
 }
 
-ManhattanRouting::~ManhattanRouting() {
+DijkstraUnweighted::~DijkstraUnweighted() {
 	delete pheromone;
 	delete pheromoneEmergency;
 	delete traffic;
 }
 
-void ManhattanRouting::handleMessage(cMessage *msg) {
+void DijkstraUnweighted::handleMessage(cMessage *msg) {
 
 	Vehicle *pk = check_and_cast<Vehicle *>(msg);
 	int destAddr = pk->getDestAddr();
@@ -174,7 +174,7 @@ void ManhattanRouting::handleMessage(cMessage *msg) {
 		pk->setHopCount(pk->getHopCount() + 1);
 	}
 }
-void ManhattanRouting::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
+void DijkstraUnweighted::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
 		// Emit pheromone signal

@@ -1,6 +1,6 @@
  package src.node;
 
-simple WeightedDijkstraPheromon like IRouting
+simple DijkstraTraffic like IRouting
 {
     parameters:
         // ------ SIGNALS -------- //

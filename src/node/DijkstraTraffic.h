@@ -20,11 +20,8 @@
 #include "Pheromone.h"
 #include "Traffic.h"
 #include "AbstractNetworkManager.h"
-#include "BaseCoord.h"
 
-
-
-class WeightPheromonCivil_UnweightAmbulances : public cSimpleModule,cListener
+class DijkstraTraffic : public cSimpleModule, cListener
 {
 private:
     int myAddress;
@@ -37,10 +34,11 @@ private:
 	// Feromone
 	double pheromoneDecayTime;
 	double pheromoneDecayFactor;
-	Pheromone *pheromone;
-	Pheromone *pheromoneEmergency;
 
 	simsignal_t decayPheromoneValue;
+	Pheromone *pheromone;
+
+	Pheromone *pheromoneEmergency;
 
 	// Traffico
 	Traffic *traffic;
@@ -57,7 +55,7 @@ private:
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-    virtual ~WeightPheromonCivil_UnweightAmbulances();
+    virtual ~DijkstraTraffic();
 	virtual void receiveSignal(cComponent *source, simsignal_t signalID, bool value);
 };
 

@@ -13,14 +13,14 @@
  ########################################################
  */
 
-#include "WeightedDijkstraPheromon.h"
+#include "AAAPheromone.h"
 #include "Vehicle.h"
 #include "Pheromone.h"
 #include "Traffic.h"
 
-Define_Module(WeightedDijkstraPheromon);
+Define_Module(AAAPheromone);
 
-void WeightedDijkstraPheromon::initialize() {
+void AAAPheromone::initialize() {
 	netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
 	signalFeromone = new simsignal_t[4];
@@ -72,14 +72,14 @@ void WeightedDijkstraPheromon::initialize() {
 
 }
 
-WeightedDijkstraPheromon::~WeightedDijkstraPheromon() {
+AAAPheromone::~AAAPheromone() {
 	delete pheromone;
 	delete pheromoneEmergency;
 	delete traffic;
 }
 
 
-void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
+void AAAPheromone::handleMessage(cMessage *msg) {
 
 
 
@@ -209,7 +209,7 @@ void WeightedDijkstraPheromon::handleMessage(cMessage *msg) {
 	}
 }
 
-void WeightedDijkstraPheromon::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
+void AAAPheromone::receiveSignal(cComponent* source, simsignal_t signalID, bool value) {
 	if (signalID == decayPheromoneValue) {
 		pheromone->decayPheromone();
 		// Emit pheromone signal

@@ -1,6 +1,6 @@
  package src.node;
 
-simple ManhattanRouting like IRouting
+simple DijkstraUnweighted like IRouting
 {
     parameters:
         // ------ SIGNALS -------- //

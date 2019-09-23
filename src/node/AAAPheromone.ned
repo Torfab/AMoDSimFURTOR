@@ -1,6 +1,6 @@
  package src.node;
 
-simple WeightPheromonCivil_UnweightAmbulances like IRouting
+simple AAAPheromone like IRouting
 {
     parameters:
         // ------ SIGNALS -------- //

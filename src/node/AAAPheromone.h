@@ -24,7 +24,7 @@
 
 
 
-class WeightedDijkstraPheromon : public cSimpleModule,cListener
+class AAAPheromone : public cSimpleModule,cListener
 {
 private:
     int myAddress;
@@ -57,7 +57,7 @@ private:
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-    virtual ~WeightedDijkstraPheromon();
+    virtual ~AAAPheromone();
 	virtual void receiveSignal(cComponent *source, simsignal_t signalID, bool value);
 };
 
