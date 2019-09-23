@@ -60,7 +60,7 @@ simple BaseCoord like ICoord
         @statistic[signal_civilEvacuated](title="Number of civil evacuated";source="signal_civilEvacuated";record=vector,count;interpolation=none);
 		
 		@signal[differenceFromRequestToPickup](type="double");       
-      	@statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,stats;interpolation=none);
+      	@statistic[differenceFromRequestToPickup](title="Difference From Emergency request creation To Pickup";source="differenceFromRequestToPickup";record=vector,mean;interpolation=none);
 
         @signal[emergencyRequest](type="int");       
         @statistic[emergencyRequest](title="Emergency requests in time";source="emergencyRequest";record=vector,count;interpolation=none);
@@ -68,7 +68,7 @@ simple BaseCoord like ICoord
 		@signal[decayPheromoneValue](type="double");
 		
 		@signal[differenceFromRedCodeRequestToPickup](type="double");       
-        @statistic[differenceFromRedCodeRequestToPickup](title="Difference From Red code Emergency request creation To Pickup";source="differenceFromRedCodeRequestToPickup";record=vector,stats;interpolation=none);
+        @statistic[differenceFromRedCodeRequestToPickup](title="Difference From Red code Emergency request creation To Pickup";source="differenceFromRedCodeRequestToPickup";record=vector,mean;interpolation=none);
 		
 		@signal[redCodeRequest](type="int");       
         @statistic[redCodeRequest](title="Red codeEmergency requests in time";source="redCodeRequest";record=vector,count;interpolation=none);

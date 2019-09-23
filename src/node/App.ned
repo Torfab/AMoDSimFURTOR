@@ -16,23 +16,23 @@ simple App like IApp
         
           // ------ SIGNALS -------- //
         @signal[signal_ambulanceDelayTravelTime](type="double");       	
-        @statistic[signal_ambulanceDelayTravelTime](title="Ambulances Delay between ideal time to serve a request and actual time to serve that request";source="signal_ambulanceDelayTravelTime";record=vector,stats;interpolation=none);
+        @statistic[signal_ambulanceDelayTravelTime](title="Ambulances Delay between ideal time to serve a request and actual time to serve that request";source="signal_ambulanceDelayTravelTime";record=vector,mean;interpolation=none);
 
         @signal[signal_truckTravelTime](type="double");       	
-        @statistic[signal_truckTravelTime](title="Truck time to serve a request";source="signal_truckTravelTime";record=vector,stats;interpolation=none);
+        @statistic[signal_truckTravelTime](title="Truck time to serve a request";source="signal_truckTravelTime";record=vector,mean;interpolation=none);
 
         @signal[signal_civilDelayTravelTime](type="double");       
-        @statistic[signal_civilDelayTravelTime](title="Civil Delay between ideal time to serve a request and actual time to serve that request";source="signal_civilDelayTravelTime";record=vector,stats;interpolation=none);
+        @statistic[signal_civilDelayTravelTime](title="Civil Delay between ideal time to serve a request and actual time to serve that request";source="signal_civilDelayTravelTime";record=vector,mean;interpolation=none);
         
         @signal[signal_ambulancesIdle](type="int");       
-        @statistic[signal_ambulancesIdle](title="Number of idle ambulances in hospital";source="signal_ambulancesIdle";record=vector,stats;interpolation=none);
+        @statistic[signal_ambulancesIdle](title="Number of idle ambulances in hospital";source="signal_ambulancesIdle";record=vector,mean;interpolation=none);
        
        
         @signal[signal_civilTravelTime](type="double");       
-        @statistic[signal_civilTravelTime](title="Civil travel time to reach the destination";source="signal_civilTravelTime";record=vector,stats;interpolation=none);
+        @statistic[signal_civilTravelTime](title="Civil travel time to reach the destination";source="signal_civilTravelTime";record=vector,mean;interpolation=none);
     
    		@signal[signal_ambulanceTravelTime](type="double");       
-        @statistic[signal_ambulanceTravelTime](title="Ambulance travel time to serve a request";source="signal_ambulanceTravelTime";record=vector,stats;interpolation=none);
+        @statistic[signal_ambulanceTravelTime](title="Ambulance travel time to serve a request";source="signal_ambulanceTravelTime";record=vector,mean;interpolation=none);
 
 
     gates:
