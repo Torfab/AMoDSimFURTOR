@@ -281,8 +281,11 @@ void App::handleMessage(cMessage *msg) {
 
 		// reset times
 		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+
+		if(nextStopPoint->getIsPickup()){
 		vehicle->setCurrentTraveledTime(0);
 		vehicle->setHopCount(0);
+		}
 
 		//Time for boarding or drop-off passengers
 
