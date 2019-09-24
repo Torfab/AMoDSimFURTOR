@@ -61,11 +61,11 @@ network AMoD
         netmanager: <netmanagerType> like INetworkManager{
             parameters:
                 numberOfNodes = height * width;
-        	@display("p=800,50");
+        	@display("p=99800,50");
         }
                 
         tcoord: <coordType> like ICoord{
-            @display("p=600,50");
+            @display("p=99600,50");
         }
                 
         n[height*width]: Node {
