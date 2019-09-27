@@ -105,6 +105,11 @@ private:
         typedef std::map<int,TripRequest*> PendingRequests; //requestID/request
         PendingRequests pendingRequests;
 
+        typedef std::list<StopPoint*> PendingStopPoints;
+	    PendingStopPoints PendingStopPoints;
+	    typedef std::list<StopPoint*> PendingRedStopPoints;
+		PendingRedStopPoints PendingRedStopPoints;
+
     	simsignal_t signal_civilEvacuated;
         int civilCounter;
 

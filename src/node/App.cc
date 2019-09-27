@@ -295,6 +295,20 @@ void App::handleMessage(cMessage *msg) {
 
 	//No other stop point for the vehicle. The vehicle stay here and it is registered in the node
 	else {
+		//TODO: chiede al coordinatore se ha richieste rosse
+		if (tcoord->checkPendingRedStopPoints()) {
+			// se si ne prende una e parte
+			tcoord->pickOnePendingRedStopPoints();
+		}
+		else if (tcoord->checkPendingStopPoints()) {
+			// se si ne prende una e parte
+			for (int i =0 ; i < vehicle->getSeats(); i++)
+				if (tcoord->pickOnePendingStopPoints() != NULL)
+			tcoord->pickOnePendingStopPoints();
+		}
+		// chiede al coordinatore se ha richieste normali pending
+			// se si ne prende fino a max seat e parte
+
 		EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
 		tcoord->registerVehicle(vehicle, myAddress);
 
