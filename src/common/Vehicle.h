@@ -57,7 +57,7 @@ class Vehicle: public Packet {
         virtual double getOptimalEstimatedTravelTime() const;
         virtual void setOptimalEstimatedTravelTime(double optimalEstimatedTravelTime);
         virtual double getAcceleration() const;
-	void setSpecialVehicle(int specialVehicle);
+        void setSpecialVehicle(int specialVehicle);
 };
 
 #endif /* VEHICLE_H_ */
