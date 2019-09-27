@@ -231,7 +231,7 @@ per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini  -g
 
 
-opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..110
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..179
 
 opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Tkenv -f simulations/omnetpp.ini -r 0
 
@@ -267,3 +267,4 @@ replication-label = "seed-set=<seedset>"
 
 
 
+opp_runall -j3 ./AMoD_Simulator -c General -u Cmdenv -f simulations/VariRouting.ini -r 0..4
