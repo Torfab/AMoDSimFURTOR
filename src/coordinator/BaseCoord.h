@@ -28,7 +28,7 @@
 class BaseCoord : public cSimpleModule, cListener{
 
 private:
-    virtual void updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spList, StopPoint *pickupSP);
+
 
     protected:
         double totrequests;
@@ -142,6 +142,8 @@ private:
          void updateTopology();
         virtual void handleMessage(cMessage *msg);
     public:
+        virtual void updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spList, StopPoint *pickupSP);
+
         virtual ~BaseCoord();
 		void emitEmergencyRequest();
 		void emitRedCodeEmergencyRequest();
@@ -160,6 +162,10 @@ private:
         virtual void evacuateCivil(int address);
         virtual void emitPickupEmergencies();
 
+        virtual bool checkPendingRedStopPoints();
+        virtual bool checkPendingStopPoints();
+        virtual StopPoint* pickOnePendingRedStopPoints();
+        virtual StopPoint* pickOnePendingStopPoints();
 
 };
 
