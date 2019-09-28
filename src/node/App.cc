@@ -303,7 +303,7 @@ void App::handleMessage(cMessage *msg) {
 			// se si ne prende una e parte
 			// update vehicle stoppoint di SpList + ospedale
 
-			SpList.push_back(tcoord->pickOnePendingRedStopPoints());
+			SpList.push_back(new StopPoint (*tcoord->pickOnePendingRedStopPoints()));
 			sp->setLocation(netmanager->pickClosestHospitalFromNode(SpList.back()->getLocation()));
 			sp->setRedCode(true);
 			SpList.push_back(sp);
@@ -315,7 +315,7 @@ void App::handleMessage(cMessage *msg) {
 			// se si ne prende una e parte
 			for (int i =0 ; i < vehicle->getSeats(); i++){
 				if (tcoord->pickOnePendingStopPoints() != NULL){
-					SpList.push_back(tcoord->pickOnePendingStopPoints());
+					SpList.push_back(new StopPoint (*tcoord->pickOnePendingStopPoints()));
 				}
 			}
 			// update vehicle stoppoint di SpList + ospedale
