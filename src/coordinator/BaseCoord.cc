@@ -244,11 +244,19 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		//TODO: va in coda al coordinatore
 		// la coda verrà smaltita dalla prima ambulanza libera
 		if (tr->getPickupSP()->isRedCode()){
-			pendingRedStopPoints.push_back(tr->getPickupSP());
+			pendingRedStopPoints.push_back(new StopPoint (&(tr->getPickupSP())));
+			EV << "RED PENDIng lista : ";
+			for (auto elem : pendingRedStopPoints){
+				EV << elem->getLocation() << endl;
+			}
 
 		}
 		else{
-			pendingStopPoints.push_back(tr->getPickupSP());
+			pendingStopPoints.push_back(new StopPoint (&(tr->getPickupSP())));
+			EV << "normali PENDIng lista : ";
+						for (auto elem : pendingStopPoints){
+							EV << elem->getLocation() << endl;
+						}
 		}
 //		uRequests[tr->getID()] = new TripRequest(*tr);
 //		delete tr;
@@ -338,9 +346,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       {
 		if (pickupSP->isRedCode()) {
 			for (auto &elem : rPerVehicle[vehicleID]) {
-				pendingRedStopPoints.push_front(elem); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+				pendingStopPoints.push_front(elem); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 			}
-			pendingRedStopPoints.pop_front(); //cancellato l'ospedale
+			pendingStopPoints.pop_front(); //cancellato l'ospedale
 		}
 
           //clean the old stop point list assigned to the vehicle
@@ -972,9 +980,10 @@ bool BaseCoord::checkPendingStopPoints() {
 StopPoint* BaseCoord::pickOnePendingRedStopPoints() {
 	StopPoint *sp = NULL;
 	if (!pendingRedStopPoints.empty()) {
-		sp = pendingRedStopPoints.front();
+		EV << " PENDING red SOTP POINT FRON " << pendingRedStopPoints.front()->getLocation() << endl;
+		sp =  new StopPoint (*pendingRedStopPoints.front()) ;
 		pendingRedStopPoints.pop_front();
-		EV << "picked red SP pending con reqID: " << sp->getRequestID() << endl;
+		EV << "picked red SP pending con location : " << sp->getLocation() << endl;
 	}
 	return sp;
 }
@@ -982,9 +991,10 @@ StopPoint* BaseCoord::pickOnePendingRedStopPoints() {
 StopPoint* BaseCoord::pickOnePendingStopPoints() {
 	StopPoint *sp = NULL;
 	if (!pendingStopPoints.empty()) {
-		sp = pendingStopPoints.front();
+		EV << " PENDING SOTP POINT FRON " << pendingStopPoints.front()->getLocation() << endl;
+		sp = new StopPoint (*pendingStopPoints.front()) ;
 		pendingStopPoints.pop_front();
-		EV << "picked SP pending con reqID: " << sp->getRequestID() << endl;
+		EV << "picked SP pending con location : " <<  sp->getLocation()<< endl;
 	}
 	return sp;
 }
