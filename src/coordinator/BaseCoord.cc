@@ -221,31 +221,34 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		int min = -1;
 		for (auto const &x : vehicleProposal) { /// Ricerca del minimo numero di hop
 			// hospital closest to last vehicle location
-			if (min == -1) min = x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) + 1;
-			if (x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),	tr->getPickupSP()->getLocation()) < min) {
+			if (min == -1)
+				min = x.second->getAdditionalCost() + 1;
+			if (x.second->getAdditionalCost() < min) {
 				vehicleID = x.first;
-				min = x.second->getAdditionalCost() + netmanager->getHopDistance(getLastVehicleLocation(x.first),tr->getPickupSP()->getLocation());
+				min = x.second->getAdditionalCost();
 			}
 		}
 
-    }
-    if (vehicleID != -1) {
-        EV << "Accepted request of emergency vehicle " << vehicleID << " for request: "
-                  << tr->getID() << " .The time cost is: " << additionalCost << endl;
+	}
+	if (vehicleID != -1) {
+		EV << "Accepted request of emergency vehicle " << vehicleID << " for request: " << tr->getID() << " .The time cost is: " << additionalCost << endl;
 
-        updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
-        EV << "stop points updated! " << endl;
-        for (auto elem : vehicleProposal[vehicleID]->getSpList())
-        	EV << elem->getLocation() << " code: " << elem->isRedCode() << " request: " << elem->getRequestID() <<   endl;
-    } else {
-        EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
-        emit(signal_noVehicle, 1);
+		updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(), getRequestPickup(vehicleProposal[vehicleID]->getSpList(), tr->getID()));
+		EV << "stop points updated! " << endl;
+		for (auto elem : vehicleProposal[vehicleID]->getSpList())
+			EV << elem->getLocation() << " code: " << elem->isRedCode() << " request: " << elem->getRequestID() << endl;
+	} else {
+		EV << "No vehicle in the system can serve the request " << tr->getID() << endl;
+		emit(signal_noVehicle, 1);
 
-        uRequests[tr->getID()] = new TripRequest(*tr);
-        delete tr;
-        return -1;
-    }
-    delete tr;
+		//TODO: va in coda al coordinatore
+		// la coda verra' smaltita dalla prima ambulanza libera
+
+		uRequests[tr->getID()] = new TripRequest(*tr);
+		delete tr;
+		return -1;
+	}
+	delete tr;
 
     return vehicleID;
 }
