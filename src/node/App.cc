@@ -242,10 +242,13 @@ void App::handleMessage(cMessage *msg) {
 		if (netmanager->checkHospitalNode(myAddress)) {
 //			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
-
+			vehicle->setPassengers(0);
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
 
 		}
+		else{
+				vehicle->setPassengers(vehicle->getPassengers()+1);
+			}
 
 		break;
 	case 2: //truck
