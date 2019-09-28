@@ -240,16 +240,14 @@ void App::handleMessage(cMessage *msg) {
 
 	case 1:	//ambulance
 		if (netmanager->checkHospitalNode(myAddress)) {
+//			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
-			vehicle->setPassengers(0);
+
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
 
 		}
-		else{
-			vehicle->setPassengers(vehicle->getPassengers()++);
-		}
-		break;
 
+		break;
 	case 2: //truck
 		emit(signal_truckTravelTime, vehicle->getCurrentTraveledTime());    //number of average delay for each node compared to no traffic roads
 		EV << "Truck actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " estimated: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
@@ -290,43 +288,26 @@ void App::handleMessage(cMessage *msg) {
 		}
 
 		//Time for boarding or drop-off passengers
+
+
 		sendDelayed(vehicle, sendDelayTime, "out");     //if there is another stop point send after sendDelayTime
 	}
 
 	//No other stop point for the vehicle. The vehicle stay here and it is registered in the node
 	else {
-        std::list<StopPoint*> SpList;
-
-		StopPoint* sp = new StopPoint();
 		//TODO: chiede al coordinatore se ha richieste rosse
 		if (tcoord->checkPendingRedStopPoints()) {
 			// se si ne prende una e parte
-			// update vehicle stoppoint di SpList + ospedale
-
-			SpList.push_back(tcoord->pickOnePendingRedStopPoints());
-			sp->setLocation(netmanager->pickClosestHospitalFromNode(SpList.back()->getLocation()));
-			sp->setRedCode(true);
-			SpList.push_back(sp);
-
+			tcoord->pickOnePendingRedStopPoints();
+		}
+		else if (tcoord->checkPendingStopPoints()) {
+			// se si ne prende una e parte
+			for (int i =0 ; i < vehicle->getSeats(); i++)
+				if (tcoord->pickOnePendingStopPoints() != NULL)
+			tcoord->pickOnePendingStopPoints();
 		}
 		// chiede al coordinatore se ha richieste normali pending
 			// se si ne prende fino a max seat e parte
-		else if (tcoord->checkPendingStopPoints()) {
-			// se si ne prende una e parte
-			for (int i =0 ; i < vehicle->getSeats(); i++){
-				if (tcoord->pickOnePendingStopPoints() != NULL){
-					SpList.push_back(tcoord->pickOnePendingStopPoints());
-				}
-			}
-			// update vehicle stoppoint di SpList + ospedale
-			sp->setLocation(netmanager->pickClosestHospitalFromNode(SpList.back()->getLocation()));
-			SpList.push_back(sp);
-		}
-
-		//update the vehicle stop points
-		if (!SpList.empty())
-			tcoord->updateVehicleStopPoints(vehicle->getID(), SpList,SpList.back());
-
 
 		EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
 		tcoord->registerVehicle(vehicle, myAddress);

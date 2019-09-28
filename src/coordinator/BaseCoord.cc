@@ -332,9 +332,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       {
 		if (pickupSP->isRedCode()) {
 			for (auto &elem : rPerVehicle[vehicleID]) {
-				PendingStopPoints.push_front(elem); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+				PendingStopPoints.push_front(elem);
 			}
-			PendingStopPoints.pop_front(); //cancellato l'ospedale
+			PendingStopPoints.pop_front();
 		}
 
           //clean the old stop point list assigned to the vehicle
@@ -953,32 +953,4 @@ void BaseCoord::emitRedCodeEmergencyRequest() {
 void BaseCoord::emitPickupEmergencies() {
 	pickupEmergenciesCount++;
 	emit(pickupEmergencies, pickupEmergenciesCount);
-}
-
-bool BaseCoord::checkPendingRedStopPoints() {
-	return !PendingRedStopPoints.empty();
-}
-
-bool BaseCoord::checkPendingStopPoints() {
-	return !PendingStopPoints.empty();
-}
-
-StopPoint* BaseCoord::pickOnePendingRedStopPoints() {
-	StopPoint sp = NULL;
-	if (!PendingRedStopPoints.empty()) {
-		sp = PendingRedStopPoints.front();
-		PendingRedStopPoints.pop_front();
-		EV << "picked red SP pending con reqID: " << sp.getRequestID() << endl;
-	}
-	return sp;
-}
-
-StopPoint* BaseCoord::pickOnePendingStopPoints() {
-	StopPoint sp = NULL;
-	if (!PendingStopPoints.empty()) {
-		sp = PendingStopPoints.front();
-		PendingStopPoints.pop_front();
-		EV << "picked SP pending con reqID: " << sp.getRequestID() << endl;
-	}
-	return sp;
 }
