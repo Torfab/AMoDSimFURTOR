@@ -322,3 +322,7 @@ std::list<double> HeuristicCoord::getResidualTime(std::list<StopPoint*> spl, int
 	return residuals;
 }
 
+StopPointOrderingProposal* HeuristicCoord::eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) {
+	return nullptr;
+}
+

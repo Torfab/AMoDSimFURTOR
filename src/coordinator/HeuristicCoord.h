@@ -31,6 +31,7 @@ protected:
     StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) override;
     StopPointOrderingProposal* eval_RedCodeEmergencyRequestAssignment(int vehicleID, TripRequest* newTR) override;
     StopPointOrderingProposal* eval_Assignment(int vehicleID, TripRequest* newTR) override;
+    StopPointOrderingProposal* eval_EmergencyRequestAssignment(int vehicleID, TripRequest* newTR) override;
 };
 
 #endif /* HEURISTICCOORD_H_ */
