@@ -49,7 +49,7 @@ void RideSharingCoord::handleTripRequest(TripRequest *tr) {
 			if (x.first->getSpecialVehicle() == 1) { //the vehicle considered is an ambulance
 
 				//Evaluate the request considering the vehicle
-				StopPointOrderingProposal *tmp = eval_EmergencyRequestAssignment(x.first->getID(), tr);
+				StopPointOrderingProposal *tmp = eval_Assignment(x.first->getID(), tr);
 				if (tmp && !tmp->getSpList().empty()) {
 					vehicleProposals[x.first->getID()] = tmp;
 				}
@@ -136,103 +136,6 @@ StopPointOrderingProposal* RideSharingCoord::eval_RedCodeEmergencyRequestAssignm
 
 	return toReturn;
 }
-
-
-
-StopPointOrderingProposal* RideSharingCoord::eval_EmergencyRequestAssignment(int vehicleID, TripRequest* tr) {
-
-	std::list<StopPoint*> old = rPerVehicle[vehicleID];
-	std::list<StopPoint*> newList;
-	StopPoint* newTRpickup = new StopPoint(*tr->getPickupSP());
-	StopPoint* newTRdropoff = new StopPoint(*tr->getDropoffSP());
-
-	newTRpickup->setRedCode(false);
-	newTRdropoff->setRedCode(false);
-
-	StopPointOrderingProposal* toReturn = NULL;
-
-	double additionalCost = -1;
-	double timeToPickup = 0;
-
-	//The vehicle has already a red code request or is full
-	if (!old.empty()){
-		if ((getVehicleByID(vehicleID)->getPassengers()+old.size()) == getVehicleByID(vehicleID)->getSeats()+1 || (old.back()->isRedCode())  ) {
-				EV << " The vehicle " << vehicleID << " can not serve the Request " << tr->getID() << endl;
-				delete newTRpickup;
-				delete newTRdropoff;
-				return toReturn;
-			}
-
-		else if ((getVehicleByID(vehicleID)->getPassengers()+old.size()) < getVehicleByID(vehicleID)->getSeats()+1){
-
-			EV << " The vehicle " << vehicleID << " is able to accept the request " << endl;
-
-			StopPoint *last = new StopPoint(*old.back());
-
-			additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation());
-
-			std::list<StopPoint*>::iterator it1, it2;
-			for (it1 = old.begin(),	it2 = ++old.begin(); it2 != old.end(); ++it1, ++it2) {
-				additionalCost += netmanager->getHopDistance((*it1)->getLocation(), (*it2)->getLocation());
-
-			}
-			additionalCost += netmanager->getHopDistance((*it1)->getLocation(), newTRpickup->getLocation());
-			additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
-
-			EV << " Total cost " << additionalCost << " for Request " << tr->getID() << endl;
-
-			//add old sp without hospitals
-			for (auto const &x : old){
-				if (!netmanager->checkHospitalNode(x->getLocation()))
-					newList.push_back(new StopPoint(*x));
-			}
-
-
-			newList.push_back(newTRpickup);
-			newList.push_back(newTRdropoff);
-
-			toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
-
-			//vecchi stoppoint tranne ultimo ospedale
-			//aggiungere nuovo sp e ospedale
-
-			//it2 ospedale stop
-			/**
-			 * push fino a it1
-			 * aggiungere i nuovi due
-			 */
-
-			//costo: somma strade vecchi sp tranne ospedale
-			//aggiunge tratte posto nuovo sp
-			//nuovo sp ospedale
-
-		}
-
-	}
-	else{
-		//The vehicle is empty
-		// request is from getLastVehicleLocation to the trip request location
-		additionalCost = netmanager->getHopDistance(getLastVehicleLocation(vehicleID), newTRpickup->getLocation());
-		additionalCost += netmanager->getHopDistance(newTRpickup->getLocation(), newTRdropoff->getLocation());
-
-		EV << "Vehicle[" << vehicleID << "]: Cost to operate :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
-		EV << "COST :" << additionalCost << " FROM " << getLastVehicleLocation(vehicleID) << " to " << newTRpickup->getLocation() << endl;
-
-
-		newList.push_back(newTRpickup);
-		newList.push_back(newTRdropoff);
-
-		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
-	}
-
-
-		//old size = passgeri che prendo + passegeri a bordo = richieste + 1 ospedale
-		// se succede non posso
-	return toReturn;
-
-}
-
-
 
 /**
  * Evaluates a truck or emergency request
