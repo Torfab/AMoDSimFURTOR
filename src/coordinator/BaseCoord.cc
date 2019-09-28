@@ -244,6 +244,21 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		//TODO: va in coda al coordinatore
 		// la coda verra' smaltita dalla prima ambulanza libera
 
+		if (tr->getIsSpecial()==3) { //red code request
+			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+			EV << "RED PENDIng lista : ";
+			for (auto elem : pendingRedStopPoints) {
+				EV << elem->getLocation() << endl;
+			}
+
+		} else {
+			pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+			EV << "normali PENDIng lista : ";
+			for (auto elem : pendingStopPoints) {
+				EV << elem->getLocation() << endl;
+			}
+		}
+
 		uRequests[tr->getID()] = new TripRequest(*tr);
 		delete tr;
 		return -1;
