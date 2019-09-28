@@ -243,9 +243,15 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 
 		//TODO: va in coda al coordinatore
 		// la coda verrà smaltita dalla prima ambulanza libera
+		if (tr->getPickupSP()->isRedCode()){
+			pendingRedStopPoints.push_back(tr->getPickupSP());
 
-		uRequests[tr->getID()] = new TripRequest(*tr);
-		delete tr;
+		}
+		else{
+			pendingStopPoints.push_back(tr->getPickupSP());
+		}
+//		uRequests[tr->getID()] = new TripRequest(*tr);
+//		delete tr;
 		return -1;
 	}
 	delete tr;
@@ -332,9 +338,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       {
 		if (pickupSP->isRedCode()) {
 			for (auto &elem : rPerVehicle[vehicleID]) {
-				PendingStopPoints.push_front(elem); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+				pendingRedStopPoints.push_front(elem); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 			}
-			PendingStopPoints.pop_front(); //cancellato l'ospedale
+			pendingRedStopPoints.pop_front(); //cancellato l'ospedale
 		}
 
           //clean the old stop point list assigned to the vehicle
@@ -956,29 +962,29 @@ void BaseCoord::emitPickupEmergencies() {
 }
 
 bool BaseCoord::checkPendingRedStopPoints() {
-	return !PendingRedStopPoints.empty();
+	return !pendingRedStopPoints.empty();
 }
 
 bool BaseCoord::checkPendingStopPoints() {
-	return !PendingStopPoints.empty();
+	return !pendingStopPoints.empty();
 }
 
 StopPoint* BaseCoord::pickOnePendingRedStopPoints() {
-	StopPoint sp = NULL;
-	if (!PendingRedStopPoints.empty()) {
-		sp = PendingRedStopPoints.front();
-		PendingRedStopPoints.pop_front();
-		EV << "picked red SP pending con reqID: " << sp.getRequestID() << endl;
+	StopPoint *sp = NULL;
+	if (!pendingRedStopPoints.empty()) {
+		sp = pendingRedStopPoints.front();
+		pendingRedStopPoints.pop_front();
+		EV << "picked red SP pending con reqID: " << sp->getRequestID() << endl;
 	}
 	return sp;
 }
 
 StopPoint* BaseCoord::pickOnePendingStopPoints() {
-	StopPoint sp = NULL;
-	if (!PendingStopPoints.empty()) {
-		sp = PendingStopPoints.front();
-		PendingStopPoints.pop_front();
-		EV << "picked SP pending con reqID: " << sp.getRequestID() << endl;
+	StopPoint *sp = NULL;
+	if (!pendingStopPoints.empty()) {
+		sp = pendingStopPoints.front();
+		pendingStopPoints.pop_front();
+		EV << "picked SP pending con reqID: " << sp->getRequestID() << endl;
 	}
 	return sp;
 }

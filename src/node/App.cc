@@ -246,7 +246,7 @@ void App::handleMessage(cMessage *msg) {
 
 		}
 		else{
-			vehicle->setPassengers(vehicle->getPassengers()++);
+			vehicle->setPassengers(vehicle->getPassengers() +1);
 		}
 		break;
 
@@ -303,7 +303,7 @@ void App::handleMessage(cMessage *msg) {
 			// se si ne prende una e parte
 			// update vehicle stoppoint di SpList + ospedale
 
-			SpList.push_back(tcoord->pickOnePendingRedStopPoints());
+			SpList.push_back(new StopPoint (*tcoord->pickOnePendingRedStopPoints()));
 			sp->setLocation(netmanager->pickClosestHospitalFromNode(SpList.back()->getLocation()));
 			sp->setRedCode(true);
 			SpList.push_back(sp);
@@ -315,7 +315,7 @@ void App::handleMessage(cMessage *msg) {
 			// se si ne prende una e parte
 			for (int i =0 ; i < vehicle->getSeats(); i++){
 				if (tcoord->pickOnePendingStopPoints() != NULL){
-					SpList.push_back(tcoord->pickOnePendingStopPoints());
+					SpList.push_back(new StopPoint (*tcoord->pickOnePendingStopPoints()));
 				}
 			}
 			// update vehicle stoppoint di SpList + ospedale
@@ -365,7 +365,7 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
 				StopPoint* sp = tcoord->getNewAssignedStopPoint(vehicle->getID());
 				EV << "The proposal of vehicle: " << vehicle->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
 				vehicle->setSrcAddr(myAddress);
-				vehicle->setDestAddr(sp->getLocation());
+				vehicle->setDestAddr(5);
 
 				// reset times
 				vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, sp->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
