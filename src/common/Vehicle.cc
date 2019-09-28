@@ -122,14 +122,6 @@ double Vehicle::getAcceleration() const {
 	return acceleration;
 }
 
-int Vehicle::getPassengers() const {
-	return passengers;
-}
-
-void Vehicle::setPassengers(int passengers) {
-	this->passengers = passengers;
-}
-
 void Vehicle::setSpecialVehicle(int specialVehicle) {
 	this->specialVehicle = specialVehicle;
 }
