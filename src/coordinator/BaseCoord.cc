@@ -245,14 +245,14 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial()==3) { //red code request
-			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+			pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(),tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
 			EV << "RED PENDIng lista : ";
 			for (auto elem : pendingRedStopPoints) {
 				EV << elem->getLocation() << endl;
 			}
 
 		} else {
-			pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+			pendingStopPoints.push_front(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(), tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
 			EV << "normali PENDIng lista : ";
 			for (auto elem : pendingStopPoints) {
 				EV << elem->getLocation() << endl;
@@ -346,6 +346,14 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       else
       {
           //clean the old stop point list assigned to the vehicle
+		if (pickupSP->isRedCode()) {
+			for (auto &elem : rPerVehicle[vehicleID]) {
+				EV <<  "la richiesta rossa ha spostato " << elem->getLocation() << endl;
+				if (!netmanager->checkHospitalNode(elem->getLocation()))
+				pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+			}
+		}
+
           cleanStopPointList(rPerVehicle[vehicleID]);
       }
 
