@@ -628,34 +628,6 @@ StopPoint* BaseCoord::getCurrentStopPoint(int vehicleID)
     if ((rPerVehicle.find(vehicleID) != rPerVehicle.end()) && !(rPerVehicle[vehicleID].empty()))
     {
         StopPoint *r = rPerVehicle[vehicleID].front();
-        updateStateElapsedTime(vehicleID, r->getActualNumberOfPassengers() - r->getNumberOfPassengers());
-
-        if(r->getIsPickup())
-        {
-            StopPoint *sPickup = new StopPoint(*r);
-            servedPickup[r->getRequestID()] = sPickup;
-            double tmp = (simTime().dbl()-r->getTime())/60;
-
-            totalPickedupRequests++;
-            emit(pickedupRequestsPerTime, totalPickedupRequests);
-            emit(waitingTime, tmp);
-                waitingTimeVector.push_back(tmp);
-        }
-        else
-        {
-            double att = (simTime().dbl() - servedPickup[r->getRequestID()]->getActualTime()); //ActualTripTime
-            double str = (netmanager->getTimeDistance(servedPickup[r->getRequestID()]->getLocation(), r->getLocation())) / att; //Trip Efficiency Ratio
-            totalDroppedoffRequest++;
-            emit(droppedoffRequestsPerTime, totalDroppedoffRequest);
-
-            double trip_distance = netmanager->getSpaceDistance(servedPickup[r->getRequestID()]->getLocation(), r->getLocation()) / 1000;
-            emit(actualTripTime, (att/60));
-                actualTripTimeVector.push_back((att/60));
-            emit(stretch, str);
-                stretchVector.push_back(str);
-            emit(tripDistance, trip_distance);
-                tripDistanceVector.push_back(trip_distance);
-        }
         return r;
     }
     return NULL;
