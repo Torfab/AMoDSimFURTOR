@@ -271,8 +271,3 @@ experiment-label = ""
 measurement-label = "${emergencyVehicles}${numberOfHospitals}${factor}${time}"
 replication-label = "seed-set=<seedset>"
 
-
-
-
-
-opp_runall -j3 ./AMoD_Simulator -c General -u Cmdenv -f simulations/VariRouting.ini -r 0..4
