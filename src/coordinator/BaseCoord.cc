@@ -356,9 +356,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 			for (auto &elem : rPerVehicle[vehicleID]) {
 				EV << "la richiesta rossa ha spostato " << elem->getLocation() << endl;
 				if (!netmanager->checkHospitalNode(elem->getLocation())) {
-					pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+					//pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 
-					/*int code;
+					int code;
 					 StopPoint *pickupSP = new StopPoint(*elem);
 
 					 StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
@@ -376,7 +376,7 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 					request->setIsSpecial(code);
 					 //emetti triprequest
 
-					 emit(tripRequest, request);*/
+					 emit(tripRequest, request);
 				}
 			}
 		}
@@ -1018,21 +1018,21 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 
 	int cost =0;
 	int min = -1;
-	UINT i;
+
 	// sort del vettore
 	std::sort(spVector.begin(), spVector.end());
-
-
 	//Calcola il minimo costo in hop per ogni permutazione tra le permutazioni degli stop point considerati
 	do {
-		cost = netmanager->getHopDistance(srcAddr, spVector[0]->getLocation());
-		EV << spVector[0]->getLocation() <<  "  cost: " << cost << " | ";
-		for ( i = 0; i < spVector.size()-1; i++){
-			cost+=netmanager->getHopDistance(spVector[i]->getLocation(), spVector[i+1]->getLocation() );
-			EV << spVector[i+1]->getLocation() << "  cost: " << cost << " | ";
+		cost = netmanager->getHopDistance(srcAddr, (*spVector.begin())->getLocation());
+		EV << (*spVector.begin())->getLocation() <<  "  cost: " << cost << " | ";
+
+		for (auto i = spVector.begin(), it2 = ++spVector.begin() ; i!=spVector.end(),it2 != spVector.end(); ++i, ++it2) {
+			cost+=netmanager->getHopDistance( (*i)->getLocation(), (*i)->getLocation() );
+			EV << (*it2)->getLocation() << "  cost: " << cost << " | ";
 		}
-		cost+=netmanager->getHopDistance(spVector[i]->getLocation(),netmanager->pickClosestHospitalFromNode(spVector[i]->getLocation()));
-		EV  << "H: " <<netmanager->pickClosestHospitalFromNode(spVector[i]->getLocation()) << "  COST: " << cost << endl;
+		StopPoint *last = *(spVector.begin()+(spVector.size()-1));
+		cost+=netmanager->getHopDistance(last->getLocation(),netmanager->pickClosestHospitalFromNode(last->getLocation()));
+		EV  << "H: " <<netmanager->pickClosestHospitalFromNode(last->getLocation()) << "  COST: " << cost << endl;
 
 		if (min == -1){
 			min = cost;
@@ -1047,11 +1047,11 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 
 
 	std::list<StopPoint*> spList; // inserimento permutazione col minimo costo in lista spList
-	for (i = 0; i < spVectorAux.size(); i++)
-		spList.push_back(spVectorAux[i]);
+	for ( auto const value : spVectorAux)
+		spList.push_back(value);
 
 	//aggiunta ospedale alla splist
-	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(spVectorAux[i-1]->getLocation()), false, simTime().dbl(), 0);
+	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode((*(spVector.begin()+(spVector.size()-1)))->getLocation()), false, simTime().dbl(), 0);
 	spList.push_back(hospital);
 
 	EV << "NEW LIST:";
