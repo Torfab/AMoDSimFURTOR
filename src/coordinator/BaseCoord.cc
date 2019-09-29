@@ -149,7 +149,7 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
       }
       else
       {
-          EV << "No vehicle in the system can serve the request " << tr->getID() << endl;
+          EV << "1 No vehicle in the system can serve the request " << tr->getID() << endl;
           uRequests[tr->getID()] = new TripRequest(*tr);
           delete tr;
           return -1;
@@ -189,7 +189,7 @@ int BaseCoord::truckAssignment(std::map<int, StopPointOrderingProposal*> vehicle
 
         updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
     } else {
-        EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
+        EV << "2 No vehicle in the system can serve the request " << tr->getID()<< endl;
         uRequests[tr->getID()] = new TripRequest(*tr);
         delete tr;
         return -1;
@@ -233,12 +233,12 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 	if (vehicleID != -1) {
 		EV << "Accepted request of emergency vehicle " << vehicleID << " for request: " << tr->getID() << " .The time cost is: " << additionalCost << endl;
 
-		updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(), getRequestPickup(vehicleProposal[vehicleID]->getSpList(), tr->getID()));
+		updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(), tr->getPickupSP());
 		EV << "stop points updated! " << endl;
 		for (auto elem : vehicleProposal[vehicleID]->getSpList())
 			EV << elem->getLocation() << " code: " << elem->isRedCode() << " request: " << elem->getRequestID() << endl;
 	} else {
-		EV << "No vehicle in the system can serve the request " << tr->getID() << endl;
+		EV << "3 No vehicle in the system can serve the request " << tr->getID() << endl;
 		emit(signal_noVehicle, 1);
 
 		//TODO: va in coda al coordinatore
@@ -315,7 +315,7 @@ int BaseCoord::minCostAssignment(std::map<int, StopPointOrderingProposal*> vehic
 
         updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(),getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
     } else {
-        EV << "No vehicle in the system can serve the request " << tr->getID()<< endl;
+        EV << "4 No vehicle in the system can serve the request " << tr->getID()<< endl;
         uRequests[tr->getID()] = new TripRequest(*tr);
         delete tr;
         return -1;
@@ -356,9 +356,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 			for (auto &elem : rPerVehicle[vehicleID]) {
 				EV << "la richiesta rossa ha spostato " << elem->getLocation() << endl;
 				if (!netmanager->checkHospitalNode(elem->getLocation())) {
-					pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+					//pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 
-					/*int code;
+					int code;
 					 StopPoint *pickupSP = new StopPoint(*elem);
 
 					 StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
@@ -376,7 +376,7 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 					request->setIsSpecial(code);
 					 //emetti triprequest
 
-					 emit(tripRequest, request);*/
+					 emit(tripRequest, request);
 				}
 			}
 		}
