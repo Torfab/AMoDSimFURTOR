@@ -245,14 +245,20 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial()==3) { //red code request
-			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(),tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
+			if (tr->isInFront())
+				pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
+			else
+				pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
 			EV << "RED PENDIng lista : ";
 			for (auto elem : pendingRedStopPoints) {
 				EV << elem->getLocation() << endl;
 			}
 
 		} else {
-			pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(), tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
+			if (tr->isInFront())
+				pendingStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
+			else
+				pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
 			EV << "normali PENDIng lista : ";
 			for (auto elem : pendingStopPoints) {
 				EV << elem->getLocation() << endl;
@@ -348,9 +354,25 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
           //clean the old stop point list assigned to the vehicle
 		if (pickupSP->isRedCode()) {
 			for (auto &elem : rPerVehicle[vehicleID]) {
-				EV <<  "la richiesta rossa ha spostato " << elem->getLocation() << endl;
-				if (!netmanager->checkHospitalNode(elem->getLocation()))
-				pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+				EV << "la richiesta rossa ha spostato " << elem->getLocation() << endl;
+				if (!netmanager->checkHospitalNode(elem->getLocation())) {
+					//pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+
+					int code;
+					StopPoint *pickupSP = new StopPoint(*elem);
+					StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
+
+					if (elem->isRedCode()) {
+						code = 3;
+						dropoffSP->setRedCode(true);
+					} else
+						code = 1;
+					//crea trip request in base al tipo di sp
+					TripRequest *request = new TripRequest(pickupSP, dropoffSP, code, true);
+					//emetti triprequest
+
+					emit(tripRequest, request);
+			}
 			}
 		}
 

@@ -34,8 +34,11 @@ protected:
     int distanceToPickup;
     int isSpecial;
 
+    bool inFront;
+
 public:
     TripRequest();
+    TripRequest(StopPoint* pickup, StopPoint* dropoff, int isSpecial , bool inFront);
     virtual ~TripRequest();
 
     TripRequest(const TripRequest& other);
@@ -53,6 +56,10 @@ public:
     virtual void setDistanceToPickup(int distanceToPickup);
     virtual int getIsSpecial() const;
     virtual void setIsSpecial(int isSpecial);
+
+	bool isInFront() const {
+		return inFront;
+	}
 };
 
 #endif /* TRIPREQUEST_H_ */
