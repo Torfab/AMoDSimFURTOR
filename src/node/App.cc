@@ -297,23 +297,13 @@ void App::handleMessage(cMessage *msg) {
 
 	//No other stop point for the vehicle. The vehicle stay here and it is registered in the node
 	else if (tcoord->checkPendingRedStopPoints()) {
-//		tcoord->pickOnePendingRedStopPoints(vehicle->getID());
-		EV << " checkPendingRedStopPoints" << endl;
 		tcoord->registerVehicle(vehicle, myAddress);
+		tcoord->pickPendingRedStopPoints(vehicle->getID(), myAddress);
+		EV << " checkPendingRedStopPoints" << endl;
+
 		//dire la destinazione e ip arametri
-		/*
-		vehicle->setSrcAddr(myAddress);
-		vehicle->setDestAddr(nextStopPoint->getLocation());
 
-		// reset times
-		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
 
-		if(nextStopPoint->getIsPickup()){
-		vehicle->setCurrentTraveledTime(0);
-		vehicle->setHopCount(0);
-		}
-		 */
-//		sendDelayed(vehicle, sendDelayTime, "out");
 	}
 	//TODO: chiede al coordinatore se ha richieste rosse
 
@@ -327,7 +317,7 @@ void App::handleMessage(cMessage *msg) {
 		EV << " checkPendingStopPoints" << endl;
 		// se si ne prende una e parte
         tcoord->registerVehicle(vehicle, myAddress);
-		tcoord->pickPendingStopPoints(vehicle->getID(), 4, myAddress);
+		tcoord->pickPendingStopPoints(vehicle->getID(), vehicle->getSeats(), myAddress); //vehicle->getSeats()
 
 		// chiede al coordinatore se ha richieste normali pending
 		// se si ne prende fino a max seat e parte

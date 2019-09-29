@@ -952,20 +952,36 @@ bool BaseCoord::checkPendingStopPoints() {
 	return !pendingStopPoints.empty();
 }
 
-StopPoint* BaseCoord::pickOnePendingRedStopPoints(int vehicleID) {
-	StopPoint *sp = NULL;
-	if (!pendingRedStopPoints.empty()) {
-		sp = pendingRedStopPoints.front();
-		pendingRedStopPoints.pop_front();
-		EV << "picked red SP pending con reqID: " << sp->getRequestID() << endl;
-	}
-	return sp;
+void BaseCoord::pickPendingRedStopPoints(int vehicleID, int srcAddr) {
+
+	StopPoint *sp = new StopPoint(*pendingRedStopPoints.front());
+	pendingRedStopPoints.pop_front();
+
+	sp->setRedCode(true);
+	std::list<StopPoint*> spList; // inserimento permutazione col minimo costo in lista spList
+	spList.push_back(sp);
+
+	//aggiunta ospedale alla splist
+	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(sp->getLocation()), false, simTime().dbl(), 0);
+	hospital->setRedCode(true);
+
+	spList.push_back(hospital);
+
+	EV << "NEW LIST:";
+	for (auto elem: spList)
+		EV << elem->getLocation() << " - ";
+	EV <<  " vehicle: " << vehicleID << endl;
+
+
+	updateVehicleStopPoints(vehicleID,spList,hospital);
+
 }
 
 void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 
 	std::vector<StopPoint*> spVector, spVectorAux;
 
+	// prende i primi seats elementi della lista pending
 	for (int i = 0;i<seats; i++){
 		if (!pendingStopPoints.empty()) {
 			spVector.push_back(new StopPoint(*pendingStopPoints.front()));
@@ -976,7 +992,10 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 	int cost =0;
 	int min = -1;
 	UINT i;
+	// sort del vettore
 	std::sort(spVector.begin(), spVector.end());
+
+	//Calcola il minimo costo in hop per ogni permutazione tra le permutazioni degli stop point considerati
 	do {
 		cost = netmanager->getHopDistance(srcAddr, spVector[0]->getLocation());
 		EV << spVector[0]->getLocation() <<  "  cost: " << cost << " | ";
@@ -998,16 +1017,15 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 
 	} while (std::next_permutation(spVector.begin(), spVector.end()));
 
-	//EV << " SP ORDINATI ";
-	std::list<StopPoint*> spList;
+
+	std::list<StopPoint*> spList; // inserimento permutazione col minimo costo in lista spList
 	for (i = 0; i < spVectorAux.size(); i++)
 		spList.push_back(spVectorAux[i]);
 
+	//aggiunta ospedale alla splist
 	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(spVectorAux[i-1]->getLocation()), false, simTime().dbl(), 0);
 	spList.push_back(hospital);
 
-		//		EV << spVectorAux[i]->getLocation() << "   ";
-		//	EV << "COST: " << min << endl;
 	EV << "NEW LIST:";
 	for (auto elem: spList)
 		EV << elem->getLocation() << " - ";

@@ -162,7 +162,7 @@ private:
         virtual void emitPickupEmergencies();
         virtual bool checkPendingRedStopPoints();
         virtual bool checkPendingStopPoints();
-        virtual StopPoint* pickOnePendingRedStopPoints(int vehicleID);
+        virtual void pickPendingRedStopPoints(int vehicleID, int srcAddr);
         virtual void pickPendingStopPoints(int vehicleID, int seats, int srcAddr);
 
 
