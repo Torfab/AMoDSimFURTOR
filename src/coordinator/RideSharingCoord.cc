@@ -140,7 +140,7 @@ StopPointOrderingProposal* RideSharingCoord::eval_RedCodeEmergencyRequestAssignm
 
 
 StopPointOrderingProposal* RideSharingCoord::eval_EmergencyRequestAssignment(int vehicleID, TripRequest* tr) {
-
+    EV<<"hello sono " <<vehicleID<< " e sto valutando"<<endl;
 	std::list<StopPoint*> old = rPerVehicle[vehicleID];
 	std::list<StopPoint*> newList;
 	StopPoint* newTRpickup = new StopPoint(*tr->getPickupSP());
@@ -206,6 +206,9 @@ StopPointOrderingProposal* RideSharingCoord::eval_EmergencyRequestAssignment(int
 			//aggiunge tratte posto nuovo sp
 			//nuovo sp ospedale
 
+		}else{
+
+
 		}
 
 	}
@@ -225,7 +228,7 @@ StopPointOrderingProposal* RideSharingCoord::eval_EmergencyRequestAssignment(int
 		toReturn = new StopPointOrderingProposal(vehicleID, vehicleID, additionalCost, timeToPickup, newList);
 	}
 
-
+	EV<< "passeggeri: " <<getVehicleByID(vehicleID)->getPassengers()<< " size delle richieste già presenti: "<<old.size()<<" sedie: "<< getVehicleByID(vehicleID)->getSeats()<< endl;
 		//old size = passgeri che prendo + passegeri a bordo = richieste + 1 ospedale
 		// se succede non posso
 	return toReturn;
