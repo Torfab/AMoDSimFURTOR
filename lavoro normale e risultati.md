@@ -45,7 +45,15 @@ strategie per la simulazione delle condizioni a contorno di un evento catastrofi
 
 * simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
+cosa tempocritica
+se c'è posto ok
+se non 'cè posto'
+	controlla il tempo che manca a tutti i veicoli (insieme)
+		quanto tempo aveva - da quiando è partito
+		ne sovrascrive una se è piu piccola e quella se ne va in coda rossa
 
+		la coda rossa non è una coda ma è una lista ordinata
+		l'ordinamento è per urgenza
 
 
 # TODO Importanti:
