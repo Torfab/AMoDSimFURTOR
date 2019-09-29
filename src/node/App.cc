@@ -326,23 +326,8 @@ void App::handleMessage(cMessage *msg) {
 
 		EV << " checkPendingStopPoints" << endl;
 		// se si ne prende una e parte
-
-		tcoord->pickPendingStopPoints(vehicle->getID(), 4, myAddress); //vehicle->getSeats()
-		nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
-
-		vehicle->setSrcAddr(myAddress);
-		vehicle->setDestAddr(nextStopPoint->getLocation());
-
-		// reset times
-		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
-
-		if(nextStopPoint->getIsPickup()){
-		vehicle->setCurrentTraveledTime(0);
-		vehicle->setHopCount(0);
-		}
-
-		sendDelayTime = computeAccelererationTime(vehicle->getSpeed(),vehicle->getAcceleration());
-		sendDelayed(vehicle, sendDelayTime, "out");
+        tcoord->registerVehicle(vehicle, myAddress);
+		tcoord->pickPendingStopPoints(vehicle->getID(), 4, myAddress);
 
 		// chiede al coordinatore se ha richieste normali pending
 		// se si ne prende fino a max seat e parte
