@@ -241,7 +241,7 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		EV << "3 No vehicle in the system can serve the request " << tr->getID() << endl;
 		emit(signal_noVehicle, 1);
 
-		//TODO: va in coda al coordinatore
+		//va in coda al coordinatore
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial()==3) { //red code request
