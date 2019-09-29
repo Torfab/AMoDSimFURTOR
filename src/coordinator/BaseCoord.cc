@@ -1036,6 +1036,11 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 
 		//		EV << spVectorAux[i]->getLocation() << "   ";
 		//	EV << "COST: " << min << endl;
+	EV << "NEW LIST:";
+	for (auto elem: spList)
+		EV << elem->getLocation() << " - ";
+	EV <<  " vehicle: " << vehicleID << endl;
+
 
 	updateVehicleStopPoints(vehicleID,spList,hospital);
 
