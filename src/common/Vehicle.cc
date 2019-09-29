@@ -26,6 +26,7 @@ Vehicle::Vehicle() {
     weight = 1;
     specialVehicle=0;
     currentTraveledTime = 0.0;
+    passengers=0;
     /**
      * default speed = 9.7 mps
      *  (35 km/h)
@@ -47,7 +48,7 @@ Vehicle::Vehicle(int specialVehicle, double speed, int Weight) {
     seats = 1;
     this->weight = Weight;
     this->specialVehicle=specialVehicle;
-
+    passengers=0;
     currentTraveledTime = 0.0;
     /**
      * default speed = 9.7 [mps]
@@ -63,7 +64,7 @@ Vehicle::Vehicle(int specialVehicle, double speed, int Weight, int seats) {
 	    this->seats = seats;
 	    this->weight = Weight;
 	    this->specialVehicle=specialVehicle;
-
+	    passengers=0;
 	    currentTraveledTime = 0.0;
 	    /**
 	     * default speed = 9.7 [mps]
