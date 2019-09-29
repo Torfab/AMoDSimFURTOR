@@ -167,7 +167,6 @@ void App::initialize() {
 
 			if (hospital) {
 				v = new Vehicle(1, ambulanceSpeed, 1, seatsPerVehicle);
-				v->setSeats(1);
 			} else if (storagePoint){
 				v = new Vehicle(2, truckSpeed, 20);
 				v->setSeats(0);
