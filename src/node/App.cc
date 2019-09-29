@@ -169,7 +169,7 @@ void App::initialize() {
 				v = new Vehicle(1, ambulanceSpeed, 1, seatsPerVehicle);
 			} else if (storagePoint){
 				v = new Vehicle(2, truckSpeed, 20);
-				v->setSeats(0);
+				v->setSeats(1);
 			}
 
             EV << "I am node " << myAddress << ". I HAVE THE VEHICLE "<< v->getID() << " of type " << v->getSpecialVehicle()<< ". It has " << v->getSeats() << " seats." << endl;
@@ -297,7 +297,8 @@ void App::handleMessage(cMessage *msg) {
 	//No other stop point for the vehicle. The vehicle stay here and it is registered in the node
 	else if (tcoord->checkPendingRedStopPoints()) {
 		tcoord->registerVehicle(vehicle, myAddress);
-		tcoord->pickPendingRedStopPoints(vehicle->getID(), myAddress);
+		if (vehicle->getSpecialVehicle() == 1)
+			tcoord->pickPendingRedStopPoints(vehicle->getID(), myAddress);
 		EV << " checkPendingRedStopPoints" << endl;
 
 		//dire la destinazione e ip arametri
@@ -316,7 +317,9 @@ void App::handleMessage(cMessage *msg) {
 		EV << " checkPendingStopPoints" << endl;
 		// se si ne prende una e parte
         tcoord->registerVehicle(vehicle, myAddress);
-		tcoord->pickPendingStopPoints(vehicle->getID(), vehicle->getSeats(), myAddress); //vehicle->getSeats()
+
+		if (vehicle->getSpecialVehicle() == 1)
+			tcoord->pickPendingStopPoints(vehicle->getID(), vehicle->getSeats(), myAddress); //vehicle->getSeats()
 
 		// chiede al coordinatore se ha richieste normali pending
 		// se si ne prende fino a max seat e parte
