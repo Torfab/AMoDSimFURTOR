@@ -167,7 +167,7 @@ StopPointOrderingProposal* RideSharingCoord::eval_EmergencyRequestAssignment(int
 
 			EV << " The vehicle " << vehicleID << " is able to accept the request " << endl;
 
-			StopPoint *last = new StopPoint(*old.back());
+//			StopPoint *last = new StopPoint(*old.back());
 
 			additionalCost = netmanager->getHopDistance(getVehicleByID(vehicleID)->getSrcAddr(), (*old.begin())->getLocation());
 

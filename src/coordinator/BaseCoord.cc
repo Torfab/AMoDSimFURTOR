@@ -245,14 +245,14 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial()==3) { //red code request
-			pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(),tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
+			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(),tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
 			EV << "RED PENDIng lista : ";
 			for (auto elem : pendingRedStopPoints) {
 				EV << elem->getLocation() << endl;
 			}
 
 		} else {
-			pendingStopPoints.push_front(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(), tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
+			pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));//new StopPoint(tr->getID(), tr->getPickupSP()->getLocation(), false, simTime().dbl(), 0));
 			EV << "normali PENDIng lista : ";
 			for (auto elem : pendingStopPoints) {
 				EV << elem->getLocation() << endl;
@@ -969,4 +969,74 @@ void BaseCoord::emitRedCodeEmergencyRequest() {
 void BaseCoord::emitPickupEmergencies() {
 	pickupEmergenciesCount++;
 	emit(pickupEmergencies, pickupEmergenciesCount);
+}
+
+
+bool BaseCoord::checkPendingRedStopPoints() {
+	return !pendingRedStopPoints.empty();
+}
+
+bool BaseCoord::checkPendingStopPoints() {
+	return !pendingStopPoints.empty();
+}
+
+StopPoint* BaseCoord::pickOnePendingRedStopPoints(int vehicleID) {
+	StopPoint *sp = NULL;
+	if (!pendingRedStopPoints.empty()) {
+		sp = pendingRedStopPoints.front();
+		pendingRedStopPoints.pop_front();
+		EV << "picked red SP pending con reqID: " << sp->getRequestID() << endl;
+	}
+	return sp;
+}
+
+void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
+
+	std::vector<StopPoint*> spVector, spVectorAux;
+
+	for (int i = 0;i<seats; i++){
+		if (!pendingStopPoints.empty()) {
+			spVector.push_back(new StopPoint(*pendingStopPoints.front()));
+			pendingStopPoints.pop_front();
+		}
+	}
+
+	int cost =0;
+	int min = -1;
+	UINT i;
+	std::sort(spVector.begin(), spVector.end());
+	do {
+		cost = netmanager->getHopDistance(srcAddr, spVector[0]->getLocation());
+		EV << spVector[0]->getLocation() <<  "  cost: " << cost << " | ";
+		for ( i = 0; i < spVector.size()-1; i++){
+			cost+=netmanager->getHopDistance(spVector[i]->getLocation(), spVector[i+1]->getLocation() );
+			EV << spVector[i+1]->getLocation() << "  cost: " << cost << " | ";
+		}
+		cost+=netmanager->getHopDistance(spVector[i]->getLocation(),netmanager->pickClosestHospitalFromNode(spVector[i]->getLocation()));
+		EV  << "H: " <<netmanager->pickClosestHospitalFromNode(spVector[i]->getLocation()) << "  COST: " << cost << endl;
+
+		if (min == -1){
+			min = cost;
+			spVectorAux = spVector;
+		}
+		else if (cost < min){
+			min = cost;
+			spVectorAux = spVector;
+		}
+
+	} while (std::next_permutation(spVector.begin(), spVector.end()));
+
+	//EV << " SP ORDINATI ";
+	std::list<StopPoint*> spList;
+	for (i = 0; i < spVectorAux.size(); i++)
+		spList.push_back(spVectorAux[i]);
+
+	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(spVectorAux[i-1]->getLocation()), false, simTime().dbl(), 0);
+	spList.push_back(hospital);
+
+		//		EV << spVectorAux[i]->getLocation() << "   ";
+		//	EV << "COST: " << min << endl;
+
+	updateVehicleStopPoints(vehicleID,spList,hospital);
+
 }

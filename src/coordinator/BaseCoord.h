@@ -160,6 +160,10 @@ private:
         int getClosestExitNode(int address);
         virtual void evacuateCivil(int address);
         virtual void emitPickupEmergencies();
+        virtual bool checkPendingRedStopPoints();
+        virtual bool checkPendingStopPoints();
+        virtual StopPoint* pickOnePendingRedStopPoints(int vehicleID);
+        virtual void pickPendingStopPoints(int vehicleID, int seats, int srcAddr);
 
 
 };

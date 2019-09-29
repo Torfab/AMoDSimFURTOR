@@ -244,7 +244,6 @@ void App::handleMessage(cMessage *msg) {
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
 			vehicle->setPassengers(0);
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
-
 		}
 		else{
 				vehicle->setPassengers(vehicle->getPassengers()+1);
@@ -297,10 +296,61 @@ void App::handleMessage(cMessage *msg) {
 	}
 
 	//No other stop point for the vehicle. The vehicle stay here and it is registered in the node
-	else {
+	else if (tcoord->checkPendingRedStopPoints()) {
+//		tcoord->pickOnePendingRedStopPoints(vehicle->getID());
+		EV << " checkPendingRedStopPoints" << endl;
+		tcoord->registerVehicle(vehicle, myAddress);
+		//dire la destinazione e ip arametri
+		/*
+		vehicle->setSrcAddr(myAddress);
+		vehicle->setDestAddr(nextStopPoint->getLocation());
+
+		// reset times
+		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+
+		if(nextStopPoint->getIsPickup()){
+		vehicle->setCurrentTraveledTime(0);
+		vehicle->setHopCount(0);
+		}
+		 */
+//		sendDelayed(vehicle, sendDelayTime, "out");
+	}
+	//TODO: chiede al coordinatore se ha richieste rosse
+
+	//		std::list<StopPoint*> SpList;
+	//		StopPoint* sp = new StopPoint();
+
+	// se si ne prende una e parte
+
+	else if (tcoord->checkPendingStopPoints()) {
+
+		EV << " checkPendingStopPoints" << endl;
+		// se si ne prende una e parte
+
+		tcoord->pickPendingStopPoints(vehicle->getID(), 4, myAddress); //vehicle->getSeats()
+		nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
+
+		vehicle->setSrcAddr(myAddress);
+		vehicle->setDestAddr(nextStopPoint->getLocation());
+
+		// reset times
+		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
+
+		if(nextStopPoint->getIsPickup()){
+		vehicle->setCurrentTraveledTime(0);
+		vehicle->setHopCount(0);
+		}
+
+		sendDelayTime = computeAccelererationTime(vehicle->getSpeed(),vehicle->getAcceleration());
+		sendDelayed(vehicle, sendDelayTime, "out");
+
+		// chiede al coordinatore se ha richieste normali pending
+		// se si ne prende fino a max seat e parte
+	} else {
+
+
 		EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
 		tcoord->registerVehicle(vehicle, myAddress);
-
 
 		if (netmanager->checkHospitalNode(myAddress)){
 						emit(signal_ambulancesIdle,++currentVehiclesInNode);
