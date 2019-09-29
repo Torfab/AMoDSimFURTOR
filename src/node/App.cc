@@ -243,6 +243,11 @@ void App::handleMessage(cMessage *msg) {
 			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
 			vehicle->setPassengers(0);
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
+
+
+			vehicle->setCurrentTraveledTime(0);
+			vehicle->setHopCount(0);
+
 		}
 		else{
 				vehicle->setPassengers(vehicle->getPassengers()+1);
@@ -283,10 +288,7 @@ void App::handleMessage(cMessage *msg) {
 		// reset times
 		vehicle->setOptimalEstimatedTravelTime(netmanager->getHopDistance(myAddress, nextStopPoint->getLocation()) * (netmanager->getXChannelLength() / vehicle->getSpeed()));// * (netmanager->getXChannelLength() / vehicle->getSpeed())));
 
-		if(nextStopPoint->getIsPickup()){
-		vehicle->setCurrentTraveledTime(0);
-		vehicle->setHopCount(0);
-		}
+
 
 		//Time for boarding or drop-off passengers
 
