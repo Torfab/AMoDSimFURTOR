@@ -60,6 +60,8 @@ public:
 	bool isInFront() const {
 		return inFront;
 	}
+
+	void setInFront(bool inFront);
 };
 
 #endif /* TRIPREQUEST_H_ */

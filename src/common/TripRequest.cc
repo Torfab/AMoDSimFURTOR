@@ -107,6 +107,10 @@ int TripRequest::getIsSpecial() const {
     return isSpecial;
 }
 
+void TripRequest::setInFront(bool inFront) {
+	this->inFront = inFront;
+}
+
 void TripRequest::setIsSpecial(int isSpecial) {
     this->isSpecial = isSpecial;
 }
