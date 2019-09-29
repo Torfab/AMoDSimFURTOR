@@ -37,7 +37,8 @@ class Vehicle: public Packet {
 
     public:
         Vehicle();
-        Vehicle(int specialVehicle, double speed, int trafficWeight);
+        Vehicle(int specialVehicle, double speed, int Weight);
+        Vehicle(int specialVehicle, double speed, int Weight, int seats);
         virtual ~Vehicle();
         virtual int getID() const;
         virtual double getTraveledDistance() const;
