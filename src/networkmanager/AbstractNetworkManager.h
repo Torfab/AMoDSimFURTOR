@@ -71,7 +71,7 @@ public:
     inline virtual double getTruckSpeed() {return truckSpeed;}
 
 
-
+    virtual void emit_signal_ambulanceTravelTime(int signal_value) =0;
     virtual bool checkDestroyedNode(int addr) =0;
     virtual bool checkBorderNode(int addr) =0;
     virtual bool checkRedZoneNode(int addr) =0;

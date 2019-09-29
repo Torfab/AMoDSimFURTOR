@@ -33,7 +33,7 @@ private:
     double yTravelTime;
 
     simsignal_t newCivilVehicle;
-
+    simsignal_t signal_ambulanceTravelTime;
 
 
     std::set<int> setOfDestroyedNodes;
@@ -90,6 +90,7 @@ protected:
     virtual bool checkCollectionPointNode(int addr) override;
     virtual int pickClosestCollectionPointFromNode(int addr) override;
     virtual int pickRandomCollectionPointNode() override;
+    virtual void emit_signal_ambulanceTravelTime(int signal_value) override;
 };
 
 #endif

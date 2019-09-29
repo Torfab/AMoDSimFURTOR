@@ -59,7 +59,7 @@ private:
 	simsignal_t signal_civilDelayTravelTime;
 	simsignal_t signal_civilTravelTime;
 
-	simsignal_t signal_ambulanceTravelTime;
+
 	simsignal_t signal_ambulanceDelayTravelTime;
 
 
@@ -141,7 +141,7 @@ void App::initialize() {
 	signal_ambulanceDelayTravelTime = registerSignal("signal_ambulanceDelayTravelTime");
 	signal_civilDelayTravelTime = registerSignal("signal_civilDelayTravelTime");
 	signal_civilTravelTime =registerSignal("signal_civilTravelTime");
-	signal_ambulanceTravelTime =registerSignal("signal_ambulanceTravelTime");
+
 
 	signal_ambulancesIdle = registerSignal("signal_ambulancesIdle");
 
@@ -240,7 +240,7 @@ void App::handleMessage(cMessage *msg) {
 	case 1:	//ambulance
 		if (netmanager->checkHospitalNode(myAddress)) {
 //			emit(signal_ambulanceDelayTravelTime, (vehicle->getCurrentTraveledTime() - vehicle->getOptimalEstimatedTravelTime()) / numHops);
-			emit(signal_ambulanceTravelTime,vehicle->getCurrentTraveledTime()); //curr travel time
+			netmanager->emit_signal_ambulanceTravelTime(vehicle->getCurrentTraveledTime()); //curr travel time
 			vehicle->setPassengers(0);
 			EV << "Ambulance actual time from last stop point to current: " << vehicle->getCurrentTraveledTime() << " the estimated one: " << vehicle->getOptimalEstimatedTravelTime() << " hops: " << numHops << endl;
 

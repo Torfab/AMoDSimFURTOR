@@ -84,6 +84,9 @@ void ManhattanNetworkManager::initialize() {
 
     startingChannelWeight = 1000;
     // Creation of destroyed nodes set
+
+    signal_ambulanceTravelTime =registerSignal("signal_ambulanceTravelTime");
+
     buildSetOfDestroyedNodes();
 
 
@@ -522,4 +525,8 @@ void ManhattanNetworkManager::updateTopology(cTopology* topology, int channelWei
 
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {
     return collectionPointsAddresses[intuniform(0, numberOfCollectionPoints - 1)];
+}
+
+void ManhattanNetworkManager::emit_signal_ambulanceTravelTime(int signal_value) {
+    emit(signal_ambulanceTravelTime, signal_value);
 }

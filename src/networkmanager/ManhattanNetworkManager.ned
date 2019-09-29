@@ -20,6 +20,9 @@ simple ManhattanNetworkManager like INetworkManager
 		double ambulanceSpeed @unit(mps);
 		double truckSpeed @unit(mps);
 		
+		          // ------ SIGNALS -------- //
+		@signal[signal_ambulanceTravelTime](type="double");       
+        @statistic[signal_ambulanceTravelTime](title="Ambulance travel time to serve a request";source="signal_ambulanceTravelTime";record=vector,mean;interpolation=none);
 		
         @display("i=block/network2_l");
         }
