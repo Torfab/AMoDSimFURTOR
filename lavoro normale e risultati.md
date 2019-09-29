@@ -45,7 +45,18 @@ strategie per la simulazione delle condizioni a contorno di un evento catastrofi
 
 * simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
+	Strategie di ridesharing per l'ottimizzazione della movimentazione dei mezzi di soccorso, in presenza di disastri naturali.
 
+
+
+ospedali tipo diverso
+ride sharing richieste normali
+tempo criticità
+
+
+
+(per ultimo)
+piu codice rosso nell stessa ambulanza se vicini
 
 
 # TODO Importanti:
