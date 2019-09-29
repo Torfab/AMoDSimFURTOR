@@ -245,7 +245,7 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial()==3) { //red code request
-			if (tr->isInFront())
+		if (tr->isInFront())
 				pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
 			else
 				pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
@@ -351,16 +351,17 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       }
       else
       {
-          //clean the old stop point list assigned to the vehicle
+		//clean the old stop point list assigned to the vehicle
 		if (pickupSP->isRedCode()) {
 			for (auto &elem : rPerVehicle[vehicleID]) {
 				EV << "la richiesta rossa ha spostato " << elem->getLocation() << endl;
 				if (!netmanager->checkHospitalNode(elem->getLocation())) {
-					//pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
+					pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 
-					int code;
-					StopPoint *pickupSP = new StopPoint(*elem);
-					StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
+					/*int code;
+					 StopPoint *pickupSP = new StopPoint(*elem);
+
+					 StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
 
 					if (elem->isRedCode()) {
 						code = 3;
@@ -368,11 +369,15 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 					} else
 						code = 1;
 					//crea trip request in base al tipo di sp
-					TripRequest *request = new TripRequest(pickupSP, dropoffSP, code, true);
-					//emetti triprequest
+					TripRequest *request = new TripRequest();
+					request->setPickupSP(pickupSP);
+					request->setDropoffSP(dropoffSP);
+					request->setInFront(true);
+					request->setIsSpecial(code);
+					 //emetti triprequest
 
-					emit(tripRequest, request);
-			}
+					 emit(tripRequest, request);*/
+				}
 			}
 		}
 
@@ -1016,6 +1021,7 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 	UINT i;
 	// sort del vettore
 	std::sort(spVector.begin(), spVector.end());
+
 
 	//Calcola il minimo costo in hop per ogni permutazione tra le permutazioni degli stop point considerati
 	do {
