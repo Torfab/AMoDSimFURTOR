@@ -120,6 +120,9 @@ void TripRequestSubmitter::buildEmergencySchedule(int totalEmergencies) {
  * 10% red code
  */
 void TripRequestSubmitter::scheduleEmergencyOrRedCode() {
+//	scheduleAt(scheduledEmergencies[emergencyIndex++], redEmergencyPacket);
+//	return;
+
 	if (intuniform(0, 10) == 0) { // 10% chance that there's a red code emergency
 		// red code request
 		scheduleAt(scheduledEmergencies[emergencyIndex++], redEmergencyPacket);
@@ -271,11 +274,11 @@ TripRequest* TripRequestSubmitter::buildEmergencyRequest() {
 	// Generate emergency request to the closest hospital
 	int destAddress = netmanager->pickClosestHospitalFromNode(myAddress);
 
-	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, -1);
 	pickupSP->setXcoord(x_coord);
 	pickupSP->setYcoord(y_coord);
 
-	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), -1);
 
 	request->setPickupSP(pickupSP);
 	request->setDropoffSP(dropoffSP);
@@ -302,8 +305,10 @@ TripRequest* TripRequestSubmitter::buildRedCodeRequest() {
 	StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
 	pickupSP->setXcoord(x_coord);
 	pickupSP->setYcoord(y_coord);
+	pickupSP->setRedCode(true);
 
 	StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+	dropoffSP->setRedCode(true);
 
 	request->setPickupSP(pickupSP);
 	request->setDropoffSP(dropoffSP);

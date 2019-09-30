@@ -45,6 +45,7 @@ private:
         int emergencyRequestCounter;
         int redCodeRequestCounter;
         int truckRequestCounter;
+        int deadCount;
 
         AbstractNetworkManager* netmanager;
 
@@ -89,6 +90,9 @@ private:
         simsignal_t truckRequest;
 
         simsignal_t pickupEmergencies;
+        simsignal_t  deadCode;
+
+
         int pickupEmergenciesCount;
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
@@ -142,6 +146,8 @@ private:
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
          void updateTopology();
         virtual void handleMessage(cMessage *msg);
+
+
     public:
         virtual ~BaseCoord();
 		void emitEmergencyRequest();
@@ -164,7 +170,7 @@ private:
         virtual bool checkPendingStopPoints();
         virtual void pickPendingRedStopPoints(int vehicleID, int srcAddr);
         virtual void pickPendingStopPoints(int vehicleID, int seats, int srcAddr);
-
+        virtual void checkRemainingTime(StopPoint* red);
 
 };
 

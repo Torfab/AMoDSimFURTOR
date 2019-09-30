@@ -73,6 +73,8 @@ class StopPoint : public cObject{
         virtual int getYcoord() const;
         virtual bool isRedCode() const;
         virtual void setRedCode(bool redCode);
+
+        virtual double remainingTime();
 };
 
 #endif /* STOPPOINT_H_ */

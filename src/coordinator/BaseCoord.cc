@@ -50,6 +50,8 @@ void BaseCoord::initialize()
     signal_noVehicle= registerSignal("signal_noVehicle");
 
     pickupEmergencies = registerSignal("pickupEmergencies");
+    deadCode = registerSignal("deadCode");
+
     pickupEmergenciesCount = 0;
 
     totrequests = 0.0;
@@ -75,6 +77,7 @@ void BaseCoord::initialize()
     redCodeRequestCounter = 0;
     emergencyRequestCounter = 0;
     truckRequestCounter= 0;
+    deadCount = 0;
 	//Pheromone
 	pheromoneDecayTime = getParentModule()->par("pheromoneDecayTime");
 	pheromoneDecayFactor = getParentModule()->par("pheromoneDecayFactor");
@@ -199,6 +202,13 @@ int BaseCoord::truckAssignment(std::map<int, StopPointOrderingProposal*> vehicle
     return vehicleID;
 }
 
+void BaseCoord::checkRemainingTime(StopPoint* red) {
+	if (red->remainingTime() < 0) {
+		pendingRedStopPoints.remove(red);
+		emit(deadCode, ++deadCount);
+	}
+}
+
 /**
  * Assign the new trip request to the first emergency vehicle available in the vehicles proposal.
  *
@@ -248,14 +258,32 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		// la coda verra' smaltita dalla prima ambulanza libera
 
 		if (tr->getIsSpecial() == 3) { //red code request
-			if (tr->isInFront())
-				pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
-			else
-				pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
-			EV << "RED PENDIng lista : ";
-			for (auto elem : pendingRedStopPoints) {
-				EV << elem->getLocation() << endl;
+//			if (tr->isInFront())
+//				pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
+//			else
+			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+
+			//posizionare nella lista
+			tr->getPickupSP()->getMaxDelay();
+
+			EV << "rosse prima" << endl;
+			for (auto red : pendingRedStopPoints){
+				checkRemainingTime(red);
+				EV << "pendingredstoppoints: " << red->getLocation() << "   " << red->remainingTime() << endl;
 			}
+
+
+			pendingRedStopPoints.sort([]( StopPoint *sp1, StopPoint *sp2)
+				{
+					return sp1->remainingTime() < sp2->remainingTime();
+				});
+
+			EV << "RED PENDIng lista : " << endl;
+			for (auto elem : pendingRedStopPoints) {
+				EV << "pendingredstoppoints: " << elem->getLocation() << "   " << elem->remainingTime() << endl;
+			}
+
+
 
 		} else {
 			if (tr->isInFront())
@@ -367,9 +395,9 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 					//pendingStopPoints.push_front(new StopPoint(*elem)); //inseriti in testa alla coda tutti gli stop point rimanenti sovrascritti dalla rossa
 
 					int code;
-					 StopPoint *pickupSP = new StopPoint(*elem);
+					StopPoint *pickupSP = new StopPoint(*elem);
 
-					 StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
+					StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
 
 					if (elem->isRedCode()) {
 						code = 3;
@@ -988,6 +1016,10 @@ bool BaseCoord::checkPendingStopPoints() {
 }
 
 void BaseCoord::pickPendingRedStopPoints(int vehicleID, int srcAddr) {
+
+	for (auto req : pendingRedStopPoints){
+	checkRemainingTime(req);
+	}
 
 	StopPoint *sp = new StopPoint(*pendingRedStopPoints.front());
 	pendingRedStopPoints.pop_front();

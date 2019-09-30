@@ -176,3 +176,8 @@ int StopPoint::getYcoord() const
 {
     return y_coord;
 }
+
+double StopPoint::remainingTime() {
+	return maxDelay - ( simTime().dbl() - time );
+
+}
