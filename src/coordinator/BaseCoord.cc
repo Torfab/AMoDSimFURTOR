@@ -232,7 +232,10 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 	}
 	if (vehicleID != -1) {
 		EV << "Accepted request of emergency vehicle " << vehicleID << " for request: " << tr->getID() << " .The time cost is: " << additionalCost << endl;
-
+		if(tr->getIsSpecial()==3){ //ridondante ma utile
+		    tr->getPickupSP()->setRedCode(true);
+		    tr->getDropoffSP()->setRedCode(true);
+		}
 		updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(), tr->getPickupSP());
 		EV << "stop points updated! " << endl;
 		for (auto elem : vehicleProposal[vehicleID]->getSpList())
@@ -335,6 +338,7 @@ int BaseCoord::minCostAssignment(std::map<int, StopPointOrderingProposal*> vehic
  */
 void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spList, StopPoint *pickupSP)
 {
+      EV<<"sto aggiornando gli stoppoint di "<< vehicleID<<endl;
       rAssignedPerVehicle[vehicleID]++;
       totalAssignedRequests++;
       emit(assignedRequestsPerTime, totalAssignedRequests);
@@ -342,6 +346,7 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       bool toEmit = false;
       if(rPerVehicle[vehicleID].empty())
       {
+          EV<< vehicleID<<" era vuoto "<<endl;
           //The node which handle the selected vehicle should be notified
           toEmit = true;
           freeVehicles--;
@@ -351,8 +356,11 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
       }
       else
       {
+          EV<< vehicleID<<" era pieno, quanto rosso è pickup: "<< pickupSP->isRedCode()<<endl;
 		//clean the old stop point list assigned to the vehicle
 		if (pickupSP->isRedCode()) {
+		    EV<< vehicleID<<" era pieno sposto "<<endl;
+
 			for (auto &elem : rPerVehicle[vehicleID]) {
 				EV << "la richiesta rossa ha spostato " << elem->getLocation() << endl;
 				if (!netmanager->checkHospitalNode(elem->getLocation())) {
