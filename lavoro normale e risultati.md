@@ -45,15 +45,14 @@ strategie per la simulazione delle condizioni a contorno di un evento catastrofi
 
 * simulazioni delle condizioni a contorno di un evento catastrofico, approccio bioispirato
 
-cosa tempocritica
-se c'è posto ok
-se non 'cè posto'
-	controlla il tempo che manca a tutti i veicoli (insieme)
-		quanto tempo aveva - da quiando è partito
-		ne sovrascrive una se è piu piccola e quella se ne va in coda rossa
+OSPEDALE SKILLED
+	nodo ospedale può essere anche skilled
+	attributo nella richiesta di emergenza rossa che richiede skilled
+	pickclosestskilledhospital
+	destaddress richieste rosse
+	
 
-		la coda rossa non è una coda ma è una lista ordinata
-		l'ordinamento è per urgenza
+
 
 
 # TODO Importanti:
@@ -216,6 +215,18 @@ display look and feel figo TOP
 creare sottomodulo initialize
 creare routing aco based di giovanni
 togliere le sue statistiche che occupano spazio
+
+
+
+cosa tempocritica
+se c'è posto ok
+se non 'cè posto'
+	controlla il tempo che manca a tutti i veicoli (insieme)
+		quanto tempo aveva - da quiando è partito
+		ne sovrascrive una se è piu piccola e quella se ne va in coda rossa
+
+		la coda rossa non è una coda ma è una lista ordinata
+		l'ordinamento è per urgenza
 
 # Limiti del simulatore:
 
