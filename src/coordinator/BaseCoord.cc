@@ -244,8 +244,8 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 		//va in coda al coordinatore
 		// la coda verra' smaltita dalla prima ambulanza libera
 
-		if (tr->getIsSpecial()==3) { //red code request
-		if (tr->isInFront())
+		if (tr->getIsSpecial() == 3) { //red code request
+			if (tr->isInFront())
 				pendingRedStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
 			else
 				pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
