@@ -163,7 +163,7 @@ private:
         int countOnBoardRequests(int vehicleID);
         StopPoint* getNewAssignedStopPoint(int vehicleID);
         inline double getMinTripLength(){return minTripLength;}
-        int getClosestExitNode(int address);
+
         virtual void evacuateCivil(int address);
         virtual void emitPickupEmergencies();
         virtual bool checkPendingRedStopPoints();

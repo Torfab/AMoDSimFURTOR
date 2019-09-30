@@ -134,51 +134,64 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 		//Weighted or unweighted dijkstra to target
 
 		//If it's an ambulance
-		if (pk->getSpecialVehicle() == 1)
+		if (pk->getSpecialVehicle() == 1){
 			topoEmergency->calculateWeightedSingleShortestPathsTo(targetnodeEmergency);
-		//else it's a civil or truck
-		else
-			topo->calculateWeightedSingleShortestPathsTo(targetnode);
-
-
-		if (node->getNumPaths() == 0 && nodeEmergency->getNumPaths() == 0)  {
-			EV << "No path to destination.\n";
-			return;
-		} else { //there are paths available
-
-			int id;
-
-			if (pk->getSpecialVehicle() == 1){
-				cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
-				pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
-				//Need to save the LinkOut id of the localgate to id
-				for (id = 0; id < topoEmergency->getNode(myAddress)->getNumOutLinks();id++) {
-					if (topoEmergency->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
-						break;
+			if (nodeEmergency->getNumPaths() == 0){
+				EV << "I am: " << myAddress << " No path to destination.My dest is: " << targetnode->getModule()->getFullPath()  << endl;
+				for (int i = 0; i < node->getNumOutLinks(); i++) {
+					EV << "Local gates: " << node->getLinkOut(i)->getLocalGate()->getFullPath() << endl;
 				}
+				return;
 			}
-
-			else{
-				cTopology::LinkOut *path = node->getPath(0);
-				pk->setChosenGate(path->getLocalGate()->getIndex());
-				//Need to save the LinkOut id of the localgate to id
-				for (id = 0; id < topo->getNode(myAddress)->getNumOutLinks();	id++) {
-					if (topo->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
-						break;
-				}
-			}
-
-			// Update Pheromone and Traffic
-			pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
-			traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
-
-			int pkChosenGate = pk->getChosenGate();
-			// Update weights
-			topo->getNode(myAddress)->getLinkOut(id)->setWeight(1 + (pheromone->getPheromone(pkChosenGate) /20)); // AAA
-			topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate)); // ACO
-
-
 		}
+		//else it's a civil or truck
+		else{
+			topo->calculateWeightedSingleShortestPathsTo(targetnode);
+			if (node->getNumPaths() == 0 )  {
+				EV << "No path to destination. My dest is:" << targetnode->getModule()->getFullPath()  << endl;
+				pk->setDestAddr(netmanager->getClosestExitNode(myAddress));
+				int destination = pk->getDestAddr();
+				cTopology::Node *targetnode = topo->getNode(destination);
+				topo->calculateWeightedSingleShortestPathsTo(targetnode);
+			}
+		}
+
+			//there are paths available
+
+		int id;
+
+		if (pk->getSpecialVehicle() == 1) {
+			cTopology::LinkOut *pathEmergency = nodeEmergency->getPath(0);
+			pk->setChosenGate(pathEmergency->getLocalGate()->getIndex());
+			//Need to save the LinkOut id of the localgate to id
+			for (id = 0;
+					id < topoEmergency->getNode(myAddress)->getNumOutLinks();
+					id++) {
+				if (topoEmergency->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
+					break;
+			}
+		}
+
+		else {
+			cTopology::LinkOut *path = node->getPath(0);
+			pk->setChosenGate(path->getLocalGate()->getIndex());
+			//Need to save the LinkOut id of the localgate to id
+			for (id = 0; id < topo->getNode(myAddress)->getNumOutLinks();
+					id++) {
+				if (topo->getNode(myAddress)->getLinkOut(id)->getLocalGate()->getIndex() == pk->getChosenGate())
+					break;
+			}
+		}
+
+		// Update Pheromone and Traffic
+		pheromone->increasePheromone(pk->getChosenGate(), pk->getWeight());
+		traffic->increaseTraffic(pk->getChosenGate(), pk->getWeight());
+
+		int pkChosenGate = pk->getChosenGate();
+		// Update weights
+		topo->getNode(myAddress)->getLinkOut(id)->setWeight(1 + (pheromone->getPheromone(pkChosenGate) / 20)); // AAA
+		topoEmergency->getNode(myAddress)->getLinkOut(id)->setWeight(netmanager->getStartingChannelWeight() - pheromone->getPheromone(pkChosenGate)); // ACO
+
 		// Traffic delay logic
 
 		int distanceToTravel = 0;
@@ -190,7 +203,7 @@ void AAAcivilACOambulance::handleMessage(cMessage *msg) {
 
 		simtime_t channelTravelTime = distanceToTravel / pk->getSpeed();
 
-		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) *(1 + (traffic->trafficInfluence(pk->getChosenGate())));
+		simtime_t trafficDelay = simTime().dbl() + (distanceToTravel / pk->getSpeed()) * (1 + (traffic->trafficInfluence(pk->getChosenGate())));
 		if (trafficDelay < simTime())
 			trafficDelay = simTime(); // .dbl() doesn't work
 

@@ -941,27 +941,7 @@ bool BaseCoord::eval_feasibility (int vehicleID, StopPoint* sp)
     return isFeasible;
 }
 
-int BaseCoord::getClosestExitNode(int address) {
 
-	std::set<int> borderNodes = netmanager->getSetOfBorderNodes();
-
-
-	int min = netmanager->getNumberOfNodes()-1; // No roads can be greater that the number of nodes
-	int closestAddr=min;
-
-	for (auto elem : borderNodes) {
-		//calcolo min path
-		if (min > netmanager->getHopDistance(address, elem)){
-			closestAddr = elem;
-			min = netmanager->getHopDistance(address, elem);
-		}
-
-	}
-//	EV << "Closest Exit node for node: " << address << " is > " << closestAddr << endl;
-	return closestAddr;
-
-
-}
 
 void BaseCoord::updateLinkWeight(cTopology::LinkOut* path, int pkChosenGate) {
 	/*cTopology::LinkOut *path = node->getPath(0);

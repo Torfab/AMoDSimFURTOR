@@ -454,6 +454,31 @@ int ManhattanNetworkManager::pickClosestCollectionPointFromNode(int addr) {
 
 }
 
+
+int ManhattanNetworkManager::getClosestExitNode(int address) {
+
+	std::set<int> borderNodes = getSetOfBorderNodes();
+
+
+	int min = getNumberOfNodes()-1; // No roads can be greater that the number of nodes
+	int closestAddr=pickClosestCollectionPointFromNode(address);
+
+	for (auto elem : borderNodes) {
+		//calcolo min path
+		if (!checkDestroyedNode(elem)){
+		if (min > getHopDistance(address, elem)){
+			closestAddr = elem;
+			min = getHopDistance(address, elem);
+		}
+		}
+
+	}
+//	EV << "Closest Exit node for node: " << address << " is > " << closestAddr << endl;
+	return closestAddr;
+
+
+}
+
 void ManhattanNetworkManager::buildsetOfAvailableNodes() {
     EV << "Nodi available ";
     for (int i = 0; i < numberOfNodes; i++) {

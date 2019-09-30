@@ -63,7 +63,7 @@ protected:
 	void initTopo(cTopology* topology); //initialize topology
 
     virtual int pickSkilledHospitalFromNode(int addr);
-
+    virtual int getClosestExitNode(int address) override;
 
 
 

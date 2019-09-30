@@ -70,7 +70,7 @@ public:
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
     inline virtual double getAmbulanceSpeed() {return ambulanceSpeed;}
     inline virtual double getTruckSpeed() {return truckSpeed;}
-
+    virtual int getClosestExitNode(int address)=0;
 
     virtual void emit_signal_ambulanceTravelTime(int signal_value) =0;
     virtual bool checkDestroyedNode(int addr) =0;

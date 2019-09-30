@@ -105,7 +105,7 @@ void App::generateCivilTraffic(simtime_t interval) {
 
 	if (intuniform(0, 1) == 0) {  // 50% chances: border node - collection point
 		civile=new Vehicle(-1, 9.7, 1); // vehicle(type,speed,traffic weight)
-	    destAddress = tcoord->getClosestExitNode(myAddress); // look for a border node
+	    destAddress = netmanager->getClosestExitNode(myAddress); // look for a border node
 
 	} else {
 
