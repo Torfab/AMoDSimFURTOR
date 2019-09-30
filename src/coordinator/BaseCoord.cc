@@ -399,7 +399,7 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 
 					StopPoint *dropoffSP = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(elem->getLocation()), false, simTime().dbl(), 0);
 
-					if (elem->isRedCode()) {
+					if (elem->isRedCode()) { //TODO: permettere ad una rossa urgente di scavalcare una rossa poco urgente (valutare eventualmente se richiede skilled)
 						code = 3;
 						dropoffSP->setRedCode(true);
 					} else
@@ -1015,6 +1015,9 @@ bool BaseCoord::checkPendingStopPoints() {
 	return !pendingStopPoints.empty();
 }
 
+
+
+
 void BaseCoord::pickPendingRedStopPoints(int vehicleID, int srcAddr) {
 
 	for (auto req : pendingRedStopPoints){
@@ -1028,8 +1031,16 @@ void BaseCoord::pickPendingRedStopPoints(int vehicleID, int srcAddr) {
 	std::list<StopPoint*> spList; // inserimento permutazione col minimo costo in lista spList
 	spList.push_back(sp);
 
+	int destAddress;
+	if (sp->isNeedSkilledHospital()) {	//requires skilled hospital
+			destAddress = netmanager->pickSkilledHospitalFromNode(sp->getLocation());
+		} else{
+			// Generate emergency request to the closest hospital
+			destAddress = netmanager->pickClosestHospitalFromNode(sp->getLocation());
+		}
+
 	//aggiunta ospedale alla splist
-	StopPoint *hospital = new StopPoint(-1, netmanager->pickClosestHospitalFromNode(sp->getLocation()), false, simTime().dbl(), 0);
+	StopPoint *hospital = new StopPoint(-1,destAddress , false, simTime().dbl(), 0);
 	hospital->setRedCode(true);
 
 	spList.push_back(hospital);

@@ -10,6 +10,11 @@ simple TripRequestSubmitter
         int numberOfEmergencies;
         
         @display("i=block/user");
+        
+        
+        @signal[skilledRequests](type="int");       	//Traffic per channel
+        @statistic[skilledRequests](title="skilledRequests";source="skilledRequests";record=vector,count;interpolation=none);
+      
 
 
 }

@@ -27,6 +27,7 @@ StopPoint::StopPoint() {
     this->isPickup = false;
     this->maxDelay = 0;
     this->redCode = false;
+    this->needSkilledHospital = false;
 }
 
 StopPoint::StopPoint(int requestID, int location, bool isPickup, double time, double maxDelay)
@@ -42,6 +43,7 @@ StopPoint::StopPoint(int requestID, int location, bool isPickup, double time, do
     this->isPickup = isPickup;
     this->maxDelay = maxDelay;
     this->redCode = false;
+    this->needSkilledHospital = false;
 }
 
 StopPoint::StopPoint(const StopPoint& other)
@@ -62,6 +64,7 @@ void StopPoint::copy(const StopPoint& other)
     this->isPickup = other.isPickup;
     this->maxDelay = other.maxDelay;
     this->redCode = other.redCode;
+    this->needSkilledHospital =  other.needSkilledHospital;
 }
 
 
@@ -175,6 +178,14 @@ void StopPoint::setRedCode(bool redCode) {
 int StopPoint::getYcoord() const
 {
     return y_coord;
+}
+
+bool StopPoint::isNeedSkilledHospital() const {
+	return needSkilledHospital;
+}
+
+void StopPoint::setNeedSkilledHospital(bool needSkilledHospital) {
+	this->needSkilledHospital = needSkilledHospital;
 }
 
 double StopPoint::remainingTime() {
