@@ -248,11 +248,13 @@ nella sua shell
 simulazioni da riga di comando
 per vedere le combinazioni
 ./AMoD_Simulator -x AMoD_Network -f simulations/omnetpp.ini  -g
+./AMoD_Simulator -x AMoD_Network -f simulations/omnetppserio.ini  -g
 
 
 opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetpp.ini -r 0..179
+opp_runall -j3 ./AMoD_Simulator -c AMoD_Network -u Cmdenv -f simulations/omnetppserio.ini -r 0..179
 
-opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Tkenv -f simulations/omnetpp.ini -r 0
+opp_runall -j2 ./AMoD_Simulator -c AMoD_Network -u Tkenv -f simulations/omnetppserio.ini -r 0
 
 
 -j7 simulazioni contemporanee
@@ -271,11 +273,6 @@ Scenario
 Simulatore
 Algoritmi applicati
 Risultati
-
-
-
-git diff --stat 227313141dd2ccc972ff61eab72ee9e3a2829a09 8c54719c6ae89e4ef570c
-
 
 
 experiment-label = ""
