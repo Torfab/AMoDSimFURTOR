@@ -56,10 +56,13 @@ protected:
 	void buildTruckStartNode();
 	int pickRandomElemFromSet(std::set<int> s);
 	void buildHospitalNodes();
+	void buildSkilledHospitalNodes();
 	void buildCollectionPointNodes();
 	void buildStoragePointNodes();
 	int pickRandomStoragePointNode();
 	void initTopo(cTopology* topology); //initialize topology
+
+    virtual int pickSkilledHospitalFromNode(int addr);
 
 
 

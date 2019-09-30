@@ -35,6 +35,7 @@ protected:
     int startingChannelWeight;
 
     int * hospitalAddresses;
+    int * skilledHospitalAddresses;
     int * collectionPointsAddresses;
     int * storagePointsAddresses;
 
@@ -80,6 +81,8 @@ public:
     virtual int pickRandomNodeInRedZone()=0;
     virtual int pickClosestHospitalFromNode(int addr) = 0;
     virtual int pickRandomStoragePointNode() =0;
+
+    virtual int pickSkilledHospitalFromNode(int addr) = 0;
 
     virtual bool checkCollectionPointNode(int addr) = 0;
     virtual int pickClosestCollectionPointFromNode(int addr) = 0;

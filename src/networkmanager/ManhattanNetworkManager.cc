@@ -50,6 +50,7 @@ int ManhattanNetworkManager::pickRandomElemFromSet(std::set<int> s) {
 
 ManhattanNetworkManager::~ManhattanNetworkManager() {
     delete hospitalAddresses;
+    delete skilledHospitalAddresses;
     delete collectionPointsAddresses;
     delete topo;
     delete topoEmergency;
@@ -63,6 +64,7 @@ void ManhattanNetworkManager::initialize() {
 
     numberOfHospitals = par("numberOfHospitals");
     hospitalAddresses = new int[numberOfHospitals];
+    skilledHospitalAddresses = new int[1];
 
     numberOfCollectionPoints = par("numberOfCollectionPoints");
     collectionPointsAddresses = new int[numberOfCollectionPoints];
@@ -94,6 +96,7 @@ void ManhattanNetworkManager::initialize() {
     buildsetOfAvailableNodes();
     buildSetOfBorderNodes();            // Creation of border zones nodes set
     buildHospitalNodes();
+    buildSkilledHospitalNodes();
     buildStoragePointNodes();
     buildCollectionPointNodes();
 
@@ -419,6 +422,11 @@ int ManhattanNetworkManager::pickClosestHospitalFromNode(int addr) {
 
 }
 
+int ManhattanNetworkManager::pickSkilledHospitalFromNode(int addr) {
+	//TODO: aggiungere skilledNumberOfHospital e distanza min
+	return skilledHospitalAddresses[0];
+}
+
 int ManhattanNetworkManager::pickRandomNodeInRedZone() {
     return pickRandomElemFromSet(setOfNodesInRedZone);
 }
@@ -526,6 +534,12 @@ void ManhattanNetworkManager::updateTopology(cTopology* topology, int channelWei
 int ManhattanNetworkManager::pickRandomCollectionPointNode() {
     return collectionPointsAddresses[intuniform(0, numberOfCollectionPoints - 1)];
 }
+
+void ManhattanNetworkManager::buildSkilledHospitalNodes() {
+	skilledHospitalAddresses[0] = hospitalAddresses[0];
+}
+
+
 
 void ManhattanNetworkManager::emit_signal_ambulanceTravelTime(int signal_value) {
     emit(signal_ambulanceTravelTime, signal_value);
