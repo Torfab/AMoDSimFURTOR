@@ -85,7 +85,7 @@ void DijkstraTraffic::handleMessage(cMessage *msg) {
 	int trafficWeight = pk->getWeight();
 
 	// Topology
-	cTopology* topo = netmanager->getTopo();
+	cTopology* topo = netmanager->getTopoEmergency();
 	//If this node is the destination, forward the vehicle to the application level
 	if (destAddr == myAddress) {
 		EV << "Vehicle arrived in the stop point " << myAddress	<< ". Traveled distance: " << pk->getTraveledDistance()		<< endl;
@@ -125,7 +125,7 @@ void DijkstraTraffic::handleMessage(cMessage *msg) {
 //		 Assegna il peso del traffico corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
 			ev << "1) " << traffic->getTraffic(i) + 1<< endl;
-			node->getLinkOut(i)->setWeight(1 + (traffic->getTraffic(i) / 20) );
+			node->getLinkOut(i)->setWeight(netmanager->getStartingChannelWeight() + (traffic->getTraffic(i) / 20) );
 		}
 		//weighted dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
@@ -145,7 +145,7 @@ void DijkstraTraffic::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 
-			path->setWeight(1 + (traffic->getTraffic(pkChosenGate) / 20) );
+			path->setWeight(netmanager->getStartingChannelWeight() + (traffic->getTraffic(pkChosenGate) / 20) );
 
 			ev << "----> " << path->getWeight() << endl;
 
