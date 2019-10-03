@@ -125,7 +125,7 @@ void AAAPheromone::handleMessage(cMessage *msg) {
 
 //		 Assegna il peso del feromone corrente (escluso il veicolo nuovo) ai canali in uscita
 		for (int i = 0; i < node->getNumOutLinks(); i++) {
-			node->getLinkOut(i)->setWeight(1 + (pheromone->getPheromone(i)));
+			node->getLinkOut(i)->setWeight(1 + (pheromone->getPheromone(i)/20));
 		}
 		//weighted dijkstra to target
 		topo->calculateWeightedSingleShortestPathsTo(targetnode);
@@ -143,7 +143,7 @@ void AAAPheromone::handleMessage(cMessage *msg) {
 
 			int pkChosenGate = pk->getChosenGate();
 
-			path->setWeight(1 + (pheromone->getPheromone(pkChosenGate)));
+			path->setWeight(1 + (pheromone->getPheromone(pkChosenGate)/20));
 			ev << "----> " << path->getWeight() << endl;
 
 			ev << "-------pacchetto " << pk->getID() << " diretto a " << pk->getDestAddr() << endl;
