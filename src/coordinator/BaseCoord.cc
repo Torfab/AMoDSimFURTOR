@@ -52,6 +52,9 @@ void BaseCoord::initialize()
     pickupEmergencies = registerSignal("pickupEmergencies");
     deadCode = registerSignal("deadCode");
 
+    signal_sizeEmergencyQueue = registerSignal("signal_sizeEmergencyQueue");
+    signal_sizeRedcodeEmergencyQueue = registerSignal("signal_sizeRedcodeEmergencyQueue");
+
     pickupEmergenciesCount = 0;
 
     totrequests = 0.0;
@@ -263,6 +266,8 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 //			else
 			pendingRedStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
 
+			emit(signal_sizeRedcodeEmergencyQueue, pendingRedStopPoints.size());
+
 			//posizionare nella lista
 			tr->getPickupSP()->getMaxDelay();
 
@@ -290,6 +295,9 @@ int BaseCoord::emergencyAssignment(std::map<int, StopPointOrderingProposal*> veh
 				pendingStopPoints.push_front(new StopPoint(*tr->getPickupSP()));
 			else
 				pendingStopPoints.push_back(new StopPoint(*tr->getPickupSP()));
+
+			emit(signal_sizeEmergencyQueue, pendingStopPoints.size());
+
 			EV << "normali PENDIng lista : ";
 			for (auto elem : pendingStopPoints) {
 				EV << elem->getLocation() << endl;
@@ -1007,6 +1015,8 @@ void BaseCoord::pickPendingRedStopPoints(int vehicleID, int srcAddr) {
 	StopPoint *sp = new StopPoint(*pendingRedStopPoints.front());
 	pendingRedStopPoints.pop_front();
 
+	emit(signal_sizeRedcodeEmergencyQueue, pendingRedStopPoints.size());
+
 	sp->setRedCode(true);
 	std::list<StopPoint*> spList; // inserimento permutazione col minimo costo in lista spList
 	spList.push_back(sp);
@@ -1046,6 +1056,8 @@ void BaseCoord::pickPendingStopPoints(int vehicleID, int seats, int srcAddr) {
 			pendingStopPoints.pop_front();
 		}
 	}
+
+	emit(signal_sizeEmergencyQueue, pendingStopPoints.size());
 
 	int cost =0;
 	int min = -1;

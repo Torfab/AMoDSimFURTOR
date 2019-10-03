@@ -85,4 +85,9 @@ simple BaseCoord like ICoord
         @signal[deadCode](type="int");       
         @statistic[deadCode](title="Number of dead emergencies";source="deadCode";record=vector,count;interpolation=none);
        
+        @signal[signal_sizeRedcodeEmergencyQueue](type="int");       
+        @statistic[signal_sizeRedcodeEmergencyQueue](title="Size of red code emergency queue";source="signal_sizeRedcodeEmergencyQueue";record=vector,count,max;interpolation=none);
+        
+        @signal[signal_sizeEmergencyQueue](type="int");       
+        @statistic[signal_sizeEmergencyQueue](title="Size of emergency Queue";source="signal_sizeEmergencyQueue";record=vector,count,max;interpolation=none);
 }

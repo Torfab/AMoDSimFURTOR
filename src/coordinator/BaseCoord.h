@@ -91,7 +91,8 @@ private:
 
         simsignal_t pickupEmergencies;
         simsignal_t  deadCode;
-
+        simsignal_t signal_sizeEmergencyQueue;
+        simsignal_t signal_sizeRedcodeEmergencyQueue;
 
         int pickupEmergenciesCount;
 
